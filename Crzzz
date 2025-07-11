@@ -1511,7 +1511,7 @@ function redzlib:MakeWindow(Configs)
 	})
 	
 	local ControlSize1, ControlSize2 = MakeDrag(Create("ImageButton", MainFrame, {
-		Size = UDim2.new(0, 35, 0, 35),
+		Size = UDim2.new(0, 50, 0, 50),
 		Position = MainFrame.Size,
 		Active = true,
 		AnchorPoint = Vector2.new(0.8, 0.8),
