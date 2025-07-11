@@ -1580,8 +1580,8 @@ function redzlib:MakeWindow(Configs)
 	local Window, FirstTab = {}, false
 	function Window:CloseBtn()
 		local Dialog = Window:Dialog({
-			Title = "Close",
-			Text = "You Want Close Ui?",
+			Title = "إغلاق",
+			Text = "هل تريد إغلاق السكربت ؟",
 			Options = {
 				{"Confirm", function()
 					ScreenGui:Destroy()
