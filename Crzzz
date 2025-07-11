@@ -1583,10 +1583,10 @@ function redzlib:MakeWindow(Configs)
 			Title = "إغلاق",
 			Text = "هل تريد إغلاق السكربت ؟",
 			Options = {
-				{"Confirm", function()
+				{"نعم", function()
 					ScreenGui:Destroy()
 				end},
-				{"Cancel"}
+				{"لا"}
 			}
 		})
 	end
