@@ -52,7 +52,7 @@ local redzlib = {
 	},
 	Save = {
 		UISize = {600, 400},
-		TabSize = 160,
+		TabSize = 260,
 		Theme = "Darker"
 	},
 	Settings = {},
