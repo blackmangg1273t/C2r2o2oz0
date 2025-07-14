@@ -1279,30 +1279,31 @@ local function ButtonFrame(Instance, Title, Description, HolderSize)
 	}), "DarkText")
 
 	local Frame = Make("Button", Instance, {
-		Size = UDim2.new(1, 0, 0, 25),
-		AutomaticSize = "Y",
-		Name = "Option"
-	})Make("Corner", Frame, UDim.new(0, 6))
-	
-	LabelHolder = Create("Frame", Frame, {
-		AutomaticSize = "Y",
-		BackgroundTransparency = 1,
-		Size = HolderSize,
-		Position = UDim2.new(0, 10, 0),
-		AnchorPoint = Vector2.new(0, 0)
-	}, {
-		Create("UIListLayout", {
-			SortOrder = "LayoutOrder",
-			VerticalAlignment = "Center",
-			Padding = UDim.new(0, 2)
-		}),
-		Create("UIPadding", {
-			PaddingBottom = UDim.new(0, 5),
-			PaddingTop = UDim.new(0, 5)
-		}),
-		TitleL,
-		DescL,
-	})
+	Size = UDim2.new(1, 0, 0, 50), -- كبر الزر
+	AutomaticSize = "Y",
+	Name = "Option"
+})
+Make("Corner", Frame, UDim.new(0, 6))
+
+LabelHolder = Create("Frame", Frame, {
+	AutomaticSize = "Y",
+	BackgroundTransparency = 1,
+	Size = UDim2.new(1, -20, 0, 50), -- كبر مساحة النص داخل الزر
+	Position = UDim2.new(0, 10, 0),
+	AnchorPoint = Vector2.new(0, 0)
+}, {
+	Create("UIListLayout", {
+		SortOrder = "LayoutOrder",
+		VerticalAlignment = "Center",
+		Padding = UDim.new(0, 2)
+	}),
+	Create("UIPadding", {
+		PaddingBottom = UDim.new(0, 5),
+		PaddingTop = UDim.new(0, 5)
+	}),
+	TitleL,
+	DescL,
+})
 	
 	local Label = {}
 	function Label:SetTitle(NewTitle)
@@ -1423,7 +1424,7 @@ function redzlib:MakeWindow(Configs)
 	end;LoadFile()
 	
 	local UISizeX, UISizeY = unpack(redzlib.Save.UISize)
-	local MainFrame = InsertTheme(Create("ImageButton", ScreenGui, {
+	Framlocal Maine = InsertTheme(Create("ImageButton", ScreenGui, {
 		Size = UDim2.fromOffset(UISizeX, UISizeY),
 		Position = UDim2.new(0.5, -UISizeX/2, 0.5, -UISizeY/2),
 		BackgroundTransparency = 0.03,
