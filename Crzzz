@@ -1223,11 +1223,7 @@ AddEle("Button", function(parent, props, ...)
 	local args = {...}
 	local New = InsertTheme(SetProps(Create("TextButton", parent, {
 		Text = "",
-																Save = {
-									UISize = {800, 500},
-									TabSize = 250, -- enlarged tab size
-									Theme = "Darker"
-								}, = UDim2.fromScale(1, 1),
+		Size = UDim2.fromScale(1, 1),
 		BackgroundColor3 = Theme["Color Hub 2"],
 		AutoButtonColor = false
 	}), props), "Frame")
