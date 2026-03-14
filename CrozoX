@@ -837,10 +837,10 @@ function CrozoX:CreateWindow(cfg)
         Parent           = titleBar,
     })
 
-    -- ── Control buttons (inside titleBar, anchored right) ──
-    local function CtrlBtn(symbol, rightOff, normalBg, hoverBg, txtColor)
+    -- ── Control buttons — أيقونات حقيقية من Icons ────────────
+    local function CtrlBtn(iconAsset, rightOff, normalBg, hoverBg, iconColor)
         local fr = New("Frame", {
-            Size             = UDim2.new(0, 30, 0, 26),
+            Size             = UDim2.new(0, 28, 0, 28),
             AnchorPoint      = Vector2.new(1, 0.5),
             Position         = UDim2.new(1, -rightOff, 0.5, 0),
             BackgroundColor3 = normalBg,
@@ -849,35 +849,60 @@ function CrozoX:CreateWindow(cfg)
             Parent           = titleBar,
         })
         Corner(fr, 7)
-        local lbl = New("TextLabel", {
-            Size=UDim2.new(1,0,1,0), BackgroundTransparency=1,
-            Text=symbol, TextColor3=txtColor,
-            Font=Enum.Font.GothamBold, TextSize=14,
-            ZIndex=21, Parent=fr,
+        Stroke(fr, Color3.fromRGB(255,255,255), 1, 0.88)
+
+        -- الأيقونة الحقيقية
+        local icon = New("ImageLabel", {
+            Size                 = UDim2.new(0, 14, 0, 14),
+            AnchorPoint          = Vector2.new(0.5, 0.5),
+            Position             = UDim2.new(0.5, 0, 0.5, 0),
+            BackgroundTransparency = 1,
+            Image                = iconAsset,
+            ImageColor3          = iconColor,
+            ScaleType            = Enum.ScaleType.Fit,
+            ZIndex               = 21,
+            Parent               = fr,
         })
+
         local btn = New("TextButton", {
             Size=UDim2.new(1,0,1,0), BackgroundTransparency=1,
             Text="", ZIndex=22, Parent=fr,
         })
         btn.MouseEnter:Connect(function()
-            Tween(fr,  {BackgroundColor3=hoverBg},          0.15)
-            Tween(lbl, {TextColor3=Color3.new(1,1,1)},      0.15)
+            Tween(fr,   {BackgroundColor3=hoverBg},              0.15)
+            Tween(icon, {ImageColor3=Color3.new(1,1,1)},         0.15)
+            Tween(fr,   {Size=UDim2.new(0,30,0,30)},             0.12, Enum.EasingStyle.Back)
         end)
         btn.MouseLeave:Connect(function()
-            Tween(fr,  {BackgroundColor3=normalBg},          0.15)
-            Tween(lbl, {TextColor3=txtColor},                0.15)
+            Tween(fr,   {BackgroundColor3=normalBg},              0.15)
+            Tween(icon, {ImageColor3=iconColor},                  0.15)
+            Tween(fr,   {Size=UDim2.new(0,28,0,28)},             0.12)
+        end)
+        btn.MouseButton1Down:Connect(function()
+            Tween(fr, {Size=UDim2.new(0,25,0,25)}, 0.08)
+        end)
+        btn.MouseButton1Up:Connect(function()
+            Tween(fr, {Size=UDim2.new(0,28,0,28)}, 0.12, Enum.EasingStyle.Back)
         end)
         return btn
     end
 
-    local closeBtn = CtrlBtn("✕", 10,
-        Color3.fromRGB(48,16,16),
-        Color3.fromRGB(196,36,36),
-        Color3.fromRGB(255, 80, 80))
-    local minBtn   = CtrlBtn("⊟", 48,
-        Color3.fromRGB(22,26,42),
-        Color3.fromRGB(40,52,85),
-        Color3.fromRGB(130,150,200))
+    -- ✕ إغلاق — أيقونة X الحقيقية (xcircle أو x)
+    local closeBtn = CtrlBtn(
+        Icons.xcircle,    -- أيقونة دائرة X احترافية
+        10,
+        Color3.fromRGB(44, 14, 14),    -- خلفية عادية
+        Color3.fromRGB(200, 30, 30),   -- hover أحمر
+        Color3.fromRGB(220, 60, 60)    -- لون الأيقونة
+    )
+    -- ⊟ تصغير — أيقونة minus الحقيقية
+    local minBtn = CtrlBtn(
+        Icons.minimize_icon,  -- أيقونة التصغير الحقيقية
+        46,
+        Color3.fromRGB(20, 24, 40),    -- خلفية عادية
+        Color3.fromRGB(38, 50, 82),    -- hover
+        Color3.fromRGB(120, 140, 195)  -- لون الأيقونة
+    )
 
     -- ── Sidebar — خلفيته شفافة، اللون من MainFrame ────────
     local sidebar = New("Frame", {
