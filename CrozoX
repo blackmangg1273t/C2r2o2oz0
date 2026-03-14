@@ -1460,19 +1460,23 @@ local function Init()
     end})
 
     -- SEQUENCE: Intro → LangSelect → window
-    PlayIntro(sg,function()
-        ShowLangSelect(sg,function(langName)
+    PlayIntro(sg, function()
+        ShowLangSelect(sg, function(langName)
             lib:SetLanguage(langName)
             lib:Notify({
-                Title=langName=="Arabic" and "مرحباً بك في CrozoX" or "Welcome to CrozoX",
-                Text=langName=="Arabic"
+                Title    = langName=="Arabic" and "مرحباً بك في CrozoX" or "Welcome to CrozoX",
+                Text     = langName=="Arabic"
                     and "تم تحميل المكتبة بنجاح ✓"
                     or  "Library loaded successfully ✓",
-                Duration=5, Type="Success",
+                Duration = 5,
+                Type     = "Success",
             })
-            if lib._pendingWindow then
-                task.spawn(lib._pendingWindow)
-                lib._pendingWindow=nil
+            -- يشغّل الـ callback المسجّل من السكربت الخارجي
+            -- API._pendingWindow هو المكان الصح لأن Hub يكتب على API
+            if API._pendingWindow then
+                local fn = API._pendingWindow
+                API._pendingWindow = nil
+                task.spawn(fn)
             end
         end)
     end)
