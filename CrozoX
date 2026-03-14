@@ -183,64 +183,56 @@ local Languages = {
 -- ============================================================
 local Themes = {
     Blue = {
-        -- Accent — أزرق فقط للعناصر المهمة
         Primary      = Color3.fromRGB(42,  120, 255),
         PrimaryDark  = Color3.fromRGB(24,  90,  210),
         PrimaryLight = Color3.fromRGB(80,  155, 255),
         PrimaryGlow  = Color3.fromRGB(42,  120, 255),
-        -- Backgrounds — neutral dark
-        Background   = Color3.fromRGB(10,  10,  10),   -- #0A0A0A
-        Surface      = Color3.fromRGB(17,  17,  17),   -- #111111
-        SurfaceAlt   = Color3.fromRGB(22,  22,  22),   -- #161616
-        SurfaceHover = Color3.fromRGB(30,  30,  30),   -- #1E1E1E hover
-        SurfaceCard  = Color3.fromRGB(26,  26,  26),   -- card bg
-        -- Borders — subtle
-        Border       = Color3.fromRGB(32,  32,  32),   -- subtle border
-        BorderBright = Color3.fromRGB(50,  50,  50),   -- visible border
-        BorderAccent = Color3.fromRGB(42,  120, 255),  -- accent border
-        -- Text
-        Text         = Color3.fromRGB(255, 255, 255),  -- #FFFFFF
-        TextDim      = Color3.fromRGB(160, 160, 160),  -- #A0A0A0
-        TextMuted    = Color3.fromRGB(90,  90,  90),
+        Background   = Color3.fromRGB(10,  10,  10),
+        Surface      = Color3.fromRGB(17,  17,  17),
+        SurfaceAlt   = Color3.fromRGB(21,  21,  21),   -- #151515
+        SurfaceHover = Color3.fromRGB(30,  30,  30),
+        SurfaceCard  = Color3.fromRGB(21,  21,  21),   -- #151515
+        Border       = Color3.fromRGB(32,  32,  32),
+        BorderBright = Color3.fromRGB(50,  50,  50),
+        BorderAccent = Color3.fromRGB(42,  120, 255),
+        Text         = Color3.fromRGB(255, 255, 255),
+        TextDim      = Color3.fromRGB(154, 154, 154),  -- #9A9A9A
+        TextMuted    = Color3.fromRGB(100, 100, 100),
         BtnText      = Color3.fromRGB(255, 255, 255),
-        -- Status
+        BtnStop      = Color3.fromRGB(42,  42,  42),   -- #2A2A2A زر إيقاف
+        BtnStopHov   = Color3.fromRGB(51,  51,  51),   -- #333333 hover
         Success      = Color3.fromRGB(34,  197, 94),
         Warning      = Color3.fromRGB(234, 179, 8),
         Error        = Color3.fromRGB(239, 68,  68),
         Info         = Color3.fromRGB(42,  120, 255),
-        -- Notification backgrounds
         NotifBgOk    = Color3.fromRGB(12,  28,  18),
         NotifBgWarn  = Color3.fromRGB(30,  24,   6),
         NotifBgErr   = Color3.fromRGB(30,  10,  10),
         NotifBgInfo  = Color3.fromRGB(12,  20,  36),
     },
     Red = {
-        -- Accent — أحمر فقط للعناصر المهمة
-        Primary      = Color3.fromRGB(255, 42,  42),   -- #FF2A2A
-        PrimaryDark  = Color3.fromRGB(200, 25,  25),
-        PrimaryLight = Color3.fromRGB(255, 90,  90),   -- #FF3D3D hover
-        PrimaryGlow  = Color3.fromRGB(255, 42,  42),
-        -- Backgrounds — neutral dark (نفس الـ blue)
+        Primary      = Color3.fromRGB(255, 58,  58),   -- #FF3A3A
+        PrimaryDark  = Color3.fromRGB(210, 30,  30),
+        PrimaryLight = Color3.fromRGB(255, 100, 100),
+        PrimaryGlow  = Color3.fromRGB(255, 58,  58),
         Background   = Color3.fromRGB(10,  10,  10),
         Surface      = Color3.fromRGB(17,  17,  17),
-        SurfaceAlt   = Color3.fromRGB(22,  22,  22),
+        SurfaceAlt   = Color3.fromRGB(21,  21,  21),   -- #151515
         SurfaceHover = Color3.fromRGB(30,  30,  30),
-        SurfaceCard  = Color3.fromRGB(26,  26,  26),
-        -- Borders
+        SurfaceCard  = Color3.fromRGB(21,  21,  21),   -- #151515
         Border       = Color3.fromRGB(32,  32,  32),
         BorderBright = Color3.fromRGB(50,  50,  50),
-        BorderAccent = Color3.fromRGB(255, 42,  42),
-        -- Text
+        BorderAccent = Color3.fromRGB(255, 58,  58),
         Text         = Color3.fromRGB(255, 255, 255),
-        TextDim      = Color3.fromRGB(160, 160, 160),
-        TextMuted    = Color3.fromRGB(90,  90,  90),
+        TextDim      = Color3.fromRGB(154, 154, 154),  -- #9A9A9A
+        TextMuted    = Color3.fromRGB(100, 100, 100),
         BtnText      = Color3.fromRGB(255, 255, 255),
-        -- Status
+        BtnStop      = Color3.fromRGB(42,  42,  42),   -- #2A2A2A
+        BtnStopHov   = Color3.fromRGB(51,  51,  51),   -- #333333
         Success      = Color3.fromRGB(34,  197, 94),
         Warning      = Color3.fromRGB(234, 179, 8),
         Error        = Color3.fromRGB(239, 68,  68),
-        Info         = Color3.fromRGB(255, 42,  42),
-        -- Notification backgrounds
+        Info         = Color3.fromRGB(255, 58,  58),
         NotifBgOk    = Color3.fromRGB(12,  28,  18),
         NotifBgWarn  = Color3.fromRGB(30,  24,   6),
         NotifBgErr   = Color3.fromRGB(30,  10,  10),
@@ -743,14 +735,32 @@ function CrozoX:CreateWindow(cfg)
         Parent   = mainFrame,
     })
 
-    -- Neon glow border — thickness 1.5، أرق وأكثر أناقة
-    local glowStroke = Stroke(mainFrame, T.Primary, 1.5, 0.2)
+
+    -- Animated border — Elegant rotating gradient (Thickness 1.5, not too thick)
+    local glowStroke = New("UIStroke", {
+        Thickness    = 1.5,
+        Transparency = 0.3,   -- elegant, not neon
+        Parent       = mainFrame,
+    })
+    New("UIGradient", {
+        Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0,    T.Primary),
+            ColorSequenceKeypoint.new(0.35, T.PrimaryLight),
+            ColorSequenceKeypoint.new(0.5,  T.Primary:Lerp(Color3.new(1,1,1), 0.2)),
+            ColorSequenceKeypoint.new(0.65, T.PrimaryLight),
+            ColorSequenceKeypoint.new(1,    T.Primary),
+        },
+        Rotation = 0,
+        Parent   = glowStroke,
+    })
+    -- slow elegant rotation
     task.spawn(function()
+        local rot = 0
         while mainFrame and mainFrame.Parent do
-            Tween(glowStroke, {Transparency=0.1}, 2.0, Enum.EasingStyle.Sine)
-            task.wait(2.0)
-            Tween(glowStroke, {Transparency=0.55}, 2.0, Enum.EasingStyle.Sine)
-            task.wait(2.0)
+            rot = (rot + 0.6) % 360
+            local g = glowStroke:FindFirstChildWhichIsA("UIGradient")
+            if g then g.Rotation = rot end
+            task.wait(0.03)
         end
     end)
 
@@ -1094,13 +1104,11 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    -- ── Open animation — scale 0.9→1 + fade ───────────────
+    -- ── Open animation — Pop: scale 0.92→1 + fade ─────────
     mainFrame.BackgroundTransparency = 1
     mainFrame.Size = UDim2.new(
-        0, size.X.Offset * 0.9,
-        0, size.Y.Offset * 0.9)
-
-    -- Shadow تبدأ بصفر وتكبر مع الواجهة
+        0, size.X.Offset * 0.92,
+        0, size.Y.Offset * 0.92)
     shadowImg.Size             = UDim2.new(0, 0, 0, 0)
     shadowImg.ImageTransparency = 1
 
@@ -1110,8 +1118,8 @@ function CrozoX:CreateWindow(cfg)
     }, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 
     Tween(shadowImg, {
-        Size             = UDim2.new(0, size.X.Offset+60, 0, size.Y.Offset+60),
-        Position         = UDim2.new(0.5, 0, 0.5, 12),
+        Size              = UDim2.new(0, size.X.Offset+60, 0, size.Y.Offset+60),
+        Position          = UDim2.new(0.5, 0, 0.5, 12),
         ImageTransparency = 0.45,
     }, 0.4, Enum.EasingStyle.Back)
 
@@ -1168,22 +1176,22 @@ function CrozoX:CreateWindow(cfg)
             ZIndex=13,Parent=tabList})
         Corner(tabBtn,10)
 
-        -- Left indicator bar (animated)
+        -- Left indicator — خط ملون واضح بجانب التاب النشط
         local indicator=New("Frame",{
-            Size=UDim2.new(0,3,0,0),   -- يبدأ بارتفاع صفر
+            Size=UDim2.new(0,3,0,0),
             Position=UDim2.new(0,0,0.5,0),
             AnchorPoint=Vector2.new(0,0.5),
             BackgroundColor3=T.Primary,
             BackgroundTransparency=1,
             BorderSizePixel=0,ZIndex=14,Parent=tabBtn})
         Corner(indicator,2)
-        -- Gradient on indicator
-        New("UIGradient",{
-            Color=ColorSequence.new{
-                ColorSequenceKeypoint.new(0,T.PrimaryLight),
-                ColorSequenceKeypoint.new(1,T.Primary),
-            },
-            Rotation=90,Parent=indicator})
+        -- Glow على الـ indicator
+        New("ImageLabel",{Size=UDim2.new(1,8,1,8),
+            Position=UDim2.new(0,-4,0.5,-4),AnchorPoint=Vector2.new(0,0.5),
+            BackgroundTransparency=1,Image="rbxassetid://6014261993",
+            ImageColor3=T.Primary,ImageTransparency=1,
+            ScaleType=Enum.ScaleType.Slice,SliceCenter=Rect.new(49,49,450,450),
+            ZIndex=13,Name="IndGlow",Parent=tabBtn})
 
         -- Icon
         local tabIcon=Img(tabBtn,iconAsset,17,
@@ -1205,8 +1213,8 @@ function CrozoX:CreateWindow(cfg)
             Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,
             ScrollBarThickness=3,ScrollBarImageColor3=T.BorderBright,
             BorderSizePixel=0,Visible=false,ZIndex=12,Parent=contentArea})
-        local pageLayout=ListLayout(tabPage,12)  -- 12px بين العناصر
-        Pad(tabPage,16,16,16,16)                 -- 16px padding داخلي
+        local pageLayout=ListLayout(tabPage,12)   -- 12px spacing
+        Pad(tabPage,16,16,16,16)
         pageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
             tabPage.CanvasSize=UDim2.new(0,0,0,pageLayout.AbsoluteContentSize.Y+32)
         end)
@@ -1217,22 +1225,21 @@ function CrozoX:CreateWindow(cfg)
                 Tween(activeTab.Btn,{BackgroundColor3=T.SurfaceAlt},0.2)
                 Tween(activeTab.Lbl,{TextColor3=T.TextMuted},0.2)
                 Tween(activeTab.Icon,{ImageColor3=T.TextMuted},0.2)
-                -- Indicator شرنك للصفر
-                Tween(activeTab.Ind,{
-                    Size=UDim2.new(0,3,0,0),
-                    BackgroundTransparency=1,
-                },0.2)
+                Tween(activeTab.Ind,{Size=UDim2.new(0,3,0,0),BackgroundTransparency=1},0.2)
+                local g=activeTab.Btn:FindFirstChild("IndGlow")
+                if g then Tween(g,{ImageTransparency=1},0.2) end
             end
             tabPage.Visible=true
-            -- Hover bg
             Tween(tabBtn,{BackgroundColor3=T.SurfaceHover},0.2)
             Tween(tabLabel,{TextColor3=T.Text},0.2)
             Tween(tabIcon,{ImageColor3=T.Primary},0.2)
-            -- Indicator ينمو للأعلى بـ Back easing
+            -- Indicator ينمو مع glow
             Tween(indicator,{
-                Size=UDim2.new(0,3,0.55,0),
+                Size=UDim2.new(0,3,0.6,0),
                 BackgroundTransparency=0,
             },0.3,Enum.EasingStyle.Back)
+            local g=tabBtn:FindFirstChild("IndGlow")
+            if g then Tween(g,{ImageTransparency=0.7},0.3) end
             activeTab={Btn=tabBtn,Page=tabPage,Lbl=tabLabel,
                        Icon=tabIcon,Ind=indicator}
         end
@@ -1395,32 +1402,30 @@ function CrozoX:CreateWindow(cfg)
             local function SetBtnState(active)
                 btnActive = active
                 if active then
-                    -- حالة إيقاف — لون مختلف
+                    -- حالة إيقاف — رمادي محايد (#2A2A2A)
                     rb.Text = txtOff
-                    Tween(rb,{BackgroundColor3=T.BorderBright},0.2)
-                    Tween(rbGlow,{ImageTransparency=0.65},0.2)
+                    Tween(rb, {BackgroundColor3=T.BtnStop}, 0.2)
+                    Tween(rbGlow, {ImageTransparency=0.92}, 0.2)
                 else
-                    -- حالة تفعيل — اللون الأساسي
+                    -- حالة تفعيل — accent color
                     rb.Text = txtOn
-                    Tween(rb,{BackgroundColor3=T.Primary},0.2)
-                    Tween(rbGlow,{ImageTransparency=0.80},0.2)
+                    Tween(rb, {BackgroundColor3=T.Primary}, 0.2)
+                    Tween(rbGlow, {ImageTransparency=0.80}, 0.2)
                 end
             end
 
             rb.MouseEnter:Connect(function()
-                if not btnActive then
-                    Tween(rb,{BackgroundColor3=T.PrimaryLight},0.15)
-                end
-                Tween(rbGlow,{ImageTransparency=0.50},0.15)
-                Tween(rb,{Size=UDim2.new(0,86,0,34),Position=UDim2.new(1,-97,0.5,-17)},
-                    0.15,Enum.EasingStyle.Back)
+                local hoverColor = btnActive and T.BtnStopHov or T.PrimaryLight
+                Tween(rb, {BackgroundColor3=hoverColor}, 0.15)
+                Tween(rbGlow, {ImageTransparency=0.50}, 0.15)
+                Tween(rb, {Size=UDim2.new(0,86,0,34), Position=UDim2.new(1,-97,0.5,-17)},
+                    0.15, Enum.EasingStyle.Back)
             end)
             rb.MouseLeave:Connect(function()
-                if not btnActive then
-                    Tween(rb,{BackgroundColor3=T.Primary},0.15)
-                end
-                Tween(rbGlow,{ImageTransparency=0.80},0.15)
-                Tween(rb,{Size=UDim2.new(0,82,0,32),Position=UDim2.new(1,-94,0.5,-16)},0.15)
+                local normColor = btnActive and T.BtnStop or T.Primary
+                Tween(rb, {BackgroundColor3=normColor}, 0.15)
+                Tween(rbGlow, {ImageTransparency=0.80}, 0.15)
+                Tween(rb, {Size=UDim2.new(0,82,0,32), Position=UDim2.new(1,-94,0.5,-16)}, 0.15)
             end)
             rb.MouseButton1Down:Connect(function()
                 Tween(rb,{Size=UDim2.new(0,77,0,29),Position=UDim2.new(1,-91,0.5,-14)},0.07)
@@ -1528,14 +1533,19 @@ function CrozoX:CreateWindow(cfg)
                 BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,
                 ZIndex=16,Parent=tbg})
             Corner(knob,8)
-            Stroke(knob,T.Primary,1.5,0)
-            -- Glow under knob
-            New("ImageLabel",{Size=UDim2.new(1,12,1,12),
-                Position=UDim2.new(0,-6,0,-4),
+            -- UIStroke Transparency 0.6 حول الـ knob
+            New("UIStroke", {
+                Color        = T.Primary,
+                Thickness    = 2,
+                Transparency = 0.6,
+                Parent       = knob,
+            })
+            New("ImageLabel",{Size=UDim2.new(1,14,1,14),
+                Position=UDim2.new(0,-7,0,-5),
                 BackgroundTransparency=1,
                 Image="rbxassetid://6014261993",
                 ImageColor3=T.PrimaryGlow,
-                ImageTransparency=0.78,
+                ImageTransparency=0.82,
                 ScaleType=Enum.ScaleType.Slice,
                 SliceCenter=Rect.new(49,49,450,450),
                 ZIndex=15,Parent=knob})
