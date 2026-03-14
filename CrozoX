@@ -906,28 +906,47 @@ function CrozoX:CreateWindow(cfg)
     })
     Corner(profileCard, 10)
     Stroke(profileCard, T.Border, 1, 0)
-    -- Avatar — صورة الـ Skin الحقيقية من Roblox
-    local avatarBg = New("Frame", {
-        Size=UDim2.new(0,34,0,34), Position=UDim2.new(0,7,0.5,-17),
-        BackgroundColor3=T.SurfaceHover, BorderSizePixel=0,
-        ZIndex=13, Parent=profileCard,
-    })
-    Corner(avatarBg, 17)
-    Stroke(avatarBg, T.BorderBright, 1, 0.3)
 
-    -- صورة اللاعب الحقيقية — Roblox Thumbnail API
+    -- ── Avatar دائري — صورة اللاعب الحقيقية ─────────────────
     local avatarImg = New("ImageLabel", {
-        Size=UDim2.new(1,0,1,0),
-        BackgroundTransparency=1,
-        -- rbxthumb:// يجلب صورة الـ avatar تلقائياً بدون HTTP
-        Image = "rbxthumb://type=AvatarHeadShot&id="
-            ..tostring(LocalPlayer.UserId).."&w=60&h=60",
-        ScaleType=Enum.ScaleType.Fit,
-        ZIndex=14, Parent=avatarBg,
+        Size                 = UDim2.new(0, 40, 0, 40),
+        Position             = UDim2.new(0, 6, 0.5, -20),
+        BackgroundColor3     = T.SurfaceHover,
+        BackgroundTransparency = 0,
+        Image                = "",   -- تُحدَّث بعد GetUserThumbnailAsync
+        ScaleType            = Enum.ScaleType.Fit,
+        ZIndex               = 14,
+        Parent               = profileCard,
     })
-    Corner(avatarImg, 17)
+    -- دائرة كاملة
+    New("UICorner", { CornerRadius = UDim.new(1, 0), Parent = avatarImg })
+    -- حدود خفيفة حول الصورة
+    New("UIStroke", {
+        Color        = T.Primary,
+        Thickness    = 1.5,
+        Transparency = 0.35,
+        Parent       = avatarImg,
+    })
+
+    -- جلب الصورة بشكل غير متزامن (GetUserThumbnailAsync)
+    task.spawn(function()
+        local ok, content = pcall(function()
+            return Players:GetUserThumbnailAsync(
+                LocalPlayer.UserId,
+                Enum.ThumbnailType.HeadShot,
+                Enum.ThumbnailSize.Size420x420
+            )
+        end)
+        if ok and content then
+            avatarImg.Image = content
+        else
+            -- Fallback: rbxthumb إذا فشل الأول
+            avatarImg.Image = "rbxthumb://type=AvatarHeadShot&id="
+                .. tostring(LocalPlayer.UserId) .. "&w=60&h=60"
+        end
+    end)
     New("TextLabel", {
-        Size=UDim2.new(1,-50,0,17), Position=UDim2.new(0,49,0,6),
+        Size=UDim2.new(1,-56,0,17), Position=UDim2.new(0,52,0,6),
         BackgroundTransparency=1, Text=LocalPlayer.Name,
         TextColor3=T.Text, Font=Enum.Font.GothamSemibold, TextSize=12,
         TextXAlignment=Enum.TextXAlignment.Left,
@@ -935,13 +954,13 @@ function CrozoX:CreateWindow(cfg)
         ZIndex=13, Parent=profileCard,
     })
     local onlineDot = New("Frame", {
-        Size=UDim2.new(0,6,0,6), Position=UDim2.new(0,49,0,27),
+        Size=UDim2.new(0,6,0,6), Position=UDim2.new(0,52,0,27),
         BackgroundColor3=T.Success, BorderSizePixel=0,
         ZIndex=13, Parent=profileCard,
     })
     Corner(onlineDot, 3)
     New("TextLabel", {
-        Size=UDim2.new(1,-60,0,12), Position=UDim2.new(0,60,0,25),
+        Size=UDim2.new(1,-64,0,12), Position=UDim2.new(0,63,0,25),
         BackgroundTransparency=1, Text="Online",
         TextColor3=T.TextMuted, Font=Enum.Font.Gotham, TextSize=10,
         TextXAlignment=Enum.TextXAlignment.Left,
