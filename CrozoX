@@ -6,9 +6,10 @@
   ╚██████╗██║  ██║╚██████╔╝   ██║  ╚██████╔╝██╔╝ ██╗
    ╚═════╝╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═════╝ ╚═╝  ╚═╝
 
-    CrozoX v4.0.0 — Professional Roblox UI Library
-    Fixes: rounded corners, text sizes, Arabic font,
-           auto-English after 15s, visible button text
+    CrozoX v5.0.0 — Professional Roblox UI Library
+    Fixes: true rounded corners (innerClip trick),
+           control buttons fully inside titlebar,
+           NO auto language — user must choose manually
     Author: Crozo | github.com/Crozo
     License: MIT
 --]]
@@ -267,14 +268,16 @@ local function Img(parent,asset,sz,pos,color,zi)
         Image=asset or "",ImageColor3=color or Color3.new(1,1,1),
         ScaleType=Enum.ScaleType.Fit,ZIndex=zi or 14,Parent=parent})
 end
-local function Ripple(btn)
+local function Ripple(target)
+    -- target ممكن يكون Frame أو TextButton
+    local absPos  = target.AbsolutePosition
+    local absSize = target.AbsoluteSize
     local r=New("Frame",{Size=UDim2.new(0,0,0,0),AnchorPoint=Vector2.new(0.5,0.5),
         BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=0.72,
-        BorderSizePixel=0,ZIndex=btn.ZIndex+10,Parent=btn})
+        BorderSizePixel=0,ZIndex=target.ZIndex+10,Parent=target})
     Corner(r,100)
-    r.Position=UDim2.new(0,Mouse.X-btn.AbsolutePosition.X,
-                          0,Mouse.Y-btn.AbsolutePosition.Y)
-    local sz=math.max(btn.AbsoluteSize.X,btn.AbsoluteSize.Y)*2.8
+    r.Position=UDim2.new(0,Mouse.X-absPos.X, 0,Mouse.Y-absPos.Y)
+    local sz=math.max(absSize.X,absSize.Y)*2.8
     Tween(r,{Size=UDim2.new(0,sz,0,sz),BackgroundTransparency=1},0.5)
     Debris:AddItem(r,0.55)
 end
@@ -593,8 +596,8 @@ local function ShowLangSelect(sg, onDone)
     end
 
     -- ── Confirm button ─────────────────────────────────────────
-    confirmBtn=New("TextButton",{Size=UDim2.new(1,-48,0,42),
-        Position=UDim2.new(0,24,1,-56),
+    confirmBtn=New("TextButton",{Size=UDim2.new(1,-48,0,44),
+        Position=UDim2.new(0,24,1,-58),
         BackgroundColor3=THEME_COLORS.English,
         Text="Continue  →",
         TextColor3=Color3.fromRGB(255,255,255),
@@ -610,36 +613,19 @@ local function ShowLangSelect(sg, onDone)
         Tween(confirmBtn,{BackgroundColor3=THEME_COLORS[selectedLang]},0.15)
     end)
 
-    -- ── Auto-countdown bar (15 seconds → auto English) ─────────
-    -- Shows a thin bar at bottom of card that drains over 15s
-    local TIMEOUT = 15
+    -- ── Entrance animation ─────────────────────────────────────
+    ringBg.Position=UDim2.new(0.5,0,0.65,0)
+    card.Position=UDim2.new(0.5,0,0.65,0)
+    Tween(ringBg,{BackgroundTransparency=0,Position=UDim2.new(0.5,0,0.5,0)},
+        0.5,Enum.EasingStyle.Back)
+    Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0.5,0,0.5,0)},
+        0.5,Enum.EasingStyle.Back)
 
-    local timerBg=New("Frame",{Size=UDim2.new(1,-48,0,3),
-        Position=UDim2.new(0,24,1,-12),
-        BackgroundColor3=Color3.fromRGB(38,40,58),
-        BorderSizePixel=0,ZIndex=206,Parent=card})
-    Corner(timerBg,2)
-    local timerFill=New("Frame",{Size=UDim2.new(1,0,1,0),
-        BackgroundColor3=Color3.fromRGB(100,110,160),
-        BorderSizePixel=0,ZIndex=207,Parent=timerBg})
-    Corner(timerFill,2)
-
-    -- countdown label
-    local countdownLbl=New("TextLabel",{Size=UDim2.new(0,160,0,16),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,1,-28),
-        BackgroundTransparency=1,
-        Text="Auto English in "..TIMEOUT.."s",
-        TextColor3=Color3.fromRGB(90,95,128),Font=Enum.Font.Gotham,
-        TextSize=11,ZIndex=206,Parent=card})
-
-    -- Drain the bar
-    Tween(timerFill,{Size=UDim2.new(0,0,1,0)},TIMEOUT,Enum.EasingStyle.Linear)
-
-    -- Update countdown text every second
-    local autoFired=false
+    -- ── Confirm — لا يتم تشغيل أي شيء إلا بعد ضغط الزر يدوياً ──
+    local fired=false
     local function FireConfirm()
-        if autoFired then return end
-        autoFired=true
+        if fired then return end
+        fired=true
         rainbowConn:Disconnect()
         Tween(overlay,{BackgroundTransparency=1},0.38)
         Tween(card,{BackgroundTransparency=1,Position=UDim2.new(0.5,0,0.44,0)},0.35)
@@ -650,34 +636,9 @@ local function ShowLangSelect(sg, onDone)
         end)
     end
 
-    task.spawn(function()
-        for i=TIMEOUT,1,-1 do
-            task.wait(1)
-            if autoFired then break end
-            local txt = selectedLang=="Arabic"
-                and ("English تلقائي بعد "..i.."ث")
-                or  ("Auto English in "..i.."s")
-            countdownLbl.Text=txt
-        end
-        if not autoFired then
-            -- Auto select English and fire
-            if selectedLang~="English" then SelectLang("English") end
-            task.wait(0.2)
-            FireConfirm()
-        end
-    end)
-
-    -- ── Entrance animation ─────────────────────────────────────
-    ringBg.Position=UDim2.new(0.5,0,0.65,0)
-    card.Position=UDim2.new(0.5,0,0.65,0)
-    Tween(ringBg,{BackgroundTransparency=0,Position=UDim2.new(0.5,0,0.5,0)},
-        0.5,Enum.EasingStyle.Back)
-    Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0.5,0,0.5,0)},
-        0.5,Enum.EasingStyle.Back)
-
-    -- ── Manual confirm ─────────────────────────────────────────
     confirmBtn.MouseButton1Click:Connect(function()
-        Ripple(confirmBtn); FireConfirm()
+        Ripple(confirmBtn)
+        FireConfirm()
     end)
 end
 
@@ -727,24 +688,34 @@ function CrozoX:CreateWindow(cfg)
     local sg      =self._ScreenGui
 
     -- ── Main frame ─────────────────────────────────────────
+    -- ClipsDescendants=false على الخارج عشان UICorner يشتغل صح
     local mainFrame=New("Frame",{Name="CrozoX_Window",
         Size=UDim2.new(0,0,0,0),AnchorPoint=Vector2.new(0.5,0.5),
         Position=UDim2.new(0.5,0,0.5,0),BackgroundColor3=T.Background,
         BackgroundTransparency=1,BorderSizePixel=0,
-        ClipsDescendants=true,ZIndex=10,Parent=sg})
-    Corner(mainFrame,16)   -- ← حواف منحنية كبيرة للنافذة الرئيسية
-    Stroke(mainFrame,T.Border,1.5,0)
+        ClipsDescendants=false,
+        ZIndex=10,Parent=sg})
+    Corner(mainFrame,18)
+    Stroke(mainFrame,T.BorderBright,2,0)
 
-    -- Shadow
+    -- Inner clip container — يحتوي كل المحتوى ويقصّه بدون تأثير على الحواف
+    local innerClip=New("Frame",{Name="InnerClip",
+        Size=UDim2.new(1,0,1,0),Position=UDim2.new(0,0,0,0),
+        BackgroundTransparency=1,BorderSizePixel=0,
+        ClipsDescendants=true,
+        ZIndex=10,Parent=mainFrame})
+    Corner(innerClip,18)
+
+    -- Shadow (خارج الـ innerClip مباشرة تحت mainFrame)
     New("ImageLabel",{Name="Shadow",Size=UDim2.new(1,60,1,60),
         Position=UDim2.new(0,-30,0,-20),BackgroundTransparency=1,
         Image="rbxassetid://6014261993",ImageColor3=Color3.fromRGB(0,0,0),
-        ImageTransparency=0.5,ScaleType=Enum.ScaleType.Slice,
+        ImageTransparency=0.45,ScaleType=Enum.ScaleType.Slice,
         SliceCenter=Rect.new(49,49,450,450),ZIndex=9,Parent=mainFrame})
 
-    -- ── Titlebar ───────────────────────────────────────────
+    -- ── Titlebar ─────────────────────────── (parent = innerClip)
     local titleBar=New("Frame",{Size=UDim2.new(1,0,0,56),
-        BackgroundColor3=T.Surface,BorderSizePixel=0,ZIndex=11,Parent=mainFrame})
+        BackgroundColor3=T.Surface,BorderSizePixel=0,ZIndex=11,Parent=innerClip})
 
     -- Bottom border line
     New("Frame",{Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),
@@ -768,37 +739,67 @@ function CrozoX:CreateWindow(cfg)
         Font=Enum.Font.Gotham,TextSize=11,
         TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=titleBar})
 
-    -- ── Control buttons ────────────────────────────────────
-    local function CtrlBtn(iconAsset,xOff,hoverBg,iconColor)
-        local frame=New("Frame",{Size=UDim2.new(0,32,0,32),
-            Position=UDim2.new(1,xOff,0.5,-16),
-            BackgroundColor3=T.SurfaceAlt,BorderSizePixel=0,
-            ZIndex=13,Parent=titleBar})
-        Corner(frame,9)
-        Stroke(frame,T.Border,1,0)
-        local icon=Img(frame,iconAsset,15,UDim2.new(0.5,-7.5,0.5,-7.5),
-            iconColor or T.TextMuted,14)
-        local btn=New("TextButton",{Size=UDim2.new(1,0,1,0),
-            BackgroundTransparency=1,Text="",ZIndex=15,Parent=frame})
+    -- ── Control buttons — داخل الـ titlebar تماماً ──────────
+    -- نستخدم نص واضح بدل أيقونة عشان يكون مضمون الظهور
+    local function CtrlBtn(symbol, xOff, normalBg, hoverBg, textColor)
+        local frame=New("Frame",{
+            Size            = UDim2.new(0,34,0,28),
+            Position        = UDim2.new(1,xOff,0.5,-14),
+            BackgroundColor3= normalBg,
+            BorderSizePixel = 0,
+            ZIndex          = 20,
+            Parent          = titleBar,
+        })
+        Corner(frame,8)
+        local lbl=New("TextLabel",{
+            Size            = UDim2.new(1,0,1,0),
+            BackgroundTransparency=1,
+            Text            = symbol,
+            TextColor3      = textColor,
+            Font            = Enum.Font.GothamBold,
+            TextSize        = 16,
+            ZIndex          = 21,
+            Parent          = frame,
+        })
+        local btn=New("TextButton",{
+            Size            = UDim2.new(1,0,1,0),
+            BackgroundTransparency=1,
+            Text            = "",
+            ZIndex          = 22,
+            Parent          = frame,
+        })
         btn.MouseEnter:Connect(function()
             Tween(frame,{BackgroundColor3=hoverBg},0.15)
-            Tween(icon,{ImageColor3=Color3.new(1,1,1)},0.15)
+            Tween(lbl,{TextColor3=Color3.new(1,1,1)},0.15)
         end)
         btn.MouseLeave:Connect(function()
-            Tween(frame,{BackgroundColor3=T.SurfaceAlt},0.15)
-            Tween(icon,{ImageColor3=iconColor or T.TextMuted},0.15)
+            Tween(frame,{BackgroundColor3=normalBg},0.15)
+            Tween(lbl,{TextColor3=textColor},0.15)
         end)
-        return btn,frame,icon
+        return btn
     end
 
-    local closeBtn=CtrlBtn(Icons.x,-12,Color3.fromRGB(200,30,30),
-        Color3.fromRGB(200,80,80))
-    local minBtn=CtrlBtn(Icons.minus_icon,-52,T.SurfaceHover)
+    -- زر الإغلاق (✕) — أحمر، على اليمين
+    local closeBtn = CtrlBtn(
+        "✕",
+        -10,                                -- x offset من اليمين
+        Color3.fromRGB(55,  22,  22),       -- خلفية عادية
+        Color3.fromRGB(200, 38,  38),       -- خلفية hover
+        Color3.fromRGB(230, 80,  80)        -- لون النص
+    )
+    -- زر التصغير (—) — رمادي، بجانب الإغلاق
+    local minBtn = CtrlBtn(
+        "—",
+        -52,
+        Color3.fromRGB(30,  35,  52),
+        Color3.fromRGB(50,  60,  90),
+        Color3.fromRGB(150, 160, 200)
+    )
 
-    -- ── Sidebar ────────────────────────────────────────────
+    -- ── Sidebar ──────────────────────── (parent = innerClip)
     local sidebar=New("Frame",{Size=UDim2.new(0,158,1,-56),
         Position=UDim2.new(0,0,0,56),BackgroundColor3=T.Surface,
-        BorderSizePixel=0,ZIndex=11,Parent=mainFrame})
+        BorderSizePixel=0,ZIndex=11,Parent=innerClip})
     New("Frame",{Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,0,0,0),
         BackgroundColor3=T.Border,BorderSizePixel=0,ZIndex=12,Parent=sidebar})
 
@@ -812,10 +813,10 @@ function CrozoX:CreateWindow(cfg)
         tabList.CanvasSize=UDim2.new(0,0,0,tlLayout.AbsoluteContentSize.Y+12)
     end)
 
-    -- ── Content area ───────────────────────────────────────
+    -- ── Content area ─────────────────── (parent = innerClip)
     local contentArea=New("Frame",{Size=UDim2.new(1,-158,1,-56),
         Position=UDim2.new(0,158,0,56),BackgroundColor3=T.Background,
-        BorderSizePixel=0,ClipsDescendants=true,ZIndex=11,Parent=mainFrame})
+        BorderSizePixel=0,ClipsDescendants=true,ZIndex=11,Parent=innerClip})
 
     -- ── Drag ───────────────────────────────────────────────
     local dragging,dStart,dPos
