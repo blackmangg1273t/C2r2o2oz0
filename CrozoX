@@ -712,25 +712,25 @@ function CrozoX:CreateWindow(cfg)
     -- UICorner على MainFrame مباشرة = حواف منحنية حقيقية
     Corner(mainFrame, 16)
 
-    -- Gradient خلفية (أسود → Primary خفيف)
+    -- Gradient يغطي كامل الواجهة بما فيها منطقة TopBar والـ Sidebar
     New("UIGradient", {
         Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0,   T.Background),
-            ColorSequenceKeypoint.new(0.65, T.Background),
-            ColorSequenceKeypoint.new(1,   T.Primary:Lerp(T.Background, 0.80)),
+            ColorSequenceKeypoint.new(0,    T.Background),
+            ColorSequenceKeypoint.new(0.55, T.Background),
+            ColorSequenceKeypoint.new(1,    T.Primary:Lerp(T.Background, 0.78)),
         },
-        Rotation = 135,
+        Rotation = 145,
         Parent   = mainFrame,
     })
 
-    -- Neon glow border (pulsing)
-    local glowStroke = Stroke(mainFrame, T.Primary, 2, 0.5)
+    -- Neon glow border — thickness 1.5، أرق وأكثر أناقة
+    local glowStroke = Stroke(mainFrame, T.Primary, 1.5, 0.2)
     task.spawn(function()
         while mainFrame and mainFrame.Parent do
-            Tween(glowStroke, {Transparency=0.25}, 1.8, Enum.EasingStyle.Sine)
-            task.wait(1.8)
-            Tween(glowStroke, {Transparency=0.65}, 1.8, Enum.EasingStyle.Sine)
-            task.wait(1.8)
+            Tween(glowStroke, {Transparency=0.1}, 2.0, Enum.EasingStyle.Sine)
+            task.wait(2.0)
+            Tween(glowStroke, {Transparency=0.55}, 2.0, Enum.EasingStyle.Sine)
+            task.wait(2.0)
         end
     end)
 
@@ -750,28 +750,23 @@ function CrozoX:CreateWindow(cfg)
         Parent           = sg,
     })
 
-    -- ── Titlebar ───────────────────────────────────────────
+    -- ── Titlebar — شفاف عشان حواف MainFrame تظهر ──────────
     local titleBar = New("Frame", {
-        Size             = UDim2.new(1, 0, 0, 54),
-        Position         = UDim2.new(0, 0, 0, 0),
-        BackgroundColor3 = T.Surface,
-        BorderSizePixel  = 0,
-        ZIndex           = 11,
-        Parent           = mainFrame,
+        Size                   = UDim2.new(1, 0, 0, 54),
+        Position               = UDim2.new(0, 0, 0, 0),
+        BackgroundTransparency = 1,   -- ← شفاف: لا يغطي الحواف
+        BorderSizePixel        = 0,
+        ZIndex                 = 11,
+        Parent                 = mainFrame,
     })
-    New("UIGradient", {
-        Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, T.Surface),
-            ColorSequenceKeypoint.new(1, T.Surface:Lerp(T.Primary, 0.07)),
-        },
-        Rotation = 0,
-        Parent   = titleBar,
-    })
+    -- لا gradient على الـ titleBar — الـ MainFrame هو من يحمل اللون
+
     -- Separator
     New("Frame", {
         Size             = UDim2.new(1, 0, 0, 1),
         Position         = UDim2.new(0, 0, 1, -1),
-        BackgroundColor3 = T.Border,
+        BackgroundColor3 = T.BorderBright,
+        BackgroundTransparency = 0.5,
         BorderSizePixel  = 0,
         ZIndex           = 12,
         Parent           = titleBar,
@@ -882,26 +877,22 @@ function CrozoX:CreateWindow(cfg)
         Color3.fromRGB(26,30,48), Color3.fromRGB(45,55,85),
         Color3.fromRGB(140,155,195))
 
-    -- ── Sidebar ────────────────────────────────────────────
+    -- ── Sidebar — خلفيته شفافة، اللون من MainFrame ────────
     local sidebar = New("Frame", {
-        Size             = UDim2.new(0, 162, 1, -54),
-        Position         = UDim2.new(0, 0, 0, 54),
-        BackgroundColor3 = T.Surface,
-        BorderSizePixel  = 0,
-        ZIndex           = 11,
-        Parent           = mainFrame,
+        Size                   = UDim2.new(0, 162, 1, -54),
+        Position               = UDim2.new(0, 0, 0, 54),
+        BackgroundColor3       = T.Surface,
+        BackgroundTransparency = 0.15,   -- ← شبه شفاف: يظهر لون السطح برفق
+        BorderSizePixel        = 0,
+        ZIndex                 = 11,
+        Parent                 = mainFrame,
     })
-    New("UIGradient", {
-        Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, T.Surface),
-            ColorSequenceKeypoint.new(1, T.Surface:Lerp(T.Background, 0.4)),
-        },
-        Rotation = 90,
-        Parent   = sidebar,
-    })
-    New("Frame", {   -- Right border
+    -- Right border
+    New("Frame", {
         Size=UDim2.new(0,1,1,0), Position=UDim2.new(1,0,0,0),
-        BackgroundColor3=T.Border, BorderSizePixel=0,
+        BackgroundColor3=T.BorderBright,
+        BackgroundTransparency=0.6,
+        BorderSizePixel=0,
         ZIndex=12, Parent=sidebar,
     })
 
