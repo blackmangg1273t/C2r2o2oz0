@@ -688,30 +688,42 @@ function CrozoX:CreateWindow(cfg)
     local sg      =self._ScreenGui
 
     -- ── Main frame ─────────────────────────────────────────
-    -- ClipsDescendants=false على الخارج عشان UICorner يشتغل صح
+    -- الحل الصحيح للحواف المنحنية في Roblox:
+    -- mainFrame = شفاف تماماً، فقط لتحديد الحجم والموضع
+    -- innerClip = يحمل الخلفية + UICorner + ClipsDescendants
+    -- هكذا الحواف المنحنية تعمل 100% بدون قطع
     local mainFrame=New("Frame",{Name="CrozoX_Window",
-        Size=UDim2.new(0,0,0,0),AnchorPoint=Vector2.new(0.5,0.5),
-        Position=UDim2.new(0.5,0,0.5,0),BackgroundColor3=T.Background,
-        BackgroundTransparency=1,BorderSizePixel=0,
+        Size=UDim2.new(0,0,0,0),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(0.5,0,0.5,0),
+        BackgroundTransparency=1,   -- شفاف: الـ innerClip هو من يحمل اللون
+        BorderSizePixel=0,
         ClipsDescendants=false,
         ZIndex=10,Parent=sg})
-    Corner(mainFrame,18)
-    Stroke(mainFrame,T.BorderBright,2,0)
 
-    -- Inner clip container — يحتوي كل المحتوى ويقصّه بدون تأثير على الحواف
+    -- Shadow (يجب أن يكون أول child عشان يكون خلف كل شيء)
+    New("ImageLabel",{Name="Shadow",
+        Size=UDim2.new(1,50,1,50),
+        Position=UDim2.new(0,-25,0,-15),
+        BackgroundTransparency=1,
+        Image="rbxassetid://6014261993",
+        ImageColor3=Color3.fromRGB(0,0,0),
+        ImageTransparency=0.5,
+        ScaleType=Enum.ScaleType.Slice,
+        SliceCenter=Rect.new(49,49,450,450),
+        ZIndex=9,Parent=mainFrame})
+
+    -- Inner clip: يحمل الخلفية + الحواف + يقصّ المحتوى
     local innerClip=New("Frame",{Name="InnerClip",
-        Size=UDim2.new(1,0,1,0),Position=UDim2.new(0,0,0,0),
-        BackgroundTransparency=1,BorderSizePixel=0,
-        ClipsDescendants=true,
+        Size=UDim2.new(1,0,1,0),
+        Position=UDim2.new(0,0,0,0),
+        BackgroundColor3=T.Background,  -- اللون هنا
+        BorderSizePixel=0,
+        ClipsDescendants=true,          -- يقصّ المحتوى
         ZIndex=10,Parent=mainFrame})
-    Corner(innerClip,18)
-
-    -- Shadow (خارج الـ innerClip مباشرة تحت mainFrame)
-    New("ImageLabel",{Name="Shadow",Size=UDim2.new(1,60,1,60),
-        Position=UDim2.new(0,-30,0,-20),BackgroundTransparency=1,
-        Image="rbxassetid://6014261993",ImageColor3=Color3.fromRGB(0,0,0),
-        ImageTransparency=0.45,ScaleType=Enum.ScaleType.Slice,
-        SliceCenter=Rect.new(49,49,450,450),ZIndex=9,Parent=mainFrame})
+    Corner(innerClip,16)                -- الحواف هنا
+    -- Border/stroke على الـ innerClip
+    Stroke(innerClip,T.BorderBright,2,0)
 
     -- ── Titlebar ─────────────────────────── (parent = innerClip)
     local titleBar=New("Frame",{Size=UDim2.new(1,0,0,56),
@@ -739,34 +751,34 @@ function CrozoX:CreateWindow(cfg)
         Font=Enum.Font.Gotham,TextSize=11,
         TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=titleBar})
 
-    -- ── Control buttons — داخل الـ titlebar تماماً ──────────
-    -- نستخدم نص واضح بدل أيقونة عشان يكون مضمون الظهور
-    local function CtrlBtn(symbol, xOff, normalBg, hoverBg, textColor)
+    -- ── Control buttons — مثبّتة داخل الـ titlebar ──────────
+    local function CtrlBtn(symbol, rightOffset, normalBg, hoverBg, txtColor)
+        -- rightOffset = المسافة من حافة اليمين (بالبكسل)
+        -- نستخدم UDim2.new(1, -rightOffset, ...) عشان يبقى دايماً داخل الـ titleBar
         local frame=New("Frame",{
-            Size            = UDim2.new(0,34,0,28),
-            Position        = UDim2.new(1,xOff,0.5,-14),
-            BackgroundColor3= normalBg,
-            BorderSizePixel = 0,
-            ZIndex          = 20,
-            Parent          = titleBar,
+            Size             = UDim2.new(0,30,0,26),
+            AnchorPoint      = Vector2.new(1,0.5),
+            Position         = UDim2.new(1,-rightOffset,0.5,0),
+            BackgroundColor3 = normalBg,
+            BorderSizePixel  = 0,
+            ZIndex           = 20,
+            Parent           = titleBar,
         })
-        Corner(frame,8)
+        Corner(frame,7)
         local lbl=New("TextLabel",{
-            Size            = UDim2.new(1,0,1,0),
+            Size=UDim2.new(1,0,1,0),
             BackgroundTransparency=1,
-            Text            = symbol,
-            TextColor3      = textColor,
-            Font            = Enum.Font.GothamBold,
-            TextSize        = 16,
-            ZIndex          = 21,
-            Parent          = frame,
+            Text=symbol,
+            TextColor3=txtColor,
+            Font=Enum.Font.GothamBold,
+            TextSize=14,
+            ZIndex=21,
+            Parent=frame,
         })
         local btn=New("TextButton",{
-            Size            = UDim2.new(1,0,1,0),
+            Size=UDim2.new(1,0,1,0),
             BackgroundTransparency=1,
-            Text            = "",
-            ZIndex          = 22,
-            Parent          = frame,
+            Text="",ZIndex=22,Parent=frame,
         })
         btn.MouseEnter:Connect(function()
             Tween(frame,{BackgroundColor3=hoverBg},0.15)
@@ -774,27 +786,21 @@ function CrozoX:CreateWindow(cfg)
         end)
         btn.MouseLeave:Connect(function()
             Tween(frame,{BackgroundColor3=normalBg},0.15)
-            Tween(lbl,{TextColor3=textColor},0.15)
+            Tween(lbl,{TextColor3=txtColor},0.15)
         end)
         return btn
     end
 
-    -- زر الإغلاق (✕) — أحمر، على اليمين
-    local closeBtn = CtrlBtn(
-        "✕",
-        -10,                                -- x offset من اليمين
-        Color3.fromRGB(55,  22,  22),       -- خلفية عادية
-        Color3.fromRGB(200, 38,  38),       -- خلفية hover
-        Color3.fromRGB(230, 80,  80)        -- لون النص
-    )
-    -- زر التصغير (—) — رمادي، بجانب الإغلاق
-    local minBtn = CtrlBtn(
-        "—",
-        -52,
-        Color3.fromRGB(30,  35,  52),
-        Color3.fromRGB(50,  60,  90),
-        Color3.fromRGB(150, 160, 200)
-    )
+    -- زر الإغلاق ✕ — من اليمين بـ 10px
+    local closeBtn=CtrlBtn("✕", 10,
+        Color3.fromRGB(50,18,18),
+        Color3.fromRGB(200,38,38),
+        Color3.fromRGB(220,70,70))
+    -- زر التصغير — من اليمين بـ 48px
+    local minBtn=CtrlBtn("—", 48,
+        Color3.fromRGB(26,30,48),
+        Color3.fromRGB(45,55,85),
+        Color3.fromRGB(140,155,195))
 
     -- ── Sidebar ──────────────────────── (parent = innerClip)
     local sidebar=New("Frame",{Size=UDim2.new(0,158,1,-56),
@@ -835,21 +841,26 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    -- ── Open animation ─────────────────────────────────────
-    Tween(mainFrame,{Size=size,BackgroundTransparency=0},0.5,Enum.EasingStyle.Back)
+    -- ── Open animation — animate innerClip ─────────────────
+    innerClip.BackgroundTransparency=1
+    Tween(mainFrame,{Size=size},0.5,Enum.EasingStyle.Back)
+    Tween(innerClip,{BackgroundTransparency=0},0.4)
 
     -- ── Close / Minimize ───────────────────────────────────
     local isMin=false
     closeBtn.MouseButton1Click:Connect(function()
-        Ripple(closeBtn)
-        Tween(mainFrame,{Size=UDim2.new(0,size.X.Offset,0,0),
-            BackgroundTransparency=1},0.35,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+        Tween(mainFrame,{Size=UDim2.new(0,size.X.Offset,0,0)},
+            0.35,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+        Tween(innerClip,{BackgroundTransparency=1},0.3)
         task.delay(0.38,function() mainFrame:Destroy() end)
     end)
     minBtn.MouseButton1Click:Connect(function()
-        Ripple(minBtn); isMin=not isMin
-        if isMin then Tween(mainFrame,{Size=UDim2.new(0,size.X.Offset,0,56)},0.3)
-        else Tween(mainFrame,{Size=size},0.35,Enum.EasingStyle.Back) end
+        isMin=not isMin
+        if isMin then
+            Tween(mainFrame,{Size=UDim2.new(0,size.X.Offset,0,56)},0.3)
+        else
+            Tween(mainFrame,{Size=size},0.35,Enum.EasingStyle.Back)
+        end
     end)
 
     -- ============================================================
