@@ -871,11 +871,13 @@ function CrozoX:CreateWindow(cfg)
     end
 
     local closeBtn = CtrlBtn("✕", 10,
-        Color3.fromRGB(50,18,18), Color3.fromRGB(200,38,38),
-        Color3.fromRGB(220,70,70))
-    local minBtn = CtrlBtn("—", 48,
-        Color3.fromRGB(26,30,48), Color3.fromRGB(45,55,85),
-        Color3.fromRGB(140,155,195))
+        Color3.fromRGB(48,16,16),
+        Color3.fromRGB(196,36,36),
+        Color3.fromRGB(255, 80, 80))
+    local minBtn   = CtrlBtn("⊟", 48,
+        Color3.fromRGB(22,26,42),
+        Color3.fromRGB(40,52,85),
+        Color3.fromRGB(130,150,200))
 
     -- ── Sidebar — خلفيته شفافة، اللون من MainFrame ────────
     local sidebar = New("Frame", {
@@ -904,26 +906,28 @@ function CrozoX:CreateWindow(cfg)
     })
     Corner(profileCard, 10)
     Stroke(profileCard, T.Border, 1, 0)
+    -- Avatar — صورة الـ Skin الحقيقية من Roblox
     local avatarBg = New("Frame", {
-        Size=UDim2.new(0,30,0,30), Position=UDim2.new(0,8,0.5,-15),
-        BackgroundColor3=T.Primary, BorderSizePixel=0,
+        Size=UDim2.new(0,34,0,34), Position=UDim2.new(0,7,0.5,-17),
+        BackgroundColor3=T.SurfaceHover, BorderSizePixel=0,
         ZIndex=13, Parent=profileCard,
     })
-    Corner(avatarBg, 15)
-    New("UIGradient", {
-        Color=ColorSequence.new{
-            ColorSequenceKeypoint.new(0,T.PrimaryLight),
-            ColorSequenceKeypoint.new(1,T.PrimaryDark),
-        }, Rotation=135, Parent=avatarBg,
+    Corner(avatarBg, 17)
+    Stroke(avatarBg, T.BorderBright, 1, 0.3)
+
+    -- صورة اللاعب الحقيقية — Roblox Thumbnail API
+    local avatarImg = New("ImageLabel", {
+        Size=UDim2.new(1,0,1,0),
+        BackgroundTransparency=1,
+        -- rbxthumb:// يجلب صورة الـ avatar تلقائياً بدون HTTP
+        Image = "rbxthumb://type=AvatarHeadShot&id="
+            ..tostring(LocalPlayer.UserId).."&w=60&h=60",
+        ScaleType=Enum.ScaleType.Fit,
+        ZIndex=14, Parent=avatarBg,
     })
+    Corner(avatarImg, 17)
     New("TextLabel", {
-        Size=UDim2.new(1,0,1,0), BackgroundTransparency=1,
-        Text=string.upper(string.sub(LocalPlayer.Name,1,1)),
-        TextColor3=Color3.new(1,1,1), Font=Enum.Font.GothamBold,
-        TextSize=13, ZIndex=14, Parent=avatarBg,
-    })
-    New("TextLabel", {
-        Size=UDim2.new(1,-46,0,17), Position=UDim2.new(0,46,0,7),
+        Size=UDim2.new(1,-50,0,17), Position=UDim2.new(0,49,0,6),
         BackgroundTransparency=1, Text=LocalPlayer.Name,
         TextColor3=T.Text, Font=Enum.Font.GothamSemibold, TextSize=12,
         TextXAlignment=Enum.TextXAlignment.Left,
@@ -931,13 +935,13 @@ function CrozoX:CreateWindow(cfg)
         ZIndex=13, Parent=profileCard,
     })
     local onlineDot = New("Frame", {
-        Size=UDim2.new(0,6,0,6), Position=UDim2.new(0,46,0,28),
+        Size=UDim2.new(0,6,0,6), Position=UDim2.new(0,49,0,27),
         BackgroundColor3=T.Success, BorderSizePixel=0,
         ZIndex=13, Parent=profileCard,
     })
     Corner(onlineDot, 3)
     New("TextLabel", {
-        Size=UDim2.new(1,-58,0,12), Position=UDim2.new(0,57,0,26),
+        Size=UDim2.new(1,-60,0,12), Position=UDim2.new(0,60,0,25),
         BackgroundTransparency=1, Text="Online",
         TextColor3=T.TextMuted, Font=Enum.Font.Gotham, TextSize=10,
         TextXAlignment=Enum.TextXAlignment.Left,
@@ -1425,7 +1429,7 @@ function CrozoX:CreateWindow(cfg)
             return El
         end
 
-        -- ── Dropdown ───────────────────────────────────────
+        -- ── Dropdown ── يُزيح العناصر بدلاً من الفتح فوقها ──
         function Tab:AddDropdown(dcfg)
             dcfg=dcfg or {}
             local name=dcfg.Name or "Dropdown"
@@ -1433,47 +1437,89 @@ function CrozoX:CreateWindow(cfg)
             local sel =dcfg.Default or opts[1]
             local cb  =dcfg.Callback or function() end
             local open=false
-            local f=EF(46); f.ClipsDescendants=false
-            EL(f,name,12,13,190,20,T.Text,L.FontSemi,L.LabelSize)
+
+            -- حاوية خارجية: تتمدد عند الفتح وتزيح ما تحتها
+            local container=New("Frame",{
+                Size=UDim2.new(1,0,0,46),   -- يبدأ بحجم الزر فقط
+                BackgroundTransparency=1,
+                BorderSizePixel=0,
+                ZIndex=13, Parent=tabPage,
+            })
+
+            -- الزر الرئيسي (header)
+            local f=New("Frame",{
+                Size=UDim2.new(1,0,0,46),
+                BackgroundColor3=T.SurfaceAlt,
+                BorderSizePixel=0, ZIndex=13, Parent=container,
+            })
+            Corner(f,12); Stroke(f,T.Border,1,0)
+            -- Shadow
+            New("ImageLabel",{Size=UDim2.new(1,10,1,10),
+                Position=UDim2.new(0,-5,0,2),BackgroundTransparency=1,
+                Image="rbxassetid://6014261993",ImageColor3=Color3.fromRGB(0,0,0),
+                ImageTransparency=0.88,ScaleType=Enum.ScaleType.Slice,
+                SliceCenter=Rect.new(49,49,450,450),ZIndex=12,Parent=f})
+
+            EL(f,name,12,13,185,20,T.Text,L.FontSemi,L.LabelSize)
             local sl=New("TextLabel",{Size=UDim2.new(0,110,0,20),
                 Position=UDim2.new(1,-145,0,13),BackgroundTransparency=1,
                 Text=tostring(sel or "—"),TextColor3=T.Primary,
                 Font=L.FontBody,TextSize=L.LabelSize,
                 TextXAlignment=Enum.TextXAlignment.Right,ZIndex=14,Parent=f})
-            local aIco=Img(f,Icons.chevrondown,14,
-                UDim2.new(1,-25,0.5,-7),T.TextMuted,14)
-            local dl=New("Frame",{Size=UDim2.new(1,0,0,0),
-                Position=UDim2.new(0,0,1,6),BackgroundColor3=T.Surface,
-                BorderSizePixel=0,ClipsDescendants=true,
-                ZIndex=60,Visible=false,Parent=f})
-            Corner(dl,12)
-            Stroke(dl,T.BorderBright,1,0)
+
+            -- Arrow icon
+            local arrowFrame=New("Frame",{Size=UDim2.new(0,22,0,22),
+                AnchorPoint=Vector2.new(1,0.5),
+                Position=UDim2.new(1,-8,0.5,0),
+                BackgroundColor3=T.SurfaceHover,
+                BorderSizePixel=0,ZIndex=14,Parent=f})
+            Corner(arrowFrame,6)
+            local aIco=Img(arrowFrame,Icons.chevrondown,12,
+                UDim2.new(0.5,-6,0.5,-6),T.TextDim,15)
+
+            -- قائمة الخيارات — داخل نفس الـ container مباشرة
+            local dl=New("Frame",{
+                Size=UDim2.new(1,0,0,0),        -- يبدأ بصفر
+                Position=UDim2.new(0,0,0,50),   -- تحت الـ header مباشرة
+                BackgroundColor3=T.Surface,
+                BorderSizePixel=0,
+                ClipsDescendants=true,
+                ZIndex=14, Parent=container,
+            })
+            Corner(dl,10)
+            Stroke(dl,T.BorderBright,1,0.3)
             ListLayout(dl,2); Pad(dl,4,4,4,4)
+
+            local ROW_H = 32
             local El={Value=sel}
+
             local function SetSel(o)
-                sel=o;El.Value=o;sl.Text=tostring(o);Safe(cb,o)
+                sel=o; El.Value=o; sl.Text=tostring(o); Safe(cb,o)
             end
+
             local function Refresh()
                 for _,c in ipairs(dl:GetChildren()) do
                     if c:IsA("Frame") then c:Destroy() end
                 end
                 for _,o in ipairs(opts) do
                     local isA=(o==sel)
-                    local row=New("Frame",{Size=UDim2.new(1,0,0,32),
+                    local row=New("Frame",{Size=UDim2.new(1,0,0,ROW_H),
                         BackgroundColor3=isA and T.SurfaceHover or T.SurfaceAlt,
-                        BorderSizePixel=0,ZIndex=61,Parent=dl})
-                    Corner(row,8)
+                        BorderSizePixel=0,ZIndex=15,Parent=dl})
+                    Corner(row,7)
+                    -- Active indicator
                     if isA then
-                        New("Frame",{Size=UDim2.new(0,3,0.55,0),
-                            Position=UDim2.new(0,0,0.225,0),
+                        local ind=New("Frame",{Size=UDim2.new(0,3,0.6,0),
+                            Position=UDim2.new(0,0,0.2,0),
                             BackgroundColor3=T.Primary,BorderSizePixel=0,
-                            ZIndex=62,Parent=row})
+                            ZIndex=16,Parent=row})
+                        Corner(ind,2)
                     end
-                    EL(row,tostring(o),10,0,200,32,
+                    EL(row,tostring(o),10,0,200,ROW_H,
                         isA and T.Text or T.TextDim,
-                        isA and L.FontSemi or L.FontBody,L.LabelSize,62)
+                        isA and L.FontSemi or L.FontBody,L.LabelSize,16)
                     local rb=New("TextButton",{Size=UDim2.new(1,0,1,0),
-                        BackgroundTransparency=1,Text="",ZIndex=63,Parent=row})
+                        BackgroundTransparency=1,Text="",ZIndex=17,Parent=row})
                     rb.MouseEnter:Connect(function()
                         if o~=sel then Tween(row,{BackgroundColor3=T.SurfaceHover},0.1) end
                     end)
@@ -1481,32 +1527,79 @@ function CrozoX:CreateWindow(cfg)
                         if o~=sel then Tween(row,{BackgroundColor3=T.SurfaceAlt},0.1) end
                     end)
                     rb.MouseButton1Click:Connect(function()
-                        SetSel(o);open=false
-                        Tween(dl,{Size=UDim2.new(1,0,0,0)},0.2)
+                        SetSel(o)
+                        -- إغلاق مع انيميشن
+                        open=false
+                        local targetH=46
+                        Tween(container,{Size=UDim2.new(1,0,0,targetH)},
+                            0.28,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+                        Tween(dl,{Size=UDim2.new(1,0,0,0)},
+                            0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
                         Tween(aIco,{Rotation=0},0.2)
-                        task.delay(0.22,function() dl.Visible=false end)
+                        Tween(arrowFrame,{BackgroundColor3=T.SurfaceHover},0.2)
+                        Tween(f,{BackgroundColor3=T.SurfaceAlt},0.2)
                     end)
                 end
             end
             Refresh()
+
+            -- تحديث الـ layout عند تغيير canvas
+            local dlLayout=dl:FindFirstChildWhichIsA("UIListLayout")
+            if dlLayout then
+                dlLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                    if open then
+                        dl.CanvasSize=UDim2.new(0,0,0,dlLayout.AbsoluteContentSize.Y+8)
+                    end
+                end)
+            end
+
             local tog=New("TextButton",{Size=UDim2.new(1,0,1,0),
                 BackgroundTransparency=1,Text="",ZIndex=15,Parent=f})
+
             tog.MouseButton1Click:Connect(function()
                 open=not open
+                Refresh()
                 if open then
-                    Refresh();dl.Visible=true
-                    local th=math.min(#opts*34+8,200)
-                    Tween(dl,{Size=UDim2.new(1,0,0,th)},0.25,Enum.EasingStyle.Back)
-                    Tween(aIco,{Rotation=180},0.2)
+                    -- حساب الارتفاع المناسب
+                    local listH=math.min(#opts*ROW_H+8,200)
+                    local totalH=46+4+listH   -- header + gap + list
+
+                    -- 1. container يتمدد → يزيح العناصر تحته تلقائياً (UIListLayout)
+                    Tween(container,{Size=UDim2.new(1,0,0,totalH)},
+                        0.3,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
+                    -- 2. القائمة تظهر من الأعلى للأسفل
+                    Tween(dl,{Size=UDim2.new(1,0,0,listH)},
+                        0.3,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
+                    -- 3. Header يضيء
+                    Tween(f,{BackgroundColor3=T.SurfaceHover},0.2)
+                    -- 4. Arrow يدور
+                    Tween(aIco,{Rotation=180},0.25,Enum.EasingStyle.Back)
+                    Tween(arrowFrame,{BackgroundColor3=T.Border},0.2)
                 else
-                    Tween(dl,{Size=UDim2.new(1,0,0,0)},0.2)
+                    -- إغلاق: عكس التمدد
+                    Tween(container,{Size=UDim2.new(1,0,0,46)},
+                        0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+                    Tween(dl,{Size=UDim2.new(1,0,0,0)},
+                        0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+                    Tween(f,{BackgroundColor3=T.SurfaceAlt},0.2)
                     Tween(aIco,{Rotation=0},0.2)
-                    task.delay(0.22,function() dl.Visible=false end)
+                    Tween(arrowFrame,{BackgroundColor3=T.SurfaceHover},0.2)
                 end
             end)
+
+            -- Hover على الـ header
+            tog.MouseEnter:Connect(function()
+                if not open then
+                    Tween(f,{BackgroundColor3=T.SurfaceHover},0.15) end
+            end)
+            tog.MouseLeave:Connect(function()
+                if not open then
+                    Tween(f,{BackgroundColor3=T.SurfaceAlt},0.15) end
+            end)
+
             function El:Set(v) SetSel(v) end
             function El:Get() return sel end
-            function El:SetOptions(o) opts=o;Refresh() end
+            function El:SetOptions(o) opts=o; Refresh() end
             return El
         end
 
