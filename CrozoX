@@ -6,10 +6,15 @@
   ╚██████╗██║  ██║╚██████╔╝   ██║  ╚██████╔╝██╔╝ ██╗
    ╚═════╝╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═════╝ ╚═╝  ╚═╝
 
-    CrozoX v5.0.0 — Professional Roblox UI Library
-    Fixes: true rounded corners (innerClip trick),
-           control buttons fully inside titlebar,
-           NO auto language — user must choose manually
+    CrozoX v7.0.0 — Modern Professional UI Library
+    ✦ Gradient background (black→primary)
+    ✦ Neon pulsing glow border
+    ✦ User profile in sidebar
+    ✦ Search bar for tabs
+    ✦ Enhanced Run button (glow+scale)
+    ✦ Animated tab indicator (grow/shrink)
+    ✦ Element depth shadows
+    ✦ Micro-animations throughout
     Author: Crozo | github.com/Crozo
     License: MIT
 --]]
@@ -717,38 +722,83 @@ function CrozoX:CreateWindow(cfg)
     local innerClip=New("Frame",{Name="InnerClip",
         Size=UDim2.new(1,0,1,0),
         Position=UDim2.new(0,0,0,0),
-        BackgroundColor3=T.Background,  -- اللون هنا
+        BackgroundColor3=T.Background,
         BorderSizePixel=0,
-        ClipsDescendants=true,          -- يقصّ المحتوى
+        ClipsDescendants=true,
         ZIndex=10,Parent=mainFrame})
-    Corner(innerClip,16)                -- الحواف هنا
-    -- Border/stroke على الـ innerClip
-    Stroke(innerClip,T.BorderBright,2,0)
+    Corner(innerClip,16)
+
+    -- ── Gradient background (black → dark primary) ───────────
+    New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0, T.Background),
+            ColorSequenceKeypoint.new(0.6, T.Background),
+            ColorSequenceKeypoint.new(1, T.Primary:Lerp(T.Background, 0.82)),
+        },
+        Rotation=135,
+        Parent=innerClip,
+    })
+
+    -- ── Neon glow border (animated pulse) ────────────────────
+    local glowStroke=Stroke(innerClip, T.Primary, 1.5, 0.55)
+    -- Pulse animation on the glow
+    task.spawn(function()
+        while innerClip and innerClip.Parent do
+            Tween(glowStroke,{Transparency=0.3},1.8,Enum.EasingStyle.Sine)
+            task.wait(1.8)
+            Tween(glowStroke,{Transparency=0.65},1.8,Enum.EasingStyle.Sine)
+            task.wait(1.8)
+        end
+    end)
 
     -- ── Titlebar ─────────────────────────── (parent = innerClip)
-    local titleBar=New("Frame",{Size=UDim2.new(1,0,0,56),
+    local titleBar=New("Frame",{Size=UDim2.new(1,0,0,58),
         BackgroundColor3=T.Surface,BorderSizePixel=0,ZIndex=11,Parent=innerClip})
+    -- Gradient on titlebar
+    New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0, T.Surface),
+            ColorSequenceKeypoint.new(1, T.Surface:Lerp(T.Primary, 0.06)),
+        },
+        Rotation=0,
+        Parent=titleBar,
+    })
 
-    -- Bottom border line
+    -- Bottom separator line
     New("Frame",{Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),
         BackgroundColor3=T.Border,BorderSizePixel=0,ZIndex=12,Parent=titleBar})
-    -- Accent bar
-    New("Frame",{Size=UDim2.new(0,80,0,2),Position=UDim2.new(0,14,1,-2),
+    -- Primary accent bar (animated width)
+    local accentBar=New("Frame",{Size=UDim2.new(0,0,0,2),
+        Position=UDim2.new(0,14,1,-2),
         BackgroundColor3=T.Primary,BorderSizePixel=0,ZIndex=13,Parent=titleBar})
+    New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0, T.Primary),
+            ColorSequenceKeypoint.new(1, T.PrimaryLight),
+        },
+        Parent=accentBar,
+    })
+    Tween(accentBar,{Size=UDim2.new(0,90,0,2)},0.8,Enum.EasingStyle.Back)
 
     -- Logo in titlebar
     local titleLogo=New("ImageLabel",{Size=UDim2.new(0,32,0,32),
         Position=UDim2.new(0,14,0.5,-16),BackgroundTransparency=1,
         Image=logoId,ScaleType=Enum.ScaleType.Fit,ZIndex=12,Parent=titleBar})
     Corner(titleLogo,8)
+    -- Glow ring around logo
+    New("ImageLabel",{Size=UDim2.new(0,44,0,44),
+        Position=UDim2.new(0,8,0.5,-22),BackgroundTransparency=1,
+        Image="rbxassetid://5028857084",
+        ImageColor3=T.Primary,ImageTransparency=0.75,
+        ZIndex=11,Parent=titleBar})
 
-    New("TextLabel",{Size=UDim2.new(0,220,0,24),Position=UDim2.new(0,54,0,8),
+    New("TextLabel",{Size=UDim2.new(0,220,0,22),Position=UDim2.new(0,54,0,7),
         BackgroundTransparency=1,Text=title,TextColor3=T.Text,
-        Font=L.Font,TextSize=17,   -- ← أكبر
+        Font=L.Font,TextSize=17,
         TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=titleBar})
-    New("TextLabel",{Size=UDim2.new(0,220,0,15),Position=UDim2.new(0,54,0,32),
+    New("TextLabel",{Size=UDim2.new(0,220,0,14),Position=UDim2.new(0,54,0,30),
         BackgroundTransparency=1,Text=subtitle,TextColor3=T.TextMuted,
-        Font=Enum.Font.Gotham,TextSize=11,
+        Font=Enum.Font.Gotham,TextSize=10,
         TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=titleBar})
 
     -- ── Control buttons — مثبّتة داخل الـ titlebar ──────────
@@ -803,26 +853,137 @@ function CrozoX:CreateWindow(cfg)
         Color3.fromRGB(140,155,195))
 
     -- ── Sidebar ──────────────────────── (parent = innerClip)
-    local sidebar=New("Frame",{Size=UDim2.new(0,158,1,-56),
-        Position=UDim2.new(0,0,0,56),BackgroundColor3=T.Surface,
+    local sidebar=New("Frame",{Size=UDim2.new(0,162,1,-58),
+        Position=UDim2.new(0,0,0,58),BackgroundColor3=T.Surface,
         BorderSizePixel=0,ZIndex=11,Parent=innerClip})
+    -- Subtle gradient on sidebar
+    New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0, T.Surface),
+            ColorSequenceKeypoint.new(1, T.Surface:Lerp(T.Background, 0.5)),
+        },
+        Rotation=90,
+        Parent=sidebar,
+    })
+    -- Right border
     New("Frame",{Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,0,0,0),
         BackgroundColor3=T.Border,BorderSizePixel=0,ZIndex=12,Parent=sidebar})
 
-    local tabList=New("ScrollingFrame",{Size=UDim2.new(1,0,1,-8),
-        Position=UDim2.new(0,0,0,8),BackgroundTransparency=1,
-        ScrollBarThickness=2,ScrollBarImageColor3=T.BorderBright,
-        BorderSizePixel=0,ZIndex=12,CanvasSize=UDim2.new(0,0,0,0),Parent=sidebar})
+    -- ── User profile card ────────────────────────────────────
+    local profileCard=New("Frame",{Size=UDim2.new(1,-14,0,52),
+        Position=UDim2.new(0,7,0,6),
+        BackgroundColor3=T.SurfaceAlt,
+        BorderSizePixel=0,ZIndex=12,Parent=sidebar})
+    Corner(profileCard,10)
+    Stroke(profileCard,T.Border,1,0)
+
+    -- Avatar circle
+    local avatarBg=New("Frame",{Size=UDim2.new(0,32,0,32),
+        Position=UDim2.new(0,8,0.5,-16),
+        BackgroundColor3=T.Primary,
+        BorderSizePixel=0,ZIndex=13,Parent=profileCard})
+    Corner(avatarBg,16)
+    New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0,T.PrimaryLight),
+            ColorSequenceKeypoint.new(1,T.PrimaryDark),
+        },
+        Rotation=135,Parent=avatarBg})
+    New("TextLabel",{Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,
+        Text=string.upper(string.sub(LocalPlayer.Name,1,1)),
+        TextColor3=Color3.new(1,1,1),Font=Enum.Font.GothamBold,
+        TextSize=14,ZIndex=14,Parent=avatarBg})
+
+    New("TextLabel",{Size=UDim2.new(1,-48,0,18),
+        Position=UDim2.new(0,48,0,8),BackgroundTransparency=1,
+        Text=LocalPlayer.Name,TextColor3=T.Text,
+        Font=Enum.Font.GothamSemibold,TextSize=12,
+        TextXAlignment=Enum.TextXAlignment.Left,
+        TextTruncate=Enum.TextTruncate.AtEnd,
+        ZIndex=13,Parent=profileCard})
+    -- Online indicator
+    local onlineDot=New("Frame",{Size=UDim2.new(0,7,0,7),
+        Position=UDim2.new(0,48,0,30),
+        BackgroundColor3=T.Success,
+        BorderSizePixel=0,ZIndex=13,Parent=profileCard})
+    Corner(onlineDot,4)
+    New("TextLabel",{Size=UDim2.new(1,-56,0,14),
+        Position=UDim2.new(0,60,0,27),BackgroundTransparency=1,
+        Text="Online",TextColor3=T.TextMuted,
+        Font=Enum.Font.Gotham,TextSize=10,
+        TextXAlignment=Enum.TextXAlignment.Left,
+        ZIndex=13,Parent=profileCard})
+
+    -- ── Search bar ───────────────────────────────────────────
+    local searchFrame=New("Frame",{Size=UDim2.new(1,-14,0,28),
+        Position=UDim2.new(0,7,0,64),
+        BackgroundColor3=T.SurfaceAlt,
+        BorderSizePixel=0,ZIndex=12,Parent=sidebar})
+    Corner(searchFrame,8)
+    local searchStroke=Stroke(searchFrame,T.Border,1,0)
+
+    Img(searchFrame,Icons.search,13,UDim2.new(0,7,0.5,-6.5),T.TextMuted,13)
+
+    local searchBox=New("TextBox",{Size=UDim2.new(1,-26,1,0),
+        Position=UDim2.new(0,24,0,0),
+        BackgroundTransparency=1,
+        Text="",PlaceholderText=L.Search,
+        PlaceholderColor3=T.TextMuted,
+        TextColor3=T.Text,Font=Enum.Font.Gotham,TextSize=11,
+        BorderSizePixel=0,ClearTextOnFocus=false,
+        ZIndex=13,Parent=searchFrame})
+    searchBox.Focused:Connect(function()
+        Tween(searchStroke,{Color=T.Primary},0.15)
+        Tween(searchFrame,{BackgroundColor3=T.SurfaceHover},0.15)
+    end)
+    searchBox.FocusLost:Connect(function()
+        Tween(searchStroke,{Color=T.Border},0.15)
+        Tween(searchFrame,{BackgroundColor3=T.SurfaceAlt},0.15)
+    end)
+
+    -- Search filter tabs
+    searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+        local q=string.lower(searchBox.Text)
+        for _,tabBtn in ipairs(tabList:GetChildren()) do
+            if tabBtn:IsA("Frame") and tabBtn:FindFirstChild("TextLabel") then
+                local lbl=tabBtn:FindFirstChild("TextLabel")
+                if q=="" then
+                    tabBtn.Visible=true
+                else
+                    tabBtn.Visible=string.find(string.lower(lbl.Text),q,1,true)~=nil
+                end
+            end
+        end
+    end)
+
+    local tabList=New("ScrollingFrame",{
+        Size=UDim2.new(1,0,1,-100),
+        Position=UDim2.new(0,0,0,100),
+        BackgroundTransparency=1,
+        ScrollBarThickness=2,
+        ScrollBarImageColor3=T.Primary,
+        BorderSizePixel=0,ZIndex=12,
+        CanvasSize=UDim2.new(0,0,0,0),
+        Parent=sidebar})
     local tlLayout=ListLayout(tabList,4)
-    Pad(tabList,6,6,7,7)
+    Pad(tabList,4,6,7,7)
     tlLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         tabList.CanvasSize=UDim2.new(0,0,0,tlLayout.AbsoluteContentSize.Y+12)
     end)
 
     -- ── Content area ─────────────────── (parent = innerClip)
-    local contentArea=New("Frame",{Size=UDim2.new(1,-158,1,-56),
-        Position=UDim2.new(0,158,0,56),BackgroundColor3=T.Background,
+    local contentArea=New("Frame",{Size=UDim2.new(1,-162,1,-58),
+        Position=UDim2.new(0,162,0,58),BackgroundColor3=T.Background,
         BorderSizePixel=0,ClipsDescendants=true,ZIndex=11,Parent=innerClip})
+    -- Subtle gradient on content
+    New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0, T.Background),
+            ColorSequenceKeypoint.new(1, T.Background:Lerp(T.Primary, 0.04)),
+        },
+        Rotation=160,
+        Parent=contentArea,
+    })
 
     -- ── Drag ───────────────────────────────────────────────
     local dragging,dStart,dPos
@@ -857,7 +1018,7 @@ function CrozoX:CreateWindow(cfg)
     minBtn.MouseButton1Click:Connect(function()
         isMin=not isMin
         if isMin then
-            Tween(mainFrame,{Size=UDim2.new(0,size.X.Offset,0,56)},0.3)
+            Tween(mainFrame,{Size=UDim2.new(0,size.X.Offset,0,58)},0.3)
         else
             Tween(mainFrame,{Size=size},0.35,Enum.EasingStyle.Back)
         end
@@ -876,25 +1037,37 @@ function CrozoX:CreateWindow(cfg)
 
         -- Tab button frame
         local tabBtn=New("Frame",{Name="Tab_"..tabName,
-            Size=UDim2.new(1,0,0,40),   -- ← أطول
+            Size=UDim2.new(1,0,0,38),
             BackgroundColor3=T.SurfaceAlt,BorderSizePixel=0,
             ZIndex=13,Parent=tabList})
-        Corner(tabBtn,10)  -- ← حواف منحنية
+        Corner(tabBtn,10)
 
-        local indicator=New("Frame",{Size=UDim2.new(0,3,0.5,0),
-            Position=UDim2.new(0,0,0.25,0),BackgroundColor3=T.Primary,
-            BackgroundTransparency=1,BorderSizePixel=0,ZIndex=14,Parent=tabBtn})
+        -- Left indicator bar (animated)
+        local indicator=New("Frame",{
+            Size=UDim2.new(0,3,0,0),   -- يبدأ بارتفاع صفر
+            Position=UDim2.new(0,0,0.5,0),
+            AnchorPoint=Vector2.new(0,0.5),
+            BackgroundColor3=T.Primary,
+            BackgroundTransparency=1,
+            BorderSizePixel=0,ZIndex=14,Parent=tabBtn})
         Corner(indicator,2)
+        -- Gradient on indicator
+        New("UIGradient",{
+            Color=ColorSequence.new{
+                ColorSequenceKeypoint.new(0,T.PrimaryLight),
+                ColorSequenceKeypoint.new(1,T.Primary),
+            },
+            Rotation=90,Parent=indicator})
 
-        -- Icon — always visible, coloured
-        local tabIcon=Img(tabBtn,iconAsset,18,
-            UDim2.new(0,11,0.5,-9),T.TextMuted,14)
+        -- Icon
+        local tabIcon=Img(tabBtn,iconAsset,17,
+            UDim2.new(0,12,0.5,-8.5),T.TextMuted,14)
 
         -- Label
         local tabLabel=New("TextLabel",{Size=UDim2.new(1,-36,1,0),
             Position=UDim2.new(0,34,0,0),BackgroundTransparency=1,
             Text=tabName,TextColor3=T.TextMuted,
-            Font=L.FontSemi,TextSize=L.TabSize,  -- ← من Language config
+            Font=L.FontSemi,TextSize=L.TabSize,
             TextXAlignment=Enum.TextXAlignment.Left,
             ZIndex=14,Parent=tabBtn})
 
@@ -918,24 +1091,45 @@ function CrozoX:CreateWindow(cfg)
                 Tween(activeTab.Btn,{BackgroundColor3=T.SurfaceAlt},0.2)
                 Tween(activeTab.Lbl,{TextColor3=T.TextMuted},0.2)
                 Tween(activeTab.Icon,{ImageColor3=T.TextMuted},0.2)
-                Tween(activeTab.Ind,{BackgroundTransparency=1},0.2)
+                -- Indicator شرنك للصفر
+                Tween(activeTab.Ind,{
+                    Size=UDim2.new(0,3,0,0),
+                    BackgroundTransparency=1,
+                },0.2)
             end
             tabPage.Visible=true
+            -- Hover bg
             Tween(tabBtn,{BackgroundColor3=T.SurfaceHover},0.2)
             Tween(tabLabel,{TextColor3=T.Text},0.2)
             Tween(tabIcon,{ImageColor3=T.Primary},0.2)
-            Tween(indicator,{BackgroundTransparency=0},0.2)
+            -- Indicator ينمو للأعلى بـ Back easing
+            Tween(indicator,{
+                Size=UDim2.new(0,3,0.55,0),
+                BackgroundTransparency=0,
+            },0.3,Enum.EasingStyle.Back)
             activeTab={Btn=tabBtn,Page=tabPage,Lbl=tabLabel,
                        Icon=tabIcon,Ind=indicator}
         end
-        tabClick.MouseButton1Click:Connect(function() Ripple(tabClick);SelectTab() end)
+
+        tabClick.MouseButton1Click:Connect(function()
+            -- Scale micro-animation on click
+            Tween(tabBtn,{Size=UDim2.new(1,0,0,36)},0.08)
+            task.delay(0.09,function()
+                Tween(tabBtn,{Size=UDim2.new(1,0,0,38)},0.15,Enum.EasingStyle.Back)
+            end)
+            SelectTab()
+        end)
         tabClick.MouseEnter:Connect(function()
             if not activeTab or activeTab.Btn~=tabBtn then
-                Tween(tabBtn,{BackgroundColor3=T.SurfaceHover},0.15) end
+                Tween(tabBtn,{BackgroundColor3=T.SurfaceHover},0.15)
+                Tween(tabIcon,{ImageColor3=T.TextDim},0.15)
+            end
         end)
         tabClick.MouseLeave:Connect(function()
             if not activeTab or activeTab.Btn~=tabBtn then
-                Tween(tabBtn,{BackgroundColor3=T.SurfaceAlt},0.15) end
+                Tween(tabBtn,{BackgroundColor3=T.SurfaceAlt},0.15)
+                Tween(tabIcon,{ImageColor3=T.TextMuted},0.15)
+            end
         end)
         if #tabsList==0 then task.defer(SelectTab) end
         table.insert(tabsList,tabName)
@@ -945,13 +1139,29 @@ function CrozoX:CreateWindow(cfg)
         -- ============================================================
         local Tab={}
 
-        -- shared element frame — حواف أكبر
+        -- shared element frame — shadow + depth
         local function EF(h)
             local f=New("Frame",{Size=UDim2.new(1,0,0,h or 46),
                 BackgroundColor3=T.SurfaceAlt,BorderSizePixel=0,
                 ZIndex=13,Parent=tabPage})
-            Corner(f,12)   -- ← حواف منحنية للعناصر
+            Corner(f,12)
             Stroke(f,T.Border,1,0)
+            -- Subtle top highlight line
+            New("Frame",{Size=UDim2.new(1,-4,0,1),
+                Position=UDim2.new(0,2,0,0),
+                BackgroundColor3=Color3.fromRGB(255,255,255),
+                BackgroundTransparency=0.95,
+                BorderSizePixel=0,ZIndex=14,Parent=f})
+            -- Drop shadow
+            New("ImageLabel",{Size=UDim2.new(1,10,1,10),
+                Position=UDim2.new(0,-5,0,2),
+                BackgroundTransparency=1,
+                Image="rbxassetid://6014261993",
+                ImageColor3=Color3.fromRGB(0,0,0),
+                ImageTransparency=0.88,
+                ScaleType=Enum.ScaleType.Slice,
+                SliceCenter=Rect.new(49,49,450,450),
+                ZIndex=12,Parent=f})
             return f
         end
 
@@ -1002,26 +1212,58 @@ function CrozoX:CreateWindow(cfg)
                 EL(f,desc,xOff,32,240,16,T.TextMuted,L.FontBody,12)
             end
 
-            -- ← Run button: بخلفية واضحة ونص أبيض
-            local rb=New("TextButton",{Size=UDim2.new(0,80,0,30),
-                Position=UDim2.new(1,-92,0.5,-15),
+            -- ── Run button — glow + scale ────────────────────
+            local rb=New("TextButton",{Size=UDim2.new(0,78,0,30),
+                Position=UDim2.new(1,-90,0.5,-15),
                 BackgroundColor3=T.Primary,
                 Text="Run",
-                TextColor3=T.BtnText,        -- ← أبيض دائماً
+                TextColor3=Color3.new(1,1,1),
                 Font=Enum.Font.GothamBold,
-                TextSize=14,                 -- ← أكبر
+                TextSize=13,
                 BorderSizePixel=0,ZIndex=14,Parent=f})
             Corner(rb,9)
-            -- stroke خفيف حول الزر يجعله واضحاً
-            Stroke(rb,T.PrimaryLight,1,0.5)
+            -- Gradient on button
+            New("UIGradient",{
+                Color=ColorSequence.new{
+                    ColorSequenceKeypoint.new(0,T.PrimaryLight),
+                    ColorSequenceKeypoint.new(1,T.Primary),
+                },
+                Rotation=90,Parent=rb})
+            -- Glow shadow under button
+            New("ImageLabel",{Size=UDim2.new(1,16,1,16),
+                Position=UDim2.new(0,-8,0,-4),
+                BackgroundTransparency=1,
+                Image="rbxassetid://6014261993",
+                ImageColor3=T.Primary,
+                ImageTransparency=0.72,
+                ScaleType=Enum.ScaleType.Slice,
+                SliceCenter=Rect.new(49,49,450,450),
+                ZIndex=13,Parent=rb})
 
             rb.MouseEnter:Connect(function()
-                Tween(rb,{BackgroundColor3=T.PrimaryDark,Size=UDim2.new(0,84,0,32)},0.15)
+                Tween(rb,{
+                    BackgroundColor3=T.PrimaryLight,
+                    Size=UDim2.new(0,82,0,32),
+                    Position=UDim2.new(1,-93,0.5,-16),
+                },0.18,Enum.EasingStyle.Back)
             end)
             rb.MouseLeave:Connect(function()
-                Tween(rb,{BackgroundColor3=T.Primary,Size=UDim2.new(0,80,0,30)},0.15)
+                Tween(rb,{
+                    BackgroundColor3=T.Primary,
+                    Size=UDim2.new(0,78,0,30),
+                    Position=UDim2.new(1,-90,0.5,-15),
+                },0.18)
             end)
-            rb.MouseButton1Click:Connect(function() Ripple(rb);Safe(callback) end)
+            rb.MouseButton1Down:Connect(function()
+                -- Scale down 95%
+                Tween(rb,{Size=UDim2.new(0,74,0,28),Position=UDim2.new(1,-88,0.5,-14)},0.08)
+            end)
+            rb.MouseButton1Up:Connect(function()
+                Tween(rb,{Size=UDim2.new(0,78,0,30),Position=UDim2.new(1,-90,0.5,-15)},0.15,Enum.EasingStyle.Back)
+            end)
+            rb.MouseButton1Click:Connect(function()
+                Ripple(rb); Safe(callback)
+            end)
         end
 
         -- ── Toggle ─────────────────────────────────────────
@@ -1059,9 +1301,20 @@ function CrozoX:CreateWindow(cfg)
             local function SetVal(v,fire)
                 val=v;El.Value=v
                 Tween(track,{BackgroundColor3=v and T.Primary or T.Border},0.22)
+                -- Back easing على الـ knob يعطي bounce حيوي
                 Tween(knob,{Position=v
                     and UDim2.new(1,-25,0.5,-11)
-                    or  UDim2.new(0,3,0.5,-11)},0.22)
+                    or  UDim2.new(0,3,0.5,-11)},0.28,Enum.EasingStyle.Back)
+                -- Gradient عند التفعيل
+                local g=track:FindFirstChildWhichIsA("UIGradient")
+                if v and not g then
+                    New("UIGradient",{Color=ColorSequence.new{
+                        ColorSequenceKeypoint.new(0,T.Primary),
+                        ColorSequenceKeypoint.new(1,T.PrimaryLight),
+                    },Parent=track})
+                elseif not v and g then
+                    g:Destroy()
+                end
                 if fire~=false then Safe(callback,v) end
             end
             ca.MouseButton1Click:Connect(function() SetVal(not val) end)
