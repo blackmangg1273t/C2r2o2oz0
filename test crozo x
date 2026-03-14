@@ -2,13 +2,13 @@
     CrozoX — Example Script Hub
     Import via loadstring:
     
-    local Library = loadstring(game:HttpGet("YOUR_GITHUB_RAW_URL"))()
+    local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/blackmangg1273t/C2r2o2oz0/refs/heads/main/CrozoX"))()
     
     Replace YOUR_GITHUB_RAW_URL with the raw URL of CrozoX.lua on GitHub.
 --]]
 
 -- ── Import ───────────────────────────────────────────────────
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/YourUser/CrozoX/main/CrozoX.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/blackmangg1273t/C2r2o2oz0/refs/heads/main/CrozoX"))()
 
 -- ── OPTIONAL: Override language/theme before window opens ──
 -- Library:SetLanguage("Arabic")  -- Also sets theme to Red
