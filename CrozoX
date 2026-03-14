@@ -1124,7 +1124,10 @@ function CrozoX:CreateWindow(cfg)
             Size                   = UDim2.new(0, size.X.Offset*0.9, 0, size.Y.Offset*0.9),
             BackgroundTransparency = 1,
         }, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-        Tween(shadowImg, {ImageTransparency=1, Size=UDim2.new(0,0,0,0)}, 0.25)
+        Tween(shadowImg, {
+            ImageTransparency = 1,
+            Size              = UDim2.new(0, 0, 0, 0),
+        }, 0.25)
         task.delay(0.32, function()
             mainFrame:Destroy()
             shadowImg:Destroy()
@@ -1133,11 +1136,19 @@ function CrozoX:CreateWindow(cfg)
     minBtn.MouseButton1Click:Connect(function()
         isMin = not isMin
         if isMin then
+            -- تصغير الواجهة + Shadow تصبح شفافة تماماً
             Tween(mainFrame, {Size=UDim2.new(0,size.X.Offset,0,54)}, 0.3)
-            Tween(shadowImg, {ImageTransparency=0.8}, 0.3)
+            Tween(shadowImg, {
+                ImageTransparency = 1,
+                Size = UDim2.new(0, size.X.Offset+20, 0, 74),
+            }, 0.3)
         else
+            -- إرجاع الواجهة + Shadow ترجع
             Tween(mainFrame, {Size=size}, 0.35, Enum.EasingStyle.Back)
-            Tween(shadowImg, {ImageTransparency=0.45}, 0.35)
+            Tween(shadowImg, {
+                ImageTransparency = 0.45,
+                Size = UDim2.new(0, size.X.Offset+60, 0, size.Y.Offset+60),
+            }, 0.35, Enum.EasingStyle.Back)
         end
     end)
 
@@ -1248,7 +1259,11 @@ function CrozoX:CreateWindow(cfg)
                 Tween(tabIcon,{ImageColor3=T.TextMuted},0.15)
             end
         end)
-        if #tabsList==0 then task.defer(SelectTab) end
+        if #tabsList==0 then
+            -- نستخدم task.delay بدل task.defer
+            -- عشان نعطي وقت للسكربت يضيف العناصر أولاً
+            task.delay(0.05, SelectTab)
+        end
         table.insert(tabsList,tabName)
 
         -- ============================================================
@@ -1262,9 +1277,8 @@ function CrozoX:CreateWindow(cfg)
                 BackgroundColor3=T.SurfaceCard,BorderSizePixel=0,
                 ZIndex=13,Parent=tabPage})
             Corner(f,10)
-            -- Border subtle
             Stroke(f,T.Border,1,0)
-            -- Top highlight — depth illusion
+            -- Top highlight
             New("Frame",{Size=UDim2.new(1,-2,0,1),
                 Position=UDim2.new(0,1,0,0),
                 BackgroundColor3=Color3.fromRGB(255,255,255),
@@ -1280,15 +1294,6 @@ function CrozoX:CreateWindow(cfg)
                 ScaleType=Enum.ScaleType.Slice,
                 SliceCenter=Rect.new(49,49,450,450),
                 ZIndex=12,Parent=f})
-            -- Hover effect
-            local hov=New("TextButton",{Size=UDim2.new(1,0,1,0),
-                BackgroundTransparency=1,Text="",ZIndex=12,Parent=f})
-            hov.MouseEnter:Connect(function()
-                Tween(f,{BackgroundColor3=T.SurfaceHover},0.15)
-            end)
-            hov.MouseLeave:Connect(function()
-                Tween(f,{BackgroundColor3=T.SurfaceCard},0.15)
-            end)
             return f
         end
 
