@@ -1,0 +1,426 @@
+--[[
+   ██████╗██████╗  ██████╗ ███████╗ ██████╗ ██╗  ██╗
+  ██╔════╝██╔══██╗██╔═══██╗╚════██║██╔═══██╗╚██╗██╔╝
+  ██║     ██████╔╝██║   ██║    ██╔╝██║   ██║ ╚███╔╝
+  ██║     ██╔══██╗██║   ██║   ██╔╝ ██║   ██║ ██╔██╗
+  ╚██████╗██║  ██║╚██████╔╝   ██║  ╚██████╔╝██╔╝ ██╗
+   ╚═════╝╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═════╝ ╚═╝  ╚═╝
+
+    CrozoX Intro Animation v1.0
+    Author : Crozo
+    Discord : crozo
+--]]
+
+-- ══════════════════════════════════════════════════
+--  CONFIG  (عدّل هنا بسهولة)
+-- ══════════════════════════════════════════════════
+local CONFIG = {
+    LogoAsset      = "rbxassetid://93116857865430",
+    HubName        = "CrozoX",
+    TagLine        = "Professional Script Hub",
+
+    -- ألوان
+    GlowColor      = Color3.fromRGB(220, 30,  30),   -- أحمر
+    AccentColor    = Color3.fromRGB(255, 60,  60),
+    BgColor        = Color3.fromRGB(0,   0,   0),
+    TextColor      = Color3.fromRGB(255, 255, 255),
+    SubTextColor   = Color3.fromRGB(180, 180, 180),
+
+    -- توقيتات (بالثواني)
+    FadeInDuration  = 0.7,
+    ZoomDuration    = 0.8,
+    HoldDuration    = 1.4,
+    PulseDuration   = 0.55,
+    FadeOutDuration = 0.6,
+
+    -- أحجام الشعار
+    LogoSizeStart  = UDim2.new(0, 80,  0, 80),
+    LogoSizeEnd    = UDim2.new(0, 160, 0, 160),
+    LogoPulseSize  = UDim2.new(0, 172, 0, 172),
+
+    -- عدد جزيئات الـ particles
+    ParticleCount  = 14,
+}
+
+-- ══════════════════════════════════════════════════
+--  SERVICES
+-- ══════════════════════════════════════════════════
+local TweenService     = game:GetService("TweenService")
+local RunService       = game:GetService("RunService")
+local CoreGui          = game:GetService("CoreGui")
+local Players          = game:GetService("Players")
+
+-- ══════════════════════════════════════════════════
+--  HELPERS
+-- ══════════════════════════════════════════════════
+local function Tween(obj, props, duration, style, dir)
+    style = style or Enum.EasingStyle.Quart
+    dir   = dir   or Enum.EasingDirection.Out
+    local t = TweenService:Create(obj, TweenInfo.new(duration, style, dir), props)
+    t:Play()
+    return t
+end
+
+local function Create(class, props)
+    local obj = Instance.new(class)
+    for k, v in pairs(props or {}) do
+        if k ~= "Parent" then obj[k] = v end
+    end
+    if props and props.Parent then obj.Parent = props.Parent end
+    return obj
+end
+
+local function WaitTween(obj, props, duration, style, dir)
+    local t = Tween(obj, props, duration, style, dir)
+    t.Completed:Wait()
+    return t
+end
+
+-- ══════════════════════════════════════════════════
+--  BUILD GUI
+-- ══════════════════════════════════════════════════
+local function BuildIntro(onComplete)
+
+    -- ── ScreenGui ───────────────────────────────
+    local sg = Create("ScreenGui", {
+        Name              = "CrozoX_Intro",
+        ResetOnSpawn      = false,
+        IgnoreGuiInset    = true,
+        DisplayOrder      = 9999,
+        ZIndexBehavior    = Enum.ZIndexBehavior.Sibling,
+    })
+    local ok = pcall(function() sg.Parent = CoreGui end)
+    if not ok then sg.Parent = Players.LocalPlayer:WaitForChild("PlayerGui") end
+
+    -- ── خلفية سوداء ─────────────────────────────
+    local bg = Create("Frame", {
+        Name                 = "Background",
+        Size                 = UDim2.new(1, 0, 1, 0),
+        BackgroundColor3     = CONFIG.BgColor,
+        BackgroundTransparency = 1,          -- تبدأ شفافة
+        BorderSizePixel      = 0,
+        ZIndex               = 1,
+        Parent               = sg,
+    })
+
+    -- ── Scanline texture خفيفة فوق الخلفية ──────
+    local scanline = Create("ImageLabel", {
+        Size                 = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        Image                = "rbxassetid://6014261993",
+        ImageColor3          = Color3.fromRGB(0, 0, 0),
+        ImageTransparency    = 0.96,
+        ScaleType            = Enum.ScaleType.Tile,
+        TileSize             = UDim2.new(0, 4, 0, 4),
+        ZIndex               = 2,
+        Parent               = bg,
+    })
+
+    -- ── حلقة glow خارجية (blur ring) ────────────
+    local glowRing = Create("ImageLabel", {
+        Name                 = "GlowRing",
+        Size                 = UDim2.new(0, 320, 0, 320),
+        AnchorPoint          = Vector2.new(0.5, 0.5),
+        Position             = UDim2.new(0.5, 0, 0.5, 0),
+        BackgroundTransparency = 1,
+        Image                = "rbxassetid://5028857084",   -- soft radial glow
+        ImageColor3          = CONFIG.GlowColor,
+        ImageTransparency    = 1,
+        ZIndex               = 3,
+        Parent               = bg,
+    })
+
+    -- ── حلقة glow داخلية ─────────────────────────
+    local innerGlow = Create("ImageLabel", {
+        Name                 = "InnerGlow",
+        Size                 = UDim2.new(0, 220, 0, 220),
+        AnchorPoint          = Vector2.new(0.5, 0.5),
+        Position             = UDim2.new(0.5, 0, 0.5, 0),
+        BackgroundTransparency = 1,
+        Image                = "rbxassetid://5028857084",
+        ImageColor3          = CONFIG.AccentColor,
+        ImageTransparency    = 1,
+        ZIndex               = 4,
+        Parent               = bg,
+    })
+
+    -- ── حاوية الشعار المركزية ─────────────────────
+    local logoContainer = Create("Frame", {
+        Name                 = "LogoContainer",
+        Size                 = CONFIG.LogoSizeStart,
+        AnchorPoint          = Vector2.new(0.5, 0.5),
+        Position             = UDim2.new(0.5, 0, 0.5, -20),
+        BackgroundTransparency = 1,
+        ZIndex               = 5,
+        Parent               = bg,
+    })
+
+    -- ── UIStroke (glow أحمر حول الشعار) ──────────
+    local logoImg = Create("ImageLabel", {
+        Name                 = "Logo",
+        Size                 = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        Image                = CONFIG.LogoAsset,
+        ImageTransparency    = 1,
+        ScaleType            = Enum.ScaleType.Fit,
+        ZIndex               = 6,
+        Parent               = logoContainer,
+    })
+    Create("UICorner",  { CornerRadius = UDim.new(0, 16), Parent = logoImg })
+
+    local stroke = Create("UIStroke", {
+        Color        = CONFIG.GlowColor,
+        Thickness    = 3,
+        Transparency = 1,
+        Parent       = logoImg,
+    })
+
+    -- ── اسم CrozoX ───────────────────────────────
+    local nameLabel = Create("TextLabel", {
+        Name                 = "HubName",
+        Size                 = UDim2.new(0, 300, 0, 44),
+        AnchorPoint          = Vector2.new(0.5, 0),
+        Position             = UDim2.new(0.5, 0, 0.5, 105),
+        BackgroundTransparency = 1,
+        Text                 = CONFIG.HubName,
+        TextColor3           = CONFIG.TextColor,
+        Font                 = Enum.Font.GothamBlack,
+        TextSize             = 34,
+        TextTransparency     = 1,
+        ZIndex               = 6,
+        Parent               = bg,
+    })
+
+    -- ── Tagline ───────────────────────────────────
+    local tagLabel = Create("TextLabel", {
+        Name                 = "TagLine",
+        Size                 = UDim2.new(0, 300, 0, 22),
+        AnchorPoint          = Vector2.new(0.5, 0),
+        Position             = UDim2.new(0.5, 0, 0.5, 152),
+        BackgroundTransparency = 1,
+        Text                 = CONFIG.TagLine,
+        TextColor3           = CONFIG.GlowColor,
+        Font                 = Enum.Font.GothamSemibold,
+        TextSize             = 13,
+        TextTransparency     = 1,
+        ZIndex               = 6,
+        Parent               = bg,
+    })
+
+    -- ── خط أفقي تحت الاسم ────────────────────────
+    local line = Create("Frame", {
+        Name                 = "Line",
+        Size                 = UDim2.new(0, 0, 0, 1.5),
+        AnchorPoint          = Vector2.new(0.5, 0),
+        Position             = UDim2.new(0.5, 0, 0.5, 148),
+        BackgroundColor3     = CONFIG.GlowColor,
+        BackgroundTransparency = 0,
+        BorderSizePixel      = 0,
+        ZIndex               = 6,
+        Parent               = bg,
+    })
+
+    -- ── شريط تحميل (loading bar) ─────────────────
+    local loaderBg = Create("Frame", {
+        Name                 = "LoaderBg",
+        Size                 = UDim2.new(0, 200, 0, 2),
+        AnchorPoint          = Vector2.new(0.5, 0),
+        Position             = UDim2.new(0.5, 0, 0.5, 182),
+        BackgroundColor3     = Color3.fromRGB(40, 40, 40),
+        BackgroundTransparency = 1,
+        BorderSizePixel      = 0,
+        ZIndex               = 6,
+        Parent               = bg,
+    })
+    Create("UICorner", { CornerRadius = UDim.new(1, 0), Parent = loaderBg })
+
+    local loaderFill = Create("Frame", {
+        Name                 = "LoaderFill",
+        Size                 = UDim2.new(0, 0, 1, 0),
+        BackgroundColor3     = CONFIG.GlowColor,
+        BorderSizePixel      = 0,
+        ZIndex               = 7,
+        Parent               = loaderBg,
+    })
+    Create("UICorner", { CornerRadius = UDim.new(1, 0), Parent = loaderFill })
+
+    -- ── جزيئات دائرية حول الشعار ─────────────────
+    local particles = {}
+    local RADIUS    = 130
+
+    for i = 1, CONFIG.ParticleCount do
+        local angle  = (i / CONFIG.ParticleCount) * math.pi * 2
+        local size   = math.random(3, 7)
+        local px     = 0.5 + (RADIUS * math.cos(angle)) / sg.AbsoluteSize.X
+        local py     = 0.5 + (RADIUS * math.sin(angle)) / sg.AbsoluteSize.Y
+
+        local dot = Create("Frame", {
+            Size                 = UDim2.new(0, size, 0, size),
+            AnchorPoint          = Vector2.new(0.5, 0.5),
+            Position             = UDim2.new(px, 0, py, -20),
+            BackgroundColor3     = (i % 3 == 0) and CONFIG.AccentColor or CONFIG.GlowColor,
+            BackgroundTransparency = 1,
+            BorderSizePixel      = 0,
+            ZIndex               = 5,
+            Parent               = bg,
+        })
+        Create("UICorner", { CornerRadius = UDim.new(1, 0), Parent = dot })
+        table.insert(particles, { dot = dot, angle = angle, baseSize = size })
+    end
+
+    -- ══════════════════════════════════════════════
+    --  ANIMATION SEQUENCE
+    -- ══════════════════════════════════════════════
+    task.spawn(function()
+
+        -- ─── 1. خلفية تظهر ─────────────────────
+        WaitTween(bg, { BackgroundTransparency = 0.08 }, 0.35,
+            Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+        -- ─── 2. Glow يظهر ──────────────────────
+        Tween(glowRing,  { ImageTransparency = 0.55 }, 0.5)
+        Tween(innerGlow, { ImageTransparency = 0.72 }, 0.5)
+
+        -- ─── 3. Zoom + FadeIn للشعار ────────────
+        Tween(logoContainer, { Size = CONFIG.LogoSizeEnd  }, CONFIG.ZoomDuration,
+            Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+        WaitTween(logoImg,   { ImageTransparency = 0      }, CONFIG.FadeInDuration,
+            Enum.EasingStyle.Quart)
+
+        -- ─── 4. UIStroke يظهر ───────────────────
+        Tween(stroke, { Transparency = 0.25 }, 0.4)
+
+        -- ─── 5. اسم CrozoX يظهر ─────────────────
+        Tween(nameLabel, { TextTransparency = 0   }, 0.45, Enum.EasingStyle.Quart)
+        task.wait(0.15)
+        Tween(tagLabel,  { TextTransparency = 0   }, 0.4,  Enum.EasingStyle.Quart)
+        Tween(line,      { Size = UDim2.new(0, 200, 0, 1.5) }, 0.5,
+            Enum.EasingStyle.Quart)
+
+        -- ─── 6. Loading bar ─────────────────────
+        Tween(loaderBg,   { BackgroundTransparency = 0 }, 0.3)
+        WaitTween(loaderFill, { Size = UDim2.new(1, 0, 1, 0) },
+            CONFIG.HoldDuration * 0.85, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut)
+
+        -- ─── 7. جزيئات تظهر بالتسلسل ────────────
+        for i, p in ipairs(particles) do
+            task.delay((i - 1) * 0.045, function()
+                Tween(p.dot, { BackgroundTransparency = 0.25 }, 0.3)
+            end)
+        end
+
+        -- ─── 8. Pulse effect ────────────────────
+        local totalPulses  = 3
+        local pulseDelay   = 0.05
+
+        for pulse = 1, totalPulses do
+            task.wait(pulseDelay)
+            Tween(logoContainer, { Size = CONFIG.LogoPulseSize }, CONFIG.PulseDuration * 0.45,
+                Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+            Tween(stroke, { Transparency = 0.05 }, CONFIG.PulseDuration * 0.45)
+            Tween(glowRing, { ImageTransparency = 0.35 }, CONFIG.PulseDuration * 0.45)
+            task.wait(CONFIG.PulseDuration * 0.45)
+
+            Tween(logoContainer, { Size = CONFIG.LogoSizeEnd   }, CONFIG.PulseDuration * 0.55,
+                Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+            Tween(stroke, { Transparency = 0.3 }, CONFIG.PulseDuration * 0.55)
+            Tween(glowRing, { ImageTransparency = 0.55 }, CONFIG.PulseDuration * 0.55)
+            task.wait(CONFIG.PulseDuration * 0.55)
+        end
+
+        -- ─── 9. جزيئات تطير للخارج ───────────────
+        for i, p in ipairs(particles) do
+            local farRadius = RADIUS * 2.2
+            local px2 = 0.5 + (farRadius * math.cos(p.angle)) / sg.AbsoluteSize.X
+            local py2 = 0.5 + (farRadius * math.sin(p.angle)) / sg.AbsoluteSize.Y
+
+            task.delay((i - 1) * 0.02, function()
+                Tween(p.dot, {
+                    Position             = UDim2.new(px2, 0, py2, -20),
+                    BackgroundTransparency = 1,
+                    Size                 = UDim2.new(0, 1, 0, 1),
+                }, CONFIG.FadeOutDuration, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+            end)
+        end
+
+        task.wait(0.1)
+
+        -- ─── 10. FadeOut كل شيء ──────────────────
+        Tween(logoImg,      { ImageTransparency = 1    }, CONFIG.FadeOutDuration)
+        Tween(nameLabel,    { TextTransparency  = 1    }, CONFIG.FadeOutDuration)
+        Tween(tagLabel,     { TextTransparency  = 1    }, CONFIG.FadeOutDuration)
+        Tween(line,         { BackgroundTransparency = 1 }, CONFIG.FadeOutDuration)
+        Tween(loaderBg,     { BackgroundTransparency = 1 }, CONFIG.FadeOutDuration)
+        Tween(glowRing,     { ImageTransparency = 1    }, CONFIG.FadeOutDuration)
+        Tween(innerGlow,    { ImageTransparency = 1    }, CONFIG.FadeOutDuration)
+        Tween(stroke,       { Transparency      = 1    }, CONFIG.FadeOutDuration)
+        Tween(logoContainer,{ Size = UDim2.new(0, 60, 0, 60) }, CONFIG.FadeOutDuration,
+            Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+
+        WaitTween(bg, { BackgroundTransparency = 1 }, CONFIG.FadeOutDuration,
+            Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+
+        -- ─── 11. تنظيف وتشغيل الـ callback ───────
+        task.wait(0.1)
+        sg:Destroy()
+
+        if onComplete then
+            task.spawn(onComplete)
+        end
+    end)
+
+    -- ── Ambient particle rotation (RunService) ───
+    local startTime  = tick()
+    local connection
+
+    connection = RunService.RenderStepped:Connect(function()
+        if not sg.Parent then
+            connection:Disconnect()
+            return
+        end
+
+        local t = tick() - startTime
+
+        for i, p in ipairs(particles) do
+            local speed = 0.4 + (i % 3) * 0.15
+            local newAngle = p.angle + t * speed
+            local r = RADIUS + math.sin(t * 1.8 + i) * 12
+
+            local screenW = sg.AbsoluteSize.X
+            local screenH = sg.AbsoluteSize.Y
+
+            if screenW > 0 and screenH > 0 then
+                p.dot.Position = UDim2.new(
+                    0.5 + (r * math.cos(newAngle)) / screenW, 0,
+                    0.5 + (r * math.sin(newAngle)) / screenH, -20
+                )
+            end
+        end
+    end)
+
+    return sg
+end
+
+-- ══════════════════════════════════════════════════
+--  ENTRY POINT
+-- ══════════════════════════════════════════════════
+
+--[[
+    استخدام:
+
+    -- الطريقة 1: مع CrozoX Library
+    local PlayIntro = loadstring(game:HttpGet("https://raw.githubusercontent.com/blackmangg1273t/C2r2o2oz0/refs/heads/main/test%20crozo%20x"))()
+    PlayIntro(function()
+        local Library = loadstring(game:HttpGet("RAW_URL_FOR_CROZOX"))()
+        local Window  = Library:CreateWindow({ Title = "CrozoX Hub" })
+        -- ... باقي الكود
+    end)
+
+    -- الطريقة 2: standalone (بدون callback)
+    local PlayIntro = loadstring(game:HttpGet("https://raw.githubusercontent.com/blackmangg1273t/C2r2o2oz0/refs/heads/main/test%20crozo%20x"))()
+    PlayIntro()
+--]]
+
+return function(onComplete)
+    BuildIntro(onComplete)
+end
