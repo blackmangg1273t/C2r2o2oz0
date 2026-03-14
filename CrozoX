@@ -941,9 +941,9 @@ function CrozoX:CreateWindow(cfg)
         ZIndex=12, Parent=sidebar,
     })
 
-    -- Profile card
+    -- Profile card — أكبر قليلاً عشان الصورة تظهر كاملة
     local profileCard = New("Frame", {
-        Size=UDim2.new(1,-14,0,50), Position=UDim2.new(0,7,0,6),
+        Size=UDim2.new(1,-14,0,56), Position=UDim2.new(0,7,0,6),
         BackgroundColor3=T.SurfaceAlt, BorderSizePixel=0,
         ZIndex=12, Parent=sidebar,
     })
@@ -952,17 +952,18 @@ function CrozoX:CreateWindow(cfg)
 
     -- ── Avatar دائري — صورة اللاعب الحقيقية ─────────────────
     local avatarImg = New("ImageLabel", {
-        Size                 = UDim2.new(0, 44, 0, 44),  -- 44px
-        Position             = UDim2.new(0, 6, 0.5, -22),
-        BackgroundColor3     = T.SurfaceHover,
+        Size                   = UDim2.new(0, 42, 0, 42),
+        Position               = UDim2.new(0, 7, 0.5, -21),
+        BackgroundColor3       = T.SurfaceHover,
         BackgroundTransparency = 0,
-        Image                = "",
-        ScaleType            = Enum.ScaleType.Fit,
-        ZIndex               = 14,
-        Parent               = profileCard,
+        -- rbxthumb مضمون يشتغل فوراً بدون async
+        Image = "rbxthumb://type=AvatarHeadShot&id="
+            .. tostring(LocalPlayer.UserId) .. "&w=60&h=60",
+        ScaleType = Enum.ScaleType.Fit,
+        ZIndex    = 14,
+        Parent    = profileCard,
     })
     New("UICorner", { CornerRadius = UDim.new(1, 0), Parent = avatarImg })
-    -- Glow حول الصورة بلون الـ accent
     New("UIStroke", {
         Color        = T.Primary,
         Thickness    = 2,
@@ -970,7 +971,7 @@ function CrozoX:CreateWindow(cfg)
         Parent       = avatarImg,
     })
 
-    -- جلب الصورة بشكل غير متزامن (GetUserThumbnailAsync)
+    -- محاولة الحصول على صورة أعلى جودة في الخلفية
     task.spawn(function()
         local ok, content = pcall(function()
             return Players:GetUserThumbnailAsync(
@@ -979,16 +980,13 @@ function CrozoX:CreateWindow(cfg)
                 Enum.ThumbnailSize.Size420x420
             )
         end)
-        if ok and content then
+        if ok and content and content ~= "" then
             avatarImg.Image = content
-        else
-            -- Fallback: rbxthumb إذا فشل الأول
-            avatarImg.Image = "rbxthumb://type=AvatarHeadShot&id="
-                .. tostring(LocalPlayer.UserId) .. "&w=60&h=60"
         end
+        -- إذا فشل نبقى على rbxthumb اللي اتضبط فوق
     end)
     New("TextLabel", {
-        Size=UDim2.new(1,-58,0,17), Position=UDim2.new(0,56,0,6),
+        Size=UDim2.new(1,-60,0,18), Position=UDim2.new(0,56,0,8),
         BackgroundTransparency=1, Text=LocalPlayer.Name,
         TextColor3=T.Text, Font=Enum.Font.GothamSemibold, TextSize=12,
         TextXAlignment=Enum.TextXAlignment.Left,
@@ -996,13 +994,13 @@ function CrozoX:CreateWindow(cfg)
         ZIndex=13, Parent=profileCard,
     })
     local onlineDot = New("Frame", {
-        Size=UDim2.new(0,6,0,6), Position=UDim2.new(0,56,0,27),
+        Size=UDim2.new(0,6,0,6), Position=UDim2.new(0,56,0,30),
         BackgroundColor3=T.Success, BorderSizePixel=0,
         ZIndex=13, Parent=profileCard,
     })
     Corner(onlineDot, 3)
     New("TextLabel", {
-        Size=UDim2.new(1,-68,0,12), Position=UDim2.new(0,67,0,25),
+        Size=UDim2.new(1,-68,0,14), Position=UDim2.new(0,68,0,28),
         BackgroundTransparency=1, Text="Online",
         TextColor3=T.TextMuted, Font=Enum.Font.Gotham, TextSize=10,
         TextXAlignment=Enum.TextXAlignment.Left,
@@ -1259,11 +1257,7 @@ function CrozoX:CreateWindow(cfg)
                 Tween(tabIcon,{ImageColor3=T.TextMuted},0.15)
             end
         end)
-        if #tabsList==0 then
-            -- نستخدم task.delay بدل task.defer
-            -- عشان نعطي وقت للسكربت يضيف العناصر أولاً
-            task.delay(0.05, SelectTab)
-        end
+        local isFirstTab = (#tabsList == 0)
         table.insert(tabsList,tabName)
 
         -- ============================================================
@@ -1787,6 +1781,15 @@ function CrozoX:CreateWindow(cfg)
             function El:Get() return box.Text end
             function El:Set(v) box.Text=v end
             return El
+        end
+
+        -- إذا كان هذا أول تاب، نختاره بعد ما يرجع الـ Tab
+        -- بكده نضمن إن العناصر اتضافت قبل الاختيار
+        if isFirstTab then
+            task.defer(function()
+                task.wait()   -- frame واحد يكفي
+                SelectTab()
+            end)
         end
 
         return Tab
