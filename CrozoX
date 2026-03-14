@@ -1332,7 +1332,6 @@ function CrozoX:CreateWindow(cfg)
                 Font=Enum.Font.GothamBold,
                 TextSize=FS.Section+1,   -- 12px
                 TextXAlignment=Enum.TextXAlignment.Left,
-                LetterSpacing=2,
                 ZIndex=14,Parent=s})
             -- Gradient line
             local line=New("Frame",{Size=UDim2.new(1,0,0,1),
