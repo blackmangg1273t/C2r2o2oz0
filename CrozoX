@@ -177,54 +177,74 @@ local Languages = {
 }
 
 -- ============================================================
---  THEMES
+--  THEMES — Professional Dark System
+--  Red = Arabic | Blue = English
+--  Accent فقط للعناصر المهمة، الباقي dark neutral
 -- ============================================================
 local Themes = {
     Blue = {
-        Primary      = Color3.fromRGB(56,  132, 255),
-        PrimaryDark  = Color3.fromRGB(30,  100, 220),
-        PrimaryLight = Color3.fromRGB(110, 175, 255),
-        Background   = Color3.fromRGB(9,   11,  17),
-        Surface      = Color3.fromRGB(14,  17,  26),
-        SurfaceAlt   = Color3.fromRGB(20,  24,  38),
-        SurfaceHover = Color3.fromRGB(28,  34,  54),
-        Border       = Color3.fromRGB(38,  46,  78),
-        BorderBright = Color3.fromRGB(65,  85,  140),
-        Text         = Color3.fromRGB(235, 240, 255),
-        TextDim      = Color3.fromRGB(155, 168, 210),
-        TextMuted    = Color3.fromRGB(85,  100, 148),
-        BtnText      = Color3.fromRGB(255, 255, 255),  -- ← نص الأزرار دائماً أبيض
+        -- Accent — أزرق فقط للعناصر المهمة
+        Primary      = Color3.fromRGB(42,  120, 255),
+        PrimaryDark  = Color3.fromRGB(24,  90,  210),
+        PrimaryLight = Color3.fromRGB(80,  155, 255),
+        PrimaryGlow  = Color3.fromRGB(42,  120, 255),
+        -- Backgrounds — neutral dark
+        Background   = Color3.fromRGB(10,  10,  10),   -- #0A0A0A
+        Surface      = Color3.fromRGB(17,  17,  17),   -- #111111
+        SurfaceAlt   = Color3.fromRGB(22,  22,  22),   -- #161616
+        SurfaceHover = Color3.fromRGB(30,  30,  30),   -- #1E1E1E hover
+        SurfaceCard  = Color3.fromRGB(26,  26,  26),   -- card bg
+        -- Borders — subtle
+        Border       = Color3.fromRGB(32,  32,  32),   -- subtle border
+        BorderBright = Color3.fromRGB(50,  50,  50),   -- visible border
+        BorderAccent = Color3.fromRGB(42,  120, 255),  -- accent border
+        -- Text
+        Text         = Color3.fromRGB(255, 255, 255),  -- #FFFFFF
+        TextDim      = Color3.fromRGB(160, 160, 160),  -- #A0A0A0
+        TextMuted    = Color3.fromRGB(90,  90,  90),
+        BtnText      = Color3.fromRGB(255, 255, 255),
+        -- Status
         Success      = Color3.fromRGB(34,  197, 94),
         Warning      = Color3.fromRGB(234, 179, 8),
         Error        = Color3.fromRGB(239, 68,  68),
-        Info         = Color3.fromRGB(56,  132, 255),
-        NotifBgOk    = Color3.fromRGB(14,  40,  24),
-        NotifBgWarn  = Color3.fromRGB(42,  34,   8),
-        NotifBgErr   = Color3.fromRGB(42,  12,  12),
-        NotifBgInfo  = Color3.fromRGB(14,  24,  46),
+        Info         = Color3.fromRGB(42,  120, 255),
+        -- Notification backgrounds
+        NotifBgOk    = Color3.fromRGB(12,  28,  18),
+        NotifBgWarn  = Color3.fromRGB(30,  24,   6),
+        NotifBgErr   = Color3.fromRGB(30,  10,  10),
+        NotifBgInfo  = Color3.fromRGB(12,  20,  36),
     },
     Red = {
-        Primary      = Color3.fromRGB(220, 38,  38),
-        PrimaryDark  = Color3.fromRGB(170, 20,  20),
-        PrimaryLight = Color3.fromRGB(255, 95,  95),
-        Background   = Color3.fromRGB(11,  8,   8),
-        Surface      = Color3.fromRGB(18,  11,  11),
-        SurfaceAlt   = Color3.fromRGB(26,  15,  15),
-        SurfaceHover = Color3.fromRGB(38,  22,  22),
-        Border       = Color3.fromRGB(60,  28,  28),
-        BorderBright = Color3.fromRGB(110, 48,  48),
-        Text         = Color3.fromRGB(255, 238, 238),
-        TextDim      = Color3.fromRGB(195, 155, 155),
-        TextMuted    = Color3.fromRGB(120, 78,  78),
+        -- Accent — أحمر فقط للعناصر المهمة
+        Primary      = Color3.fromRGB(255, 42,  42),   -- #FF2A2A
+        PrimaryDark  = Color3.fromRGB(200, 25,  25),
+        PrimaryLight = Color3.fromRGB(255, 90,  90),   -- #FF3D3D hover
+        PrimaryGlow  = Color3.fromRGB(255, 42,  42),
+        -- Backgrounds — neutral dark (نفس الـ blue)
+        Background   = Color3.fromRGB(10,  10,  10),
+        Surface      = Color3.fromRGB(17,  17,  17),
+        SurfaceAlt   = Color3.fromRGB(22,  22,  22),
+        SurfaceHover = Color3.fromRGB(30,  30,  30),
+        SurfaceCard  = Color3.fromRGB(26,  26,  26),
+        -- Borders
+        Border       = Color3.fromRGB(32,  32,  32),
+        BorderBright = Color3.fromRGB(50,  50,  50),
+        BorderAccent = Color3.fromRGB(255, 42,  42),
+        -- Text
+        Text         = Color3.fromRGB(255, 255, 255),
+        TextDim      = Color3.fromRGB(160, 160, 160),
+        TextMuted    = Color3.fromRGB(90,  90,  90),
         BtnText      = Color3.fromRGB(255, 255, 255),
+        -- Status
         Success      = Color3.fromRGB(34,  197, 94),
         Warning      = Color3.fromRGB(234, 179, 8),
         Error        = Color3.fromRGB(239, 68,  68),
-        Info         = Color3.fromRGB(220, 38,  38),
-        NotifBgOk    = Color3.fromRGB(14,  40,  24),
-        NotifBgWarn  = Color3.fromRGB(42,  34,   8),
-        NotifBgErr   = Color3.fromRGB(42,  12,  12),
-        NotifBgInfo  = Color3.fromRGB(32,  14,  14),
+        Info         = Color3.fromRGB(255, 42,  42),
+        -- Notification backgrounds
+        NotifBgOk    = Color3.fromRGB(12,  28,  18),
+        NotifBgWarn  = Color3.fromRGB(30,  24,   6),
+        NotifBgErr   = Color3.fromRGB(30,  10,  10),
+        NotifBgInfo  = Color3.fromRGB(28,  10,  10),
     },
 }
 
@@ -904,22 +924,20 @@ function CrozoX:CreateWindow(cfg)
         Color3.fromRGB(120, 140, 195)  -- لون الأيقونة
     )
 
-    -- ── Sidebar — خلفيته شفافة، اللون من MainFrame ────────
+    -- ── Sidebar — width 220 ───────────────────────────────
     local sidebar = New("Frame", {
-        Size                   = UDim2.new(0, 162, 1, -54),
+        Size                   = UDim2.new(0, 220, 1, -54),
         Position               = UDim2.new(0, 0, 0, 54),
         BackgroundColor3       = T.Surface,
-        BackgroundTransparency = 0.15,   -- ← شبه شفاف: يظهر لون السطح برفق
+        BackgroundTransparency = 0.1,
         BorderSizePixel        = 0,
         ZIndex                 = 11,
         Parent                 = mainFrame,
     })
-    -- Right border
+    -- Right border — subtle
     New("Frame", {
         Size=UDim2.new(0,1,1,0), Position=UDim2.new(1,0,0,0),
-        BackgroundColor3=T.BorderBright,
-        BackgroundTransparency=0.6,
-        BorderSizePixel=0,
+        BackgroundColor3=T.Border, BorderSizePixel=0,
         ZIndex=12, Parent=sidebar,
     })
 
@@ -934,22 +952,21 @@ function CrozoX:CreateWindow(cfg)
 
     -- ── Avatar دائري — صورة اللاعب الحقيقية ─────────────────
     local avatarImg = New("ImageLabel", {
-        Size                 = UDim2.new(0, 40, 0, 40),
-        Position             = UDim2.new(0, 6, 0.5, -20),
+        Size                 = UDim2.new(0, 44, 0, 44),  -- 44px
+        Position             = UDim2.new(0, 6, 0.5, -22),
         BackgroundColor3     = T.SurfaceHover,
         BackgroundTransparency = 0,
-        Image                = "",   -- تُحدَّث بعد GetUserThumbnailAsync
+        Image                = "",
         ScaleType            = Enum.ScaleType.Fit,
         ZIndex               = 14,
         Parent               = profileCard,
     })
-    -- دائرة كاملة
     New("UICorner", { CornerRadius = UDim.new(1, 0), Parent = avatarImg })
-    -- حدود خفيفة حول الصورة
+    -- Glow حول الصورة بلون الـ accent
     New("UIStroke", {
         Color        = T.Primary,
-        Thickness    = 1.5,
-        Transparency = 0.35,
+        Thickness    = 2,
+        Transparency = 0.4,
         Parent       = avatarImg,
     })
 
@@ -971,7 +988,7 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
     New("TextLabel", {
-        Size=UDim2.new(1,-56,0,17), Position=UDim2.new(0,52,0,6),
+        Size=UDim2.new(1,-58,0,17), Position=UDim2.new(0,56,0,6),
         BackgroundTransparency=1, Text=LocalPlayer.Name,
         TextColor3=T.Text, Font=Enum.Font.GothamSemibold, TextSize=12,
         TextXAlignment=Enum.TextXAlignment.Left,
@@ -979,13 +996,13 @@ function CrozoX:CreateWindow(cfg)
         ZIndex=13, Parent=profileCard,
     })
     local onlineDot = New("Frame", {
-        Size=UDim2.new(0,6,0,6), Position=UDim2.new(0,52,0,27),
+        Size=UDim2.new(0,6,0,6), Position=UDim2.new(0,56,0,27),
         BackgroundColor3=T.Success, BorderSizePixel=0,
         ZIndex=13, Parent=profileCard,
     })
     Corner(onlineDot, 3)
     New("TextLabel", {
-        Size=UDim2.new(1,-64,0,12), Position=UDim2.new(0,63,0,25),
+        Size=UDim2.new(1,-68,0,12), Position=UDim2.new(0,67,0,25),
         BackgroundTransparency=1, Text="Online",
         TextColor3=T.TextMuted, Font=Enum.Font.Gotham, TextSize=10,
         TextXAlignment=Enum.TextXAlignment.Left,
@@ -1045,9 +1062,9 @@ function CrozoX:CreateWindow(cfg)
 
     -- ── Content area ───────────────────────────────────────
     local contentArea = New("Frame", {
-        Size             = UDim2.new(1, -162, 1, -54),
-        Position         = UDim2.new(0, 162, 0, 54),
-        BackgroundTransparency = 1,   -- شفاف: لا خلفية على content
+        Size             = UDim2.new(1, -220, 1, -54),
+        Position         = UDim2.new(0, 220, 0, 54),
+        BackgroundTransparency = 1,
         BorderSizePixel  = 0,
         ClipsDescendants = true,
         ZIndex           = 11,
@@ -1079,23 +1096,43 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    -- ── Open animation ─────────────────────────────────────
+    -- ── Open animation — scale 0.9→1 + fade احترافي ──────────
     mainFrame.BackgroundTransparency = 1
-    Tween(mainFrame, {Size=size, BackgroundTransparency=0},
-        0.5, Enum.EasingStyle.Back)
+    mainFrame.Size = UDim2.new(
+        0, size.X.Offset * 0.9,
+        0, size.Y.Offset * 0.9)  -- يبدأ بـ 90%
+
+    -- Blur effect عند الفتح
+    local blur = Instance.new("BlurEffect")
+    blur.Size   = 0
+    blur.Parent = game:GetService("Lighting")
+    Tween(blur, {Size=10}, 0.3, Enum.EasingStyle.Quart)
+
+    Tween(mainFrame, {
+        Size                 = size,
+        BackgroundTransparency = 0,
+    }, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+
     Tween(shadowImg, {
-        Size    = UDim2.new(0, size.X.Offset+50, 0, size.Y.Offset+50),
-        Position = UDim2.new(0.5, 0, 0.5, 8),
-    }, 0.5, Enum.EasingStyle.Back)
+        Size     = UDim2.new(0, size.X.Offset+60, 0, size.Y.Offset+60),
+        Position = UDim2.new(0.5, 0, 0.5, 10),
+    }, 0.35, Enum.EasingStyle.Back)
 
     -- ── Close / Minimize ───────────────────────────────────
     local isMin = false
     closeBtn.MouseButton1Click:Connect(function()
-        Tween(mainFrame, {Size=UDim2.new(0,size.X.Offset,0,0),
-            BackgroundTransparency=1},
-            0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-        Tween(shadowImg, {ImageTransparency=1}, 0.3)
-        task.delay(0.38, function()
+        -- إزالة Blur عند الإغلاق
+        local existingBlur = game:GetService("Lighting"):FindFirstChildWhichIsA("BlurEffect")
+        if existingBlur then
+            Tween(existingBlur, {Size=0}, 0.3)
+            task.delay(0.32, function() existingBlur:Destroy() end)
+        end
+        Tween(mainFrame, {
+            Size=UDim2.new(0, size.X.Offset*0.9, 0, size.Y.Offset*0.9),
+            BackgroundTransparency=1,
+        }, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+        Tween(shadowImg, {ImageTransparency=1}, 0.25)
+        task.delay(0.32, function()
             mainFrame:Destroy()
             shadowImg:Destroy()
         end)
@@ -1164,10 +1201,10 @@ function CrozoX:CreateWindow(cfg)
             Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,
             ScrollBarThickness=3,ScrollBarImageColor3=T.BorderBright,
             BorderSizePixel=0,Visible=false,ZIndex=12,Parent=contentArea})
-        local pageLayout=ListLayout(tabPage,8)
-        Pad(tabPage,14,14,15,15)
+        local pageLayout=ListLayout(tabPage,12)  -- 12px بين العناصر
+        Pad(tabPage,16,16,16,16)                 -- 16px padding داخلي
         pageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            tabPage.CanvasSize=UDim2.new(0,0,0,pageLayout.AbsoluteContentSize.Y+28)
+            tabPage.CanvasSize=UDim2.new(0,0,0,pageLayout.AbsoluteContentSize.Y+32)
         end)
 
         local function SelectTab()
@@ -1224,57 +1261,90 @@ function CrozoX:CreateWindow(cfg)
         -- ============================================================
         local Tab={}
 
-        -- shared element frame — shadow + depth
+        -- Element frame — card background + proper depth
         local function EF(h)
-            local f=New("Frame",{Size=UDim2.new(1,0,0,h or 46),
-                BackgroundColor3=T.SurfaceAlt,BorderSizePixel=0,
+            local f=New("Frame",{Size=UDim2.new(1,0,0,h or 48),
+                BackgroundColor3=T.SurfaceCard,BorderSizePixel=0,
                 ZIndex=13,Parent=tabPage})
-            Corner(f,12)
+            Corner(f,10)
+            -- Border subtle
             Stroke(f,T.Border,1,0)
-            -- Subtle top highlight line
-            New("Frame",{Size=UDim2.new(1,-4,0,1),
-                Position=UDim2.new(0,2,0,0),
+            -- Top highlight — depth illusion
+            New("Frame",{Size=UDim2.new(1,-2,0,1),
+                Position=UDim2.new(0,1,0,0),
                 BackgroundColor3=Color3.fromRGB(255,255,255),
-                BackgroundTransparency=0.95,
+                BackgroundTransparency=0.92,
                 BorderSizePixel=0,ZIndex=14,Parent=f})
             -- Drop shadow
-            New("ImageLabel",{Size=UDim2.new(1,10,1,10),
-                Position=UDim2.new(0,-5,0,2),
+            New("ImageLabel",{Size=UDim2.new(1,16,1,16),
+                Position=UDim2.new(0,-8,0,4),
                 BackgroundTransparency=1,
                 Image="rbxassetid://6014261993",
                 ImageColor3=Color3.fromRGB(0,0,0),
-                ImageTransparency=0.88,
+                ImageTransparency=0.85,
                 ScaleType=Enum.ScaleType.Slice,
                 SliceCenter=Rect.new(49,49,450,450),
                 ZIndex=12,Parent=f})
+            -- Hover effect
+            local hov=New("TextButton",{Size=UDim2.new(1,0,1,0),
+                BackgroundTransparency=1,Text="",ZIndex=12,Parent=f})
+            hov.MouseEnter:Connect(function()
+                Tween(f,{BackgroundColor3=T.SurfaceHover},0.15)
+            end)
+            hov.MouseLeave:Connect(function()
+                Tween(f,{BackgroundColor3=T.SurfaceCard},0.15)
+            end)
             return f
         end
 
-        -- Label helper (handles RTL for Arabic)
+        -- Font system: Title=20, Section=16, Button=15, Desc=13
+        local FS = {
+            Title   = 15,
+            Button  = 15,
+            Body    = 13,
+            Section = 11,
+        }
+
+        -- Label helper
         local function EL(p,text,x,y,w,h,color,font,sz,zi,xa)
             local xAlign=xa
             if xAlign==nil then
                 xAlign=L.IsRTL and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
             end
             return New("TextLabel",{Size=UDim2.new(0,w or 200,0,h or 20),
-                Position=UDim2.new(0,x or 12,0,y or 13),
+                Position=UDim2.new(0,x or 16,0,y or 14),
                 BackgroundTransparency=1,Text=text,
                 TextColor3=color or T.Text,
-                Font=font or L.FontSemi,TextSize=sz or L.LabelSize,
+                Font=font or L.FontSemi,TextSize=sz or FS.Button,
                 TextXAlignment=xAlign,ZIndex=zi or 14,Parent=p})
         end
 
         -- Section
         function Tab:AddSection(name)
-            local s=New("Frame",{Size=UDim2.new(1,0,0,28),
+            local s=New("Frame",{Size=UDim2.new(1,0,0,30),
                 BackgroundTransparency=1,ZIndex=13,Parent=tabPage})
-            New("TextLabel",{Size=UDim2.new(0.6,0,1,0),
-                BackgroundTransparency=1,Text=string.upper(name or ""),
-                TextColor3=T.Primary,Font=Enum.Font.GothamBold,
-                TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,
+            -- Section label
+            New("TextLabel",{Size=UDim2.new(1,0,1,0),
+                Position=UDim2.new(0,2,0,0),
+                BackgroundTransparency=1,
+                Text=string.upper(name or ""),
+                TextColor3=T.Primary,
+                Font=Enum.Font.GothamBold,
+                TextSize=FS.Section+1,   -- 12px
+                TextXAlignment=Enum.TextXAlignment.Left,
+                LetterSpacing=2,
                 ZIndex=14,Parent=s})
-            New("Frame",{Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),
-                BackgroundColor3=T.Border,BorderSizePixel=0,ZIndex=14,Parent=s})
+            -- Gradient line
+            local line=New("Frame",{Size=UDim2.new(1,0,0,1),
+                Position=UDim2.new(0,0,1,-1),
+                BackgroundColor3=T.Border,
+                BorderSizePixel=0,ZIndex=14,Parent=s})
+            New("UIGradient",{
+                Color=ColorSequence.new{
+                    ColorSequenceKeypoint.new(0,T.Primary),
+                    ColorSequenceKeypoint.new(0.3,T.Border),
+                    ColorSequenceKeypoint.new(1,T.Background),
+                },Parent=line})
         end
 
         -- ── Button ─────────────────────────────────────────
@@ -1297,58 +1367,55 @@ function CrozoX:CreateWindow(cfg)
                 EL(f,desc,xOff,32,240,16,T.TextMuted,L.FontBody,12)
             end
 
-            -- ── Run button — glow + scale ────────────────────
-            local rb=New("TextButton",{Size=UDim2.new(0,78,0,30),
-                Position=UDim2.new(1,-90,0.5,-15),
+            -- ── Run button — Glow حقيقي + Scale احترافي ─────
+            local rb=New("TextButton",{Size=UDim2.new(0,76,0,32),
+                Position=UDim2.new(1,-92,0.5,-16),
                 BackgroundColor3=T.Primary,
                 Text="Run",
                 TextColor3=Color3.new(1,1,1),
                 Font=Enum.Font.GothamBold,
-                TextSize=13,
+                TextSize=FS.Button,
                 BorderSizePixel=0,ZIndex=14,Parent=f})
-            Corner(rb,9)
-            -- Gradient on button
-            New("UIGradient",{
-                Color=ColorSequence.new{
-                    ColorSequenceKeypoint.new(0,T.PrimaryLight),
-                    ColorSequenceKeypoint.new(1,T.Primary),
-                },
-                Rotation=90,Parent=rb})
-            -- Glow shadow under button
-            New("ImageLabel",{Size=UDim2.new(1,16,1,16),
-                Position=UDim2.new(0,-8,0,-4),
+            Corner(rb,8)
+            New("UIGradient",{Color=ColorSequence.new{
+                ColorSequenceKeypoint.new(0,T.PrimaryLight),
+                ColorSequenceKeypoint.new(1,T.Primary),
+            },Rotation=90,Parent=rb})
+            -- Glow اللي بيقوى عند الـ hover
+            local rbGlow=New("ImageLabel",{
+                Size=UDim2.new(1,22,1,22),
+                Position=UDim2.new(0,-11,0,-5),
                 BackgroundTransparency=1,
                 Image="rbxassetid://6014261993",
-                ImageColor3=T.Primary,
-                ImageTransparency=0.72,
+                ImageColor3=T.PrimaryGlow,
+                ImageTransparency=0.80,
                 ScaleType=Enum.ScaleType.Slice,
                 SliceCenter=Rect.new(49,49,450,450),
                 ZIndex=13,Parent=rb})
+            -- UIStroke أحمر/أزرق خفيف
+            Stroke(rb,T.Primary,1,0.5)
 
             rb.MouseEnter:Connect(function()
-                Tween(rb,{
-                    BackgroundColor3=T.PrimaryLight,
-                    Size=UDim2.new(0,82,0,32),
-                    Position=UDim2.new(1,-93,0.5,-16),
-                },0.18,Enum.EasingStyle.Back)
+                Tween(rb,{BackgroundColor3=T.PrimaryLight},0.15)
+                Tween(rbGlow,{ImageTransparency=0.52},0.15)
+                Tween(rb,{Size=UDim2.new(0,80,0,34),Position=UDim2.new(1,-95,0.5,-17)},
+                    0.15,Enum.EasingStyle.Back)
             end)
             rb.MouseLeave:Connect(function()
-                Tween(rb,{
-                    BackgroundColor3=T.Primary,
-                    Size=UDim2.new(0,78,0,30),
-                    Position=UDim2.new(1,-90,0.5,-15),
-                },0.18)
+                Tween(rb,{BackgroundColor3=T.Primary},0.15)
+                Tween(rbGlow,{ImageTransparency=0.80},0.15)
+                Tween(rb,{Size=UDim2.new(0,76,0,32),Position=UDim2.new(1,-92,0.5,-16)},0.15)
             end)
             rb.MouseButton1Down:Connect(function()
-                -- Scale down 95%
-                Tween(rb,{Size=UDim2.new(0,74,0,28),Position=UDim2.new(1,-88,0.5,-14)},0.08)
+                Tween(rb,{Size=UDim2.new(0,71,0,29),Position=UDim2.new(1,-89,0.5,-14)},0.07)
+                Tween(rbGlow,{ImageTransparency=0.40},0.07)
             end)
             rb.MouseButton1Up:Connect(function()
-                Tween(rb,{Size=UDim2.new(0,78,0,30),Position=UDim2.new(1,-90,0.5,-15)},0.15,Enum.EasingStyle.Back)
+                Tween(rb,{Size=UDim2.new(0,76,0,32),Position=UDim2.new(1,-92,0.5,-16)},
+                    0.15,Enum.EasingStyle.Back)
+                Tween(rbGlow,{ImageTransparency=0.80},0.15)
             end)
-            rb.MouseButton1Click:Connect(function()
-                Ripple(rb); Safe(callback)
-            end)
+            rb.MouseButton1Click:Connect(function() Ripple(rb); Safe(callback) end)
         end
 
         -- ── Toggle ─────────────────────────────────────────
@@ -1441,7 +1508,17 @@ function CrozoX:CreateWindow(cfg)
                 BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,
                 ZIndex=16,Parent=tbg})
             Corner(knob,8)
-            Stroke(knob,T.BorderBright,1,0)
+            Stroke(knob,T.Primary,1.5,0)
+            -- Glow under knob
+            New("ImageLabel",{Size=UDim2.new(1,12,1,12),
+                Position=UDim2.new(0,-6,0,-4),
+                BackgroundTransparency=1,
+                Image="rbxassetid://6014261993",
+                ImageColor3=T.PrimaryGlow,
+                ImageTransparency=0.78,
+                ScaleType=Enum.ScaleType.Slice,
+                SliceCenter=Rect.new(49,49,450,450),
+                ZIndex=15,Parent=knob})
             local drag=false
             local cz=New("TextButton",{Size=UDim2.new(1,0,0,34),
                 Position=UDim2.new(0,0,0,34),BackgroundTransparency=1,
