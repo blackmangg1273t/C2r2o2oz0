@@ -1096,42 +1096,35 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    -- ── Open animation — scale 0.9→1 + fade احترافي ──────────
+    -- ── Open animation — scale 0.9→1 + fade ───────────────
     mainFrame.BackgroundTransparency = 1
     mainFrame.Size = UDim2.new(
         0, size.X.Offset * 0.9,
-        0, size.Y.Offset * 0.9)  -- يبدأ بـ 90%
+        0, size.Y.Offset * 0.9)
 
-    -- Blur effect عند الفتح
-    local blur = Instance.new("BlurEffect")
-    blur.Size   = 0
-    blur.Parent = game:GetService("Lighting")
-    Tween(blur, {Size=10}, 0.3, Enum.EasingStyle.Quart)
+    -- Shadow تبدأ بصفر وتكبر مع الواجهة
+    shadowImg.Size             = UDim2.new(0, 0, 0, 0)
+    shadowImg.ImageTransparency = 1
 
     Tween(mainFrame, {
-        Size                 = size,
+        Size                   = size,
         BackgroundTransparency = 0,
     }, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 
     Tween(shadowImg, {
-        Size     = UDim2.new(0, size.X.Offset+60, 0, size.Y.Offset+60),
-        Position = UDim2.new(0.5, 0, 0.5, 10),
-    }, 0.35, Enum.EasingStyle.Back)
+        Size             = UDim2.new(0, size.X.Offset+60, 0, size.Y.Offset+60),
+        Position         = UDim2.new(0.5, 0, 0.5, 12),
+        ImageTransparency = 0.45,
+    }, 0.4, Enum.EasingStyle.Back)
 
     -- ── Close / Minimize ───────────────────────────────────
     local isMin = false
     closeBtn.MouseButton1Click:Connect(function()
-        -- إزالة Blur عند الإغلاق
-        local existingBlur = game:GetService("Lighting"):FindFirstChildWhichIsA("BlurEffect")
-        if existingBlur then
-            Tween(existingBlur, {Size=0}, 0.3)
-            task.delay(0.32, function() existingBlur:Destroy() end)
-        end
         Tween(mainFrame, {
-            Size=UDim2.new(0, size.X.Offset*0.9, 0, size.Y.Offset*0.9),
-            BackgroundTransparency=1,
+            Size                   = UDim2.new(0, size.X.Offset*0.9, 0, size.Y.Offset*0.9),
+            BackgroundTransparency = 1,
         }, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-        Tween(shadowImg, {ImageTransparency=1}, 0.25)
+        Tween(shadowImg, {ImageTransparency=1, Size=UDim2.new(0,0,0,0)}, 0.25)
         task.delay(0.32, function()
             mainFrame:Destroy()
             shadowImg:Destroy()
@@ -1141,8 +1134,10 @@ function CrozoX:CreateWindow(cfg)
         isMin = not isMin
         if isMin then
             Tween(mainFrame, {Size=UDim2.new(0,size.X.Offset,0,54)}, 0.3)
+            Tween(shadowImg, {ImageTransparency=0.8}, 0.3)
         else
             Tween(mainFrame, {Size=size}, 0.35, Enum.EasingStyle.Back)
+            Tween(shadowImg, {ImageTransparency=0.45}, 0.35)
         end
     end)
 
