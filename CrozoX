@@ -692,335 +692,381 @@ function CrozoX:CreateWindow(cfg)
     local L       =self._Lang
     local sg      =self._ScreenGui
 
-    -- ── Main frame ─────────────────────────────────────────
-    -- الحل الصحيح للحواف المنحنية في Roblox:
-    -- mainFrame = شفاف تماماً، فقط لتحديد الحجم والموضع
-    -- innerClip = يحمل الخلفية + UICorner + ClipsDescendants
-    -- هكذا الحواف المنحنية تعمل 100% بدون قطع
-    local mainFrame=New("Frame",{Name="CrozoX_Window",
-        Size=UDim2.new(0,0,0,0),
-        AnchorPoint=Vector2.new(0.5,0.5),
-        Position=UDim2.new(0.5,0,0.5,0),
-        BackgroundTransparency=1,   -- شفاف: الـ innerClip هو من يحمل اللون
-        BorderSizePixel=0,
-        ClipsDescendants=false,
-        ZIndex=10,Parent=sg})
+    -- ════════════════════════════════════════════════════════
+    --  MAIN FRAME — frame واحد فقط، UICorner عليه مباشرة
+    --  السر: ClipsDescendants=true + UICorner على نفس الـ frame
+    --  يعمل بدون أي frame خلفي أو wrapper
+    -- ════════════════════════════════════════════════════════
+    local mainFrame = New("Frame", {
+        Name             = "CrozoX_Window",
+        Size             = UDim2.new(0, 0, 0, 0),
+        AnchorPoint      = Vector2.new(0.5, 0.5),
+        Position         = UDim2.new(0.5, 0, 0.5, 0),
+        BackgroundColor3 = T.Background,
+        BackgroundTransparency = 1,
+        BorderSizePixel  = 0,
+        ClipsDescendants = true,   -- يقصّ المحتوى داخل الحواف
+        ZIndex           = 10,
+        Parent           = sg,
+    })
+    -- UICorner على MainFrame مباشرة = حواف منحنية حقيقية
+    Corner(mainFrame, 16)
 
-    -- Shadow (يجب أن يكون أول child عشان يكون خلف كل شيء)
-    New("ImageLabel",{Name="Shadow",
-        Size=UDim2.new(1,50,1,50),
-        Position=UDim2.new(0,-25,0,-15),
-        BackgroundTransparency=1,
-        Image="rbxassetid://6014261993",
-        ImageColor3=Color3.fromRGB(0,0,0),
-        ImageTransparency=0.5,
-        ScaleType=Enum.ScaleType.Slice,
-        SliceCenter=Rect.new(49,49,450,450),
-        ZIndex=9,Parent=mainFrame})
-
-    -- Inner clip: يحمل الخلفية + الحواف + يقصّ المحتوى
-    local innerClip=New("Frame",{Name="InnerClip",
-        Size=UDim2.new(1,0,1,0),
-        Position=UDim2.new(0,0,0,0),
-        BackgroundColor3=T.Background,
-        BorderSizePixel=0,
-        ClipsDescendants=true,
-        ZIndex=10,Parent=mainFrame})
-    Corner(innerClip,16)
-
-    -- ── Gradient background (black → dark primary) ───────────
-    New("UIGradient",{
-        Color=ColorSequence.new{
-            ColorSequenceKeypoint.new(0, T.Background),
-            ColorSequenceKeypoint.new(0.6, T.Background),
-            ColorSequenceKeypoint.new(1, T.Primary:Lerp(T.Background, 0.82)),
+    -- Gradient خلفية (أسود → Primary خفيف)
+    New("UIGradient", {
+        Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0,   T.Background),
+            ColorSequenceKeypoint.new(0.65, T.Background),
+            ColorSequenceKeypoint.new(1,   T.Primary:Lerp(T.Background, 0.80)),
         },
-        Rotation=135,
-        Parent=innerClip,
+        Rotation = 135,
+        Parent   = mainFrame,
     })
 
-    -- ── Neon glow border (animated pulse) ────────────────────
-    local glowStroke=Stroke(innerClip, T.Primary, 1.5, 0.55)
-    -- Pulse animation on the glow
+    -- Neon glow border (pulsing)
+    local glowStroke = Stroke(mainFrame, T.Primary, 2, 0.5)
     task.spawn(function()
-        while innerClip and innerClip.Parent do
-            Tween(glowStroke,{Transparency=0.3},1.8,Enum.EasingStyle.Sine)
+        while mainFrame and mainFrame.Parent do
+            Tween(glowStroke, {Transparency=0.25}, 1.8, Enum.EasingStyle.Sine)
             task.wait(1.8)
-            Tween(glowStroke,{Transparency=0.65},1.8,Enum.EasingStyle.Sine)
+            Tween(glowStroke, {Transparency=0.65}, 1.8, Enum.EasingStyle.Sine)
             task.wait(1.8)
         end
     end)
 
-    -- ── Titlebar ─────────────────────────── (parent = innerClip)
-    local titleBar=New("Frame",{Size=UDim2.new(1,0,0,58),
-        BackgroundColor3=T.Surface,BorderSizePixel=0,ZIndex=11,Parent=innerClip})
-    -- Gradient on titlebar
-    New("UIGradient",{
-        Color=ColorSequence.new{
-            ColorSequenceKeypoint.new(0, T.Surface),
-            ColorSequenceKeypoint.new(1, T.Surface:Lerp(T.Primary, 0.06)),
-        },
-        Rotation=0,
-        Parent=titleBar,
+    -- Drop shadow (ImageLabel خارج الـ MainFrame في sg مباشرة)
+    local shadowImg = New("ImageLabel", {
+        Name             = "Shadow",
+        Size             = UDim2.new(0, 0, 0, 0),
+        AnchorPoint      = Vector2.new(0.5, 0.5),
+        Position         = UDim2.new(0.5, 0, 0.5, 8),
+        BackgroundTransparency = 1,
+        Image            = "rbxassetid://6014261993",
+        ImageColor3      = Color3.fromRGB(0, 0, 0),
+        ImageTransparency = 0.45,
+        ScaleType        = Enum.ScaleType.Slice,
+        SliceCenter      = Rect.new(49, 49, 450, 450),
+        ZIndex           = 9,
+        Parent           = sg,
     })
 
-    -- Bottom separator line
-    New("Frame",{Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),
-        BackgroundColor3=T.Border,BorderSizePixel=0,ZIndex=12,Parent=titleBar})
-    -- Primary accent bar (animated width)
-    local accentBar=New("Frame",{Size=UDim2.new(0,0,0,2),
-        Position=UDim2.new(0,14,1,-2),
-        BackgroundColor3=T.Primary,BorderSizePixel=0,ZIndex=13,Parent=titleBar})
-    New("UIGradient",{
-        Color=ColorSequence.new{
+    -- ── Titlebar ───────────────────────────────────────────
+    local titleBar = New("Frame", {
+        Size             = UDim2.new(1, 0, 0, 54),
+        Position         = UDim2.new(0, 0, 0, 0),
+        BackgroundColor3 = T.Surface,
+        BorderSizePixel  = 0,
+        ZIndex           = 11,
+        Parent           = mainFrame,
+    })
+    New("UIGradient", {
+        Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, T.Surface),
+            ColorSequenceKeypoint.new(1, T.Surface:Lerp(T.Primary, 0.07)),
+        },
+        Rotation = 0,
+        Parent   = titleBar,
+    })
+    -- Separator
+    New("Frame", {
+        Size             = UDim2.new(1, 0, 0, 1),
+        Position         = UDim2.new(0, 0, 1, -1),
+        BackgroundColor3 = T.Border,
+        BorderSizePixel  = 0,
+        ZIndex           = 12,
+        Parent           = titleBar,
+    })
+    -- Accent bar
+    local accentBar = New("Frame", {
+        Size             = UDim2.new(0, 0, 0, 2),
+        Position         = UDim2.new(0, 14, 1, -2),
+        BackgroundColor3 = T.Primary,
+        BorderSizePixel  = 0,
+        ZIndex           = 13,
+        Parent           = titleBar,
+    })
+    New("UIGradient", {
+        Color = ColorSequence.new{
             ColorSequenceKeypoint.new(0, T.Primary),
             ColorSequenceKeypoint.new(1, T.PrimaryLight),
         },
-        Parent=accentBar,
+        Parent = accentBar,
     })
-    Tween(accentBar,{Size=UDim2.new(0,90,0,2)},0.8,Enum.EasingStyle.Back)
+    Tween(accentBar, {Size=UDim2.new(0,90,0,2)}, 0.8, Enum.EasingStyle.Back)
 
-    -- Logo in titlebar
-    local titleLogo=New("ImageLabel",{Size=UDim2.new(0,32,0,32),
-        Position=UDim2.new(0,14,0.5,-16),BackgroundTransparency=1,
-        Image=logoId,ScaleType=Enum.ScaleType.Fit,ZIndex=12,Parent=titleBar})
-    Corner(titleLogo,8)
-    -- Glow ring around logo
-    New("ImageLabel",{Size=UDim2.new(0,44,0,44),
-        Position=UDim2.new(0,8,0.5,-22),BackgroundTransparency=1,
-        Image="rbxassetid://5028857084",
-        ImageColor3=T.Primary,ImageTransparency=0.75,
-        ZIndex=11,Parent=titleBar})
+    -- Logo
+    local titleLogo = New("ImageLabel", {
+        Size             = UDim2.new(0, 30, 0, 30),
+        Position         = UDim2.new(0, 12, 0.5, -15),
+        BackgroundTransparency = 1,
+        Image            = logoId,
+        ScaleType        = Enum.ScaleType.Fit,
+        ZIndex           = 12,
+        Parent           = titleBar,
+    })
+    Corner(titleLogo, 7)
+    -- Glow ring
+    New("ImageLabel", {
+        Size             = UDim2.new(0, 42, 0, 42),
+        Position         = UDim2.new(0, 6, 0.5, -21),
+        BackgroundTransparency = 1,
+        Image            = "rbxassetid://5028857084",
+        ImageColor3      = T.Primary,
+        ImageTransparency = 0.78,
+        ZIndex           = 11,
+        Parent           = titleBar,
+    })
 
-    New("TextLabel",{Size=UDim2.new(0,220,0,22),Position=UDim2.new(0,54,0,7),
-        BackgroundTransparency=1,Text=title,TextColor3=T.Text,
-        Font=L.Font,TextSize=17,
-        TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=titleBar})
-    New("TextLabel",{Size=UDim2.new(0,220,0,14),Position=UDim2.new(0,54,0,30),
-        BackgroundTransparency=1,Text=subtitle,TextColor3=T.TextMuted,
-        Font=Enum.Font.Gotham,TextSize=10,
-        TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=titleBar})
+    New("TextLabel", {
+        Size             = UDim2.new(0, 260, 0, 22),
+        Position         = UDim2.new(0, 50, 0, 7),
+        BackgroundTransparency = 1,
+        Text             = title,
+        TextColor3       = T.Text,
+        Font             = L.Font,
+        TextSize         = 16,
+        TextXAlignment   = Enum.TextXAlignment.Left,
+        ZIndex           = 12,
+        Parent           = titleBar,
+    })
+    New("TextLabel", {
+        Size             = UDim2.new(0, 260, 0, 14),
+        Position         = UDim2.new(0, 50, 0, 30),
+        BackgroundTransparency = 1,
+        Text             = subtitle,
+        TextColor3       = T.TextMuted,
+        Font             = Enum.Font.Gotham,
+        TextSize         = 10,
+        TextXAlignment   = Enum.TextXAlignment.Left,
+        ZIndex           = 12,
+        Parent           = titleBar,
+    })
 
-    -- ── Control buttons — مثبّتة داخل الـ titlebar ──────────
-    local function CtrlBtn(symbol, rightOffset, normalBg, hoverBg, txtColor)
-        -- rightOffset = المسافة من حافة اليمين (بالبكسل)
-        -- نستخدم UDim2.new(1, -rightOffset, ...) عشان يبقى دايماً داخل الـ titleBar
-        local frame=New("Frame",{
-            Size             = UDim2.new(0,30,0,26),
-            AnchorPoint      = Vector2.new(1,0.5),
-            Position         = UDim2.new(1,-rightOffset,0.5,0),
+    -- ── Control buttons (inside titleBar, anchored right) ──
+    local function CtrlBtn(symbol, rightOff, normalBg, hoverBg, txtColor)
+        local fr = New("Frame", {
+            Size             = UDim2.new(0, 30, 0, 26),
+            AnchorPoint      = Vector2.new(1, 0.5),
+            Position         = UDim2.new(1, -rightOff, 0.5, 0),
             BackgroundColor3 = normalBg,
             BorderSizePixel  = 0,
             ZIndex           = 20,
             Parent           = titleBar,
         })
-        Corner(frame,7)
-        local lbl=New("TextLabel",{
-            Size=UDim2.new(1,0,1,0),
-            BackgroundTransparency=1,
-            Text=symbol,
-            TextColor3=txtColor,
-            Font=Enum.Font.GothamBold,
-            TextSize=14,
-            ZIndex=21,
-            Parent=frame,
+        Corner(fr, 7)
+        local lbl = New("TextLabel", {
+            Size=UDim2.new(1,0,1,0), BackgroundTransparency=1,
+            Text=symbol, TextColor3=txtColor,
+            Font=Enum.Font.GothamBold, TextSize=14,
+            ZIndex=21, Parent=fr,
         })
-        local btn=New("TextButton",{
-            Size=UDim2.new(1,0,1,0),
-            BackgroundTransparency=1,
-            Text="",ZIndex=22,Parent=frame,
+        local btn = New("TextButton", {
+            Size=UDim2.new(1,0,1,0), BackgroundTransparency=1,
+            Text="", ZIndex=22, Parent=fr,
         })
         btn.MouseEnter:Connect(function()
-            Tween(frame,{BackgroundColor3=hoverBg},0.15)
-            Tween(lbl,{TextColor3=Color3.new(1,1,1)},0.15)
+            Tween(fr,  {BackgroundColor3=hoverBg},          0.15)
+            Tween(lbl, {TextColor3=Color3.new(1,1,1)},      0.15)
         end)
         btn.MouseLeave:Connect(function()
-            Tween(frame,{BackgroundColor3=normalBg},0.15)
-            Tween(lbl,{TextColor3=txtColor},0.15)
+            Tween(fr,  {BackgroundColor3=normalBg},          0.15)
+            Tween(lbl, {TextColor3=txtColor},                0.15)
         end)
         return btn
     end
 
-    -- زر الإغلاق ✕ — من اليمين بـ 10px
-    local closeBtn=CtrlBtn("✕", 10,
-        Color3.fromRGB(50,18,18),
-        Color3.fromRGB(200,38,38),
+    local closeBtn = CtrlBtn("✕", 10,
+        Color3.fromRGB(50,18,18), Color3.fromRGB(200,38,38),
         Color3.fromRGB(220,70,70))
-    -- زر التصغير — من اليمين بـ 48px
-    local minBtn=CtrlBtn("—", 48,
-        Color3.fromRGB(26,30,48),
-        Color3.fromRGB(45,55,85),
+    local minBtn = CtrlBtn("—", 48,
+        Color3.fromRGB(26,30,48), Color3.fromRGB(45,55,85),
         Color3.fromRGB(140,155,195))
 
-    -- ── Sidebar ──────────────────────── (parent = innerClip)
-    local sidebar=New("Frame",{Size=UDim2.new(0,162,1,-58),
-        Position=UDim2.new(0,0,0,58),BackgroundColor3=T.Surface,
-        BorderSizePixel=0,ZIndex=11,Parent=innerClip})
-    -- Subtle gradient on sidebar
-    New("UIGradient",{
-        Color=ColorSequence.new{
-            ColorSequenceKeypoint.new(0, T.Surface),
-            ColorSequenceKeypoint.new(1, T.Surface:Lerp(T.Background, 0.5)),
-        },
-        Rotation=90,
-        Parent=sidebar,
+    -- ── Sidebar ────────────────────────────────────────────
+    local sidebar = New("Frame", {
+        Size             = UDim2.new(0, 162, 1, -54),
+        Position         = UDim2.new(0, 0, 0, 54),
+        BackgroundColor3 = T.Surface,
+        BorderSizePixel  = 0,
+        ZIndex           = 11,
+        Parent           = mainFrame,
     })
-    -- Right border
-    New("Frame",{Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,0,0,0),
-        BackgroundColor3=T.Border,BorderSizePixel=0,ZIndex=12,Parent=sidebar})
+    New("UIGradient", {
+        Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, T.Surface),
+            ColorSequenceKeypoint.new(1, T.Surface:Lerp(T.Background, 0.4)),
+        },
+        Rotation = 90,
+        Parent   = sidebar,
+    })
+    New("Frame", {   -- Right border
+        Size=UDim2.new(0,1,1,0), Position=UDim2.new(1,0,0,0),
+        BackgroundColor3=T.Border, BorderSizePixel=0,
+        ZIndex=12, Parent=sidebar,
+    })
 
-    -- ── User profile card ────────────────────────────────────
-    local profileCard=New("Frame",{Size=UDim2.new(1,-14,0,52),
-        Position=UDim2.new(0,7,0,6),
-        BackgroundColor3=T.SurfaceAlt,
-        BorderSizePixel=0,ZIndex=12,Parent=sidebar})
-    Corner(profileCard,10)
-    Stroke(profileCard,T.Border,1,0)
-
-    -- Avatar circle
-    local avatarBg=New("Frame",{Size=UDim2.new(0,32,0,32),
-        Position=UDim2.new(0,8,0.5,-16),
-        BackgroundColor3=T.Primary,
-        BorderSizePixel=0,ZIndex=13,Parent=profileCard})
-    Corner(avatarBg,16)
-    New("UIGradient",{
+    -- Profile card
+    local profileCard = New("Frame", {
+        Size=UDim2.new(1,-14,0,50), Position=UDim2.new(0,7,0,6),
+        BackgroundColor3=T.SurfaceAlt, BorderSizePixel=0,
+        ZIndex=12, Parent=sidebar,
+    })
+    Corner(profileCard, 10)
+    Stroke(profileCard, T.Border, 1, 0)
+    local avatarBg = New("Frame", {
+        Size=UDim2.new(0,30,0,30), Position=UDim2.new(0,8,0.5,-15),
+        BackgroundColor3=T.Primary, BorderSizePixel=0,
+        ZIndex=13, Parent=profileCard,
+    })
+    Corner(avatarBg, 15)
+    New("UIGradient", {
         Color=ColorSequence.new{
             ColorSequenceKeypoint.new(0,T.PrimaryLight),
             ColorSequenceKeypoint.new(1,T.PrimaryDark),
-        },
-        Rotation=135,Parent=avatarBg})
-    New("TextLabel",{Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,
+        }, Rotation=135, Parent=avatarBg,
+    })
+    New("TextLabel", {
+        Size=UDim2.new(1,0,1,0), BackgroundTransparency=1,
         Text=string.upper(string.sub(LocalPlayer.Name,1,1)),
-        TextColor3=Color3.new(1,1,1),Font=Enum.Font.GothamBold,
-        TextSize=14,ZIndex=14,Parent=avatarBg})
-
-    New("TextLabel",{Size=UDim2.new(1,-48,0,18),
-        Position=UDim2.new(0,48,0,8),BackgroundTransparency=1,
-        Text=LocalPlayer.Name,TextColor3=T.Text,
-        Font=Enum.Font.GothamSemibold,TextSize=12,
+        TextColor3=Color3.new(1,1,1), Font=Enum.Font.GothamBold,
+        TextSize=13, ZIndex=14, Parent=avatarBg,
+    })
+    New("TextLabel", {
+        Size=UDim2.new(1,-46,0,17), Position=UDim2.new(0,46,0,7),
+        BackgroundTransparency=1, Text=LocalPlayer.Name,
+        TextColor3=T.Text, Font=Enum.Font.GothamSemibold, TextSize=12,
         TextXAlignment=Enum.TextXAlignment.Left,
         TextTruncate=Enum.TextTruncate.AtEnd,
-        ZIndex=13,Parent=profileCard})
-    -- Online indicator
-    local onlineDot=New("Frame",{Size=UDim2.new(0,7,0,7),
-        Position=UDim2.new(0,48,0,30),
-        BackgroundColor3=T.Success,
-        BorderSizePixel=0,ZIndex=13,Parent=profileCard})
-    Corner(onlineDot,4)
-    New("TextLabel",{Size=UDim2.new(1,-56,0,14),
-        Position=UDim2.new(0,60,0,27),BackgroundTransparency=1,
-        Text="Online",TextColor3=T.TextMuted,
-        Font=Enum.Font.Gotham,TextSize=10,
+        ZIndex=13, Parent=profileCard,
+    })
+    local onlineDot = New("Frame", {
+        Size=UDim2.new(0,6,0,6), Position=UDim2.new(0,46,0,28),
+        BackgroundColor3=T.Success, BorderSizePixel=0,
+        ZIndex=13, Parent=profileCard,
+    })
+    Corner(onlineDot, 3)
+    New("TextLabel", {
+        Size=UDim2.new(1,-58,0,12), Position=UDim2.new(0,57,0,26),
+        BackgroundTransparency=1, Text="Online",
+        TextColor3=T.TextMuted, Font=Enum.Font.Gotham, TextSize=10,
         TextXAlignment=Enum.TextXAlignment.Left,
-        ZIndex=13,Parent=profileCard})
+        ZIndex=13, Parent=profileCard,
+    })
 
-    -- ── Search bar ───────────────────────────────────────────
-    local searchFrame=New("Frame",{Size=UDim2.new(1,-14,0,28),
-        Position=UDim2.new(0,7,0,64),
-        BackgroundColor3=T.SurfaceAlt,
-        BorderSizePixel=0,ZIndex=12,Parent=sidebar})
-    Corner(searchFrame,8)
-    local searchStroke=Stroke(searchFrame,T.Border,1,0)
-
-    Img(searchFrame,Icons.search,13,UDim2.new(0,7,0.5,-6.5),T.TextMuted,13)
-
-    local searchBox=New("TextBox",{Size=UDim2.new(1,-26,1,0),
-        Position=UDim2.new(0,24,0,0),
-        BackgroundTransparency=1,
-        Text="",PlaceholderText=L.Search,
-        PlaceholderColor3=T.TextMuted,
-        TextColor3=T.Text,Font=Enum.Font.Gotham,TextSize=11,
-        BorderSizePixel=0,ClearTextOnFocus=false,
-        ZIndex=13,Parent=searchFrame})
+    -- Search bar
+    local searchFrame = New("Frame", {
+        Size=UDim2.new(1,-14,0,27), Position=UDim2.new(0,7,0,62),
+        BackgroundColor3=T.SurfaceAlt, BorderSizePixel=0,
+        ZIndex=12, Parent=sidebar,
+    })
+    Corner(searchFrame, 8)
+    local searchStroke = Stroke(searchFrame, T.Border, 1, 0)
+    Img(searchFrame, Icons.search, 12, UDim2.new(0,7,0.5,-6), T.TextMuted, 13)
+    local searchBox = New("TextBox", {
+        Size=UDim2.new(1,-24,1,0), Position=UDim2.new(0,22,0,0),
+        BackgroundTransparency=1, Text="",
+        PlaceholderText=L.Search, PlaceholderColor3=T.TextMuted,
+        TextColor3=T.Text, Font=Enum.Font.Gotham, TextSize=11,
+        BorderSizePixel=0, ClearTextOnFocus=false,
+        ZIndex=13, Parent=searchFrame,
+    })
     searchBox.Focused:Connect(function()
-        Tween(searchStroke,{Color=T.Primary},0.15)
-        Tween(searchFrame,{BackgroundColor3=T.SurfaceHover},0.15)
+        Tween(searchStroke, {Color=T.Primary}, 0.15)
+        Tween(searchFrame,  {BackgroundColor3=T.SurfaceHover}, 0.15)
     end)
     searchBox.FocusLost:Connect(function()
-        Tween(searchStroke,{Color=T.Border},0.15)
-        Tween(searchFrame,{BackgroundColor3=T.SurfaceAlt},0.15)
+        Tween(searchStroke, {Color=T.Border},    0.15)
+        Tween(searchFrame,  {BackgroundColor3=T.SurfaceAlt}, 0.15)
     end)
 
-    -- Search filter tabs
+    -- Tab list
+    local tabList = New("ScrollingFrame", {
+        Size=UDim2.new(1,0,1,-96), Position=UDim2.new(0,0,0,96),
+        BackgroundTransparency=1, ScrollBarThickness=2,
+        ScrollBarImageColor3=T.Primary, BorderSizePixel=0,
+        ZIndex=12, CanvasSize=UDim2.new(0,0,0,0), Parent=sidebar,
+    })
+    local tlLayout = ListLayout(tabList, 4)
+    Pad(tabList, 4, 6, 7, 7)
+    tlLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        tabList.CanvasSize = UDim2.new(0,0,0,tlLayout.AbsoluteContentSize.Y+12)
+    end)
+
+    -- Search filter
     searchBox:GetPropertyChangedSignal("Text"):Connect(function()
-        local q=string.lower(searchBox.Text)
-        for _,tabBtn in ipairs(tabList:GetChildren()) do
-            if tabBtn:IsA("Frame") and tabBtn:FindFirstChild("TextLabel") then
-                local lbl=tabBtn:FindFirstChild("TextLabel")
-                if q=="" then
-                    tabBtn.Visible=true
-                else
-                    tabBtn.Visible=string.find(string.lower(lbl.Text),q,1,true)~=nil
-                end
+        local q = string.lower(searchBox.Text)
+        for _, tb in ipairs(tabList:GetChildren()) do
+            if tb:IsA("Frame") then
+                local lbl = tb:FindFirstChildWhichIsA("TextLabel")
+                tb.Visible = q=="" or (lbl and
+                    string.find(string.lower(lbl.Text),q,1,true)~=nil)
             end
         end
     end)
 
-    local tabList=New("ScrollingFrame",{
-        Size=UDim2.new(1,0,1,-100),
-        Position=UDim2.new(0,0,0,100),
-        BackgroundTransparency=1,
-        ScrollBarThickness=2,
-        ScrollBarImageColor3=T.Primary,
-        BorderSizePixel=0,ZIndex=12,
-        CanvasSize=UDim2.new(0,0,0,0),
-        Parent=sidebar})
-    local tlLayout=ListLayout(tabList,4)
-    Pad(tabList,4,6,7,7)
-    tlLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        tabList.CanvasSize=UDim2.new(0,0,0,tlLayout.AbsoluteContentSize.Y+12)
-    end)
-
-    -- ── Content area ─────────────────── (parent = innerClip)
-    local contentArea=New("Frame",{Size=UDim2.new(1,-162,1,-58),
-        Position=UDim2.new(0,162,0,58),BackgroundColor3=T.Background,
-        BorderSizePixel=0,ClipsDescendants=true,ZIndex=11,Parent=innerClip})
-    -- Subtle gradient on content
-    New("UIGradient",{
-        Color=ColorSequence.new{
-            ColorSequenceKeypoint.new(0, T.Background),
-            ColorSequenceKeypoint.new(1, T.Background:Lerp(T.Primary, 0.04)),
-        },
-        Rotation=160,
-        Parent=contentArea,
+    -- ── Content area ───────────────────────────────────────
+    local contentArea = New("Frame", {
+        Size             = UDim2.new(1, -162, 1, -54),
+        Position         = UDim2.new(0, 162, 0, 54),
+        BackgroundTransparency = 1,   -- شفاف: لا خلفية على content
+        BorderSizePixel  = 0,
+        ClipsDescendants = true,
+        ZIndex           = 11,
+        Parent           = mainFrame,
     })
 
     -- ── Drag ───────────────────────────────────────────────
-    local dragging,dStart,dPos
+    local dragging, dStart, dPos
     titleBar.InputBegan:Connect(function(inp)
-        if inp.UserInputType==Enum.UserInputType.MouseButton1 then
-            dragging=true;dStart=inp.Position;dPos=mainFrame.Position end
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging=true; dStart=inp.Position; dPos=mainFrame.Position
+        end
     end)
     titleBar.InputEnded:Connect(function(inp)
-        if inp.UserInputType==Enum.UserInputType.MouseButton1 then dragging=false end
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
     end)
     UserInputService.InputChanged:Connect(function(inp)
         if dragging and inp.UserInputType==Enum.UserInputType.MouseMovement then
-            local d=inp.Position-dStart
-            mainFrame.Position=UDim2.new(dPos.X.Scale,dPos.X.Offset+d.X,
-                dPos.Y.Scale,dPos.Y.Offset+d.Y)
+            local d = inp.Position - dStart
+            mainFrame.Position = UDim2.new(
+                dPos.X.Scale, dPos.X.Offset + d.X,
+                dPos.Y.Scale, dPos.Y.Offset + d.Y)
+            -- Shadow تتحرك مع الواجهة
+            shadowImg.Position = UDim2.new(
+                dPos.X.Scale, dPos.X.Offset + d.X,
+                dPos.Y.Scale, dPos.Y.Offset + d.Y + 8)
         end
     end)
 
-    -- ── Open animation — animate innerClip ─────────────────
-    innerClip.BackgroundTransparency=1
-    Tween(mainFrame,{Size=size},0.5,Enum.EasingStyle.Back)
-    Tween(innerClip,{BackgroundTransparency=0},0.4)
+    -- ── Open animation ─────────────────────────────────────
+    mainFrame.BackgroundTransparency = 1
+    Tween(mainFrame, {Size=size, BackgroundTransparency=0},
+        0.5, Enum.EasingStyle.Back)
+    Tween(shadowImg, {
+        Size    = UDim2.new(0, size.X.Offset+50, 0, size.Y.Offset+50),
+        Position = UDim2.new(0.5, 0, 0.5, 8),
+    }, 0.5, Enum.EasingStyle.Back)
 
     -- ── Close / Minimize ───────────────────────────────────
-    local isMin=false
+    local isMin = false
     closeBtn.MouseButton1Click:Connect(function()
-        Tween(mainFrame,{Size=UDim2.new(0,size.X.Offset,0,0)},
-            0.35,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-        Tween(innerClip,{BackgroundTransparency=1},0.3)
-        task.delay(0.38,function() mainFrame:Destroy() end)
+        Tween(mainFrame, {Size=UDim2.new(0,size.X.Offset,0,0),
+            BackgroundTransparency=1},
+            0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+        Tween(shadowImg, {ImageTransparency=1}, 0.3)
+        task.delay(0.38, function()
+            mainFrame:Destroy()
+            shadowImg:Destroy()
+        end)
     end)
     minBtn.MouseButton1Click:Connect(function()
-        isMin=not isMin
+        isMin = not isMin
         if isMin then
-            Tween(mainFrame,{Size=UDim2.new(0,size.X.Offset,0,58)},0.3)
+            Tween(mainFrame, {Size=UDim2.new(0,size.X.Offset,0,54)}, 0.3)
         else
-            Tween(mainFrame,{Size=size},0.35,Enum.EasingStyle.Back)
+            Tween(mainFrame, {Size=size}, 0.35, Enum.EasingStyle.Back)
         end
     end)
 
