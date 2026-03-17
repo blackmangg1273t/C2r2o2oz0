@@ -1367,74 +1367,88 @@ function CrozoX:CreateWindow(cfg)
                 EL(f,desc,xOff,32,240,16,T.TextMuted,L.FontBody,12)
             end
 
-            -- ── زر تفعيل/إيقاف — يتبدّل عند الضغط ───────────
+            -- ── زر تفعيل/إيقاف ────────────────────────────
             local btnActive = false
             local txtOn  = L.IsRTL and "تفعيل" or "Run"
             local txtOff = L.IsRTL and "إيقاف" or "Stop"
 
-            local rb=New("TextButton",{
-                Size=UDim2.new(0,82,0,32),
-                Position=UDim2.new(1,-94,0.5,-16),
-                BackgroundColor3=T.Primary,
-                Text=txtOn,
-                TextColor3=Color3.new(1,1,1),   -- أبيض دائماً
-                Font=Enum.Font.GothamBold,
-                TextSize=FS.Button,
-                BorderSizePixel=0,ZIndex=14,Parent=f})
-            Corner(rb,8)
-            New("UIGradient",{Color=ColorSequence.new{
-                ColorSequenceKeypoint.new(0,T.PrimaryLight),
-                ColorSequenceKeypoint.new(1,T.Primary),
-            },Rotation=90,Parent=rb})
-            local rbGlow=New("ImageLabel",{
-                Size=UDim2.new(1,22,1,22),
-                Position=UDim2.new(0,-11,0,-5),
-                BackgroundTransparency=1,
-                Image="rbxassetid://6014261993",
-                ImageColor3=T.PrimaryGlow,
-                ImageTransparency=0.80,
-                ScaleType=Enum.ScaleType.Slice,
-                SliceCenter=Rect.new(49,49,450,450),
-                ZIndex=13,Parent=rb})
-            Stroke(rb,T.Primary,1,0.5)
+            local rb = New("TextButton", {
+                Size             = UDim2.new(0, 82, 0, 32),
+                Position         = UDim2.new(1, -94, 0.5, -16),
+                BackgroundColor3 = T.Primary,
+                Text             = txtOn,
+                TextColor3       = Color3.new(1, 1, 1),  -- أبيض صريح
+                Font             = Enum.Font.GothamBold,
+                TextSize         = FS.Button,
+                BorderSizePixel  = 0,
+                ZIndex           = 14,
+                Parent           = f,
+            })
+            Corner(rb, 8)
+            -- gradient خفيف على الزر
+            New("UIGradient", {
+                Color = ColorSequence.new{
+                    ColorSequenceKeypoint.new(0, T.PrimaryLight),
+                    ColorSequenceKeypoint.new(1, T.Primary),
+                },
+                Rotation = 90,
+                Parent   = rb,
+            })
+            -- stroke خفيف حول الزر
+            Stroke(rb, T.Primary, 1, 0.6)
 
             -- دالة تغيير الحالة
             local function SetBtnState(active)
                 btnActive = active
                 if active then
-                    -- حالة إيقاف — رمادي محايد (#2A2A2A)
                     rb.Text = txtOff
+                    -- إيقاف = رمادي #2A2A2A
+                    local g = rb:FindFirstChildWhichIsA("UIGradient")
+                    if g then g:Destroy() end
                     Tween(rb, {BackgroundColor3=T.BtnStop}, 0.2)
-                    Tween(rbGlow, {ImageTransparency=0.92}, 0.2)
                 else
-                    -- حالة تفعيل — accent color
                     rb.Text = txtOn
+                    -- تفعيل = Primary مع gradient
+                    if not rb:FindFirstChildWhichIsA("UIGradient") then
+                        New("UIGradient", {
+                            Color = ColorSequence.new{
+                                ColorSequenceKeypoint.new(0, T.PrimaryLight),
+                                ColorSequenceKeypoint.new(1, T.Primary),
+                            },
+                            Rotation = 90, Parent = rb,
+                        })
+                    end
                     Tween(rb, {BackgroundColor3=T.Primary}, 0.2)
-                    Tween(rbGlow, {ImageTransparency=0.80}, 0.2)
                 end
             end
 
             rb.MouseEnter:Connect(function()
-                local hoverColor = btnActive and T.BtnStopHov or T.PrimaryLight
-                Tween(rb, {BackgroundColor3=hoverColor}, 0.15)
-                Tween(rbGlow, {ImageTransparency=0.50}, 0.15)
-                Tween(rb, {Size=UDim2.new(0,86,0,34), Position=UDim2.new(1,-97,0.5,-17)},
-                    0.15, Enum.EasingStyle.Back)
+                local c = btnActive and T.BtnStopHov or T.PrimaryLight
+                Tween(rb, {BackgroundColor3=c}, 0.15)
+                Tween(rb, {
+                    Size     = UDim2.new(0, 86, 0, 34),
+                    Position = UDim2.new(1, -97, 0.5, -17),
+                }, 0.15, Enum.EasingStyle.Back)
             end)
             rb.MouseLeave:Connect(function()
-                local normColor = btnActive and T.BtnStop or T.Primary
-                Tween(rb, {BackgroundColor3=normColor}, 0.15)
-                Tween(rbGlow, {ImageTransparency=0.80}, 0.15)
-                Tween(rb, {Size=UDim2.new(0,82,0,32), Position=UDim2.new(1,-94,0.5,-16)}, 0.15)
+                local c = btnActive and T.BtnStop or T.Primary
+                Tween(rb, {BackgroundColor3=c}, 0.15)
+                Tween(rb, {
+                    Size     = UDim2.new(0, 82, 0, 32),
+                    Position = UDim2.new(1, -94, 0.5, -16),
+                }, 0.15)
             end)
             rb.MouseButton1Down:Connect(function()
-                Tween(rb,{Size=UDim2.new(0,77,0,29),Position=UDim2.new(1,-91,0.5,-14)},0.07)
-                Tween(rbGlow,{ImageTransparency=0.35},0.07)
+                Tween(rb, {
+                    Size     = UDim2.new(0, 77, 0, 29),
+                    Position = UDim2.new(1, -91, 0.5, -14),
+                }, 0.07)
             end)
             rb.MouseButton1Up:Connect(function()
-                Tween(rb,{Size=UDim2.new(0,82,0,32),Position=UDim2.new(1,-94,0.5,-16)},
-                    0.15,Enum.EasingStyle.Back)
-                Tween(rbGlow,{ImageTransparency=0.80},0.15)
+                Tween(rb, {
+                    Size     = UDim2.new(0, 82, 0, 32),
+                    Position = UDim2.new(1, -94, 0.5, -16),
+                }, 0.15, Enum.EasingStyle.Back)
             end)
             rb.MouseButton1Click:Connect(function()
                 Ripple(rb)
