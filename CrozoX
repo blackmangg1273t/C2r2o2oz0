@@ -719,8 +719,8 @@ function CrozoX:CreateWindow(cfg)
     local wrapFrame = New("Frame", {
         Name                   = "CrozoX_Wrap",
         Size                   = UDim2.new(0, 0, 0, 0),
-        AnchorPoint            = Vector2.new(0.5, 0.5),
-        Position               = UDim2.new(0.5, 0, 0.5, 0),
+        AnchorPoint            = Vector2.new(0, 0),
+        Position               = UDim2.new(0, 0, 0, 0),
         BackgroundTransparency = 1,
         BorderSizePixel        = 0,
         ClipsDescendants       = false,
@@ -1120,31 +1120,19 @@ function CrozoX:CreateWindow(cfg)
     local MAX_W, MAX_H = 1200, 800
 
     -- ── Drag ──────────────────────────────────────────────
-    local anchorFixed = false   -- flag بسيط بدل مقارنة Vector2
-
     UserInputService.InputBegan:Connect(function(inp, gp)
         if gp then return end
         if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
         if resizing then return end
-
         local mp = UserInputService:GetMouseLocation()
         local ap = wrapFrame.AbsolutePosition
         local as = wrapFrame.AbsoluteSize
-        local inFrame = mp.X >= ap.X and mp.X <= ap.X + as.X
-                    and mp.Y >= ap.Y and mp.Y <= ap.Y + as.Y
-        if not inFrame then return end
-
-        -- أول لمسة: نحوّل من Scale إلى Offset خالص مرة واحدة
-        if not anchorFixed then
-            anchorFixed           = true
-            wrapFrame.AnchorPoint = Vector2.new(0, 0)
-            wrapFrame.Position    = UDim2.new(0, ap.X, 0, ap.Y)
-        end
-
+        if mp.X < ap.X or mp.X > ap.X + as.X then return end
+        if mp.Y < ap.Y or mp.Y > ap.Y + as.Y then return end
+        -- AnchorPoint=0,0 دايماً → dragOff = موضع الماوس من الزاوية
         dragging = true
-        local fp = wrapFrame.AbsolutePosition   -- إعادة قراءة بعد التحويل
-        dragOffX = mp.X - fp.X
-        dragOffY = mp.Y - fp.Y
+        dragOffX = mp.X - ap.X
+        dragOffY = mp.Y - ap.Y
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
@@ -1234,15 +1222,29 @@ function CrozoX:CreateWindow(cfg)
     end)
 
     -- ── Open animation ─────────────────────────────────────
-    -- نستخدم AbsolutePosition بعد frame واحد عشان نضمن إنه اتحسب
     mainFrame.BackgroundTransparency = 1
-    wrapFrame.Size = UDim2.new(0, size.X.Offset * 0.92, 0, size.Y.Offset * 0.92)
-    -- نتركه يتحدد في المنتصف بالـ AnchorPoint أولاً
-    wrapFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    wrapFrame.Position    = UDim2.new(0.5, 0, 0.5, 0)
+    wrapFrame.Size     = UDim2.new(0, 0, 0, 0)
+    wrapFrame.Position = UDim2.new(0, 0, 0, 0)
 
-    Tween(wrapFrame, {Size = size}, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
-    Tween(mainFrame, {BackgroundTransparency = 0}, 0.35)
+    -- ننتظر frame واحد عشان sg.AbsoluteSize يكون جاهز
+    task.defer(function()
+        local sw = sg.AbsoluteSize.X
+        local sh = sg.AbsoluteSize.Y
+        local w  = size.X.Offset
+        local h  = size.Y.Offset
+        -- موضع المركز بـ AnchorPoint=0,0
+        local cx = (sw - w) / 2
+        local cy = (sh - h) / 2
+        local sx = (sw - w * 0.92) / 2
+        local sy = (sh - h * 0.92) / 2
+        wrapFrame.Size     = UDim2.new(0, w * 0.92, 0, h * 0.92)
+        wrapFrame.Position = UDim2.new(0, sx, 0, sy)
+        Tween(wrapFrame, {
+            Size     = UDim2.new(0, w, 0, h),
+            Position = UDim2.new(0, cx, 0, cy),
+        }, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+        Tween(mainFrame, {BackgroundTransparency = 0}, 0.35)
+    end)
 
     -- ── Close / Minimize ───────────────────────────────────
     local isMin = false
