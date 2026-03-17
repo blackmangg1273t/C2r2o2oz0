@@ -719,8 +719,8 @@ function CrozoX:CreateWindow(cfg)
     local wrapFrame = New("Frame", {
         Name                   = "CrozoX_Wrap",
         Size                   = UDim2.new(0, 0, 0, 0),
-        AnchorPoint            = Vector2.new(0, 0),   -- ← 0,0 لازم يتطابق مع طريقة الـ drag
-        Position               = UDim2.new(0, 0, 0, 0),
+        AnchorPoint            = Vector2.new(0.5, 0.5),
+        Position               = UDim2.new(0.5, 0, 0.5, 0),
         BackgroundTransparency = 1,
         BorderSizePixel        = 0,
         ClipsDescendants       = false,
@@ -1221,27 +1221,25 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    -- ── Open animation — حساب الموضع المركزي مع AnchorPoint=0,0 ─
-    -- لما AnchorPoint=0,0 فالموضع بيكون من الزاوية العلوية اليسرى
-    -- عشان يظهر في المنتصف: X = (ScreenW - W) / 2
-    local sg_size = sg.AbsoluteSize
-    local startW  = size.X.Offset * 0.92
-    local startH  = size.Y.Offset * 0.92
-    local centX   = (sg_size.X - size.X.Offset) / 2
-    local centY   = (sg_size.Y - size.Y.Offset) / 2
-
-    wrapFrame.Size     = UDim2.new(0, startW, 0, startH)
-    wrapFrame.Position = UDim2.new(0,
-        (sg_size.X - startW) / 2,
-        0,
-        (sg_size.Y - startH) / 2)
+    -- ── Open animation ─────────────────────────────────────
+    -- نستخدم AbsolutePosition بعد frame واحد عشان نضمن إنه اتحسب
     mainFrame.BackgroundTransparency = 1
+    wrapFrame.Size = UDim2.new(0, size.X.Offset * 0.92, 0, size.Y.Offset * 0.92)
+    -- نتركه يتحدد في المنتصف بالـ AnchorPoint أولاً
+    wrapFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    wrapFrame.Position    = UDim2.new(0.5, 0, 0.5, 0)
 
-    Tween(wrapFrame, {
-        Size     = size,
-        Position = UDim2.new(0, centX, 0, centY),
-    }, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+    Tween(wrapFrame, {Size = size}, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
     Tween(mainFrame, {BackgroundTransparency = 0}, 0.35)
+
+    -- بعد animation: نحوّل الـ Position لـ Offset خالص (بدون Scale)
+    -- عشان الـ drag يشتغل صح بدون قفز
+    task.delay(0.38, function()
+        if not wrapFrame.Parent then return end
+        local ap = wrapFrame.AbsolutePosition
+        wrapFrame.AnchorPoint = Vector2.new(0, 0)
+        wrapFrame.Position    = UDim2.new(0, ap.X, 0, ap.Y)
+    end)
 
     -- ── Close / Minimize ───────────────────────────────────
     local isMin = false
@@ -1257,18 +1255,17 @@ function CrozoX:CreateWindow(cfg)
     end)
     minBtn.MouseButton1Click:Connect(function()
         isMin = not isMin
+        local px = wrapFrame.Position.X.Offset
+        local py = wrapFrame.Position.Y.Offset
         if isMin then
-            -- حفظ الموضع الحالي وتصغير الارتفاع فقط
-            local cp = wrapFrame.AbsolutePosition
             Tween(wrapFrame, {
                 Size     = UDim2.new(0, size.X.Offset, 0, 54),
-                Position = UDim2.new(0, cp.X, 0, cp.Y),
+                Position = UDim2.new(0, px, 0, py),
             }, 0.3)
         else
-            local cp = wrapFrame.AbsolutePosition
             Tween(wrapFrame, {
                 Size     = size,
-                Position = UDim2.new(0, cp.X, 0, cp.Y),
+                Position = UDim2.new(0, px, 0, py),
             }, 0.35, Enum.EasingStyle.Back)
         end
     end)
