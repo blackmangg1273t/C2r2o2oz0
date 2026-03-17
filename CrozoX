@@ -767,32 +767,37 @@ function CrozoX:CreateWindow(cfg)
 
     -- Drop shadow — في sg خلف mainFrame، تتبع موضعه تلقائياً
     local shadowImg = New("ImageLabel", {
-        Name                  = "Shadow",
-        Size                  = UDim2.new(0, 0, 0, 0),
-        Position              = UDim2.new(0, 0, 0, 0),
+        Name                   = "Shadow",
+        Size                   = UDim2.new(0, 10, 0, 10),
+        Position               = UDim2.new(0, 0, 0, 0),
         BackgroundTransparency = 1,
-        Image                 = "rbxassetid://6014261993",
-        ImageColor3           = Color3.fromRGB(0, 0, 0),
-        ImageTransparency     = 0.5,
-        ScaleType             = Enum.ScaleType.Slice,
-        SliceCenter           = Rect.new(49, 49, 450, 450),
-        ZIndex                = 9,
-        Parent                = sg,  -- في sg عشان لا يتأثر بـ ClipsDescendants
+        Image                  = "rbxassetid://6014261993",
+        ImageColor3            = Color3.fromRGB(0, 0, 0),
+        ImageTransparency      = 1,
+        ScaleType              = Enum.ScaleType.Slice,
+        SliceCenter            = Rect.new(49, 49, 450, 450),
+        ZIndex                 = 9,
+        Parent                 = sg,
     })
 
-    -- تحديث shadow كل frame ليبقى لاصقاً بالواجهة
+    -- Shadow تلاحق mainFrame كل frame — خلفها بالضبط
     RunService.RenderStepped:Connect(function()
         if not mainFrame.Parent then
-            shadowImg.ImageTransparency = 1
+            if shadowImg.Parent then shadowImg:Destroy() end
             return
         end
         local ap = mainFrame.AbsolutePosition
         local as = mainFrame.AbsoluteSize
-        shadowImg.Size     = UDim2.new(0, as.X + 50, 0, as.Y + 50)
-        shadowImg.Position = UDim2.new(0, ap.X - 25, 0, ap.Y - 15)
+        local pad = 30
+        shadowImg.Size     = UDim2.new(0, as.X + pad*2, 0, as.Y + pad*2)
+        shadowImg.Position = UDim2.new(0, ap.X - pad,   0, ap.Y - pad + 6)
     end)
-
-    Tween(shadowImg, {ImageTransparency=0.5}, 0.4)
+    -- تظهر بعد animation الفتح
+    task.delay(0.3, function()
+        if shadowImg.Parent then
+            Tween(shadowImg, {ImageTransparency=0.55}, 0.3)
+        end
+    end)
 
     -- ── Titlebar — شفاف عشان حواف MainFrame تظهر ──────────
     local titleBar = New("Frame", {
@@ -1094,161 +1099,132 @@ function CrozoX:CreateWindow(cfg)
     })
 
     -- ══════════════════════════════════════════════════════
-    --  SMOOTH DRAG — تحريك سلس مع Lerp
+    --  DRAG — تحريك من أي مكان في الواجهة
+    --  الـ Lerp يشتغل على RenderStepped بدون قفز
     -- ══════════════════════════════════════════════════════
-    local dragging   = false
-    local dStart     = Vector2.new()
-    local dPos       = UDim2.new()
-    local targetPos  = mainFrame.Position
-    local smoothConn
+    local dragging  = false
+    local resizing  = false   -- forward declare
+    local dragOffX  = 0       -- offset الماوس من أعلى يسار الواجهة
+    local dragOffY  = 0
+    local curTargX  = 0
+    local curTargY  = 0
 
-    titleBar.InputBegan:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dStart   = inp.Position
-            dPos     = mainFrame.Position
-            targetPos = mainFrame.Position
-            if smoothConn then smoothConn:Disconnect() end
-            smoothConn = RunService.RenderStepped:Connect(function()
-                if not mainFrame.Parent then
-                    smoothConn:Disconnect(); return
-                end
-                local cur = mainFrame.Position
-                local lx = cur.X.Offset + (targetPos.X.Offset - cur.X.Offset) * 0.25
-                local ly = cur.Y.Offset + (targetPos.Y.Offset - cur.Y.Offset) * 0.25
-                mainFrame.Position = UDim2.new(0, lx, 0, ly)
-                -- Shadow داخل mainFrame تتحرك تلقائياً
-            end)
-        end
+    -- Drag يبدأ من أي input على الواجهة كلها
+    mainFrame.InputBegan:Connect(function(inp)
+        if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
+        if resizing then return end
+
+        -- هل الماوس على حافة؟ لو آه → resize مش drag
+        local mp = UserInputService:GetMouseLocation()
+        local ap = mainFrame.AbsolutePosition
+        local as = mainFrame.AbsoluteSize
+        local EDGE_D = 8
+        local onEdge = (mp.X <= ap.X + EDGE_D or mp.X >= ap.X + as.X - EDGE_D
+                     or mp.Y >= ap.Y + as.Y - EDGE_D)
+        if onEdge then return end  -- الـ resize handler يتولى
+
+        dragging = true
+        -- نحسب offset الماوس من موضع الواجهة الحالي
+        dragOffX = mp.X - mainFrame.AbsolutePosition.X
+        dragOffY = mp.Y - mainFrame.AbsolutePosition.Y
+        curTargX = mainFrame.Position.X.Offset
+        curTargY = mainFrame.Position.Y.Offset
     end)
-    titleBar.InputEnded:Connect(function(inp)
+
+    mainFrame.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
             dragging = false
-            if smoothConn then smoothConn:Disconnect(); smoothConn=nil end
-            -- Snap انيميشن خفيف عند الإفلات
-            Tween(mainFrame, {Position=targetPos}, 0.12, Enum.EasingStyle.Quad)
         end
     end)
-    UserInputService.InputChanged:Connect(function(inp)
-        if dragging and inp.UserInputType == Enum.UserInputType.MouseMovement then
-            local d = inp.Position - dStart
-            targetPos = UDim2.new(0, dPos.X.Offset + d.X, 0, dPos.Y.Offset + d.Y)
+
+    -- حركة smooth بـ Lerp — target يتحدث فوراً، الواجهة تلحق
+    local lerpX = mainFrame.Position.X.Offset
+    local lerpY = mainFrame.Position.Y.Offset
+
+    RunService.RenderStepped:Connect(function()
+        if not mainFrame.Parent then return end
+        if dragging then
+            local mp = UserInputService:GetMouseLocation()
+            curTargX = mp.X - dragOffX
+            curTargY = mp.Y - dragOffY
+        end
+        if dragging then
+            -- Lerp سلس: 35% كل frame
+            lerpX = lerpX + (curTargX - lerpX) * 0.35
+            lerpY = lerpY + (curTargY - lerpY) * 0.35
+            mainFrame.Position = UDim2.new(0, lerpX, 0, lerpY)
         end
     end)
 
     -- ══════════════════════════════════════════════════════
-    --  RESIZE — تكبير/تصغير من جميع الحواف
+    --  RESIZE — زر خارج الواجهة، ضغطة طويلة + سحب
     -- ══════════════════════════════════════════════════════
-    local MIN_W, MIN_H = 480, 340
-    local MAX_W, MAX_H = 1100, 750
-    local EDGE = 8
+    local MIN_W, MIN_H = 420, 300
+    local MAX_W, MAX_H = 1200, 800
 
-    -- أيقونة resize — تظهر على الحافة اليمنى السفلى خارج الواجهة
-    local resizeIcon = New("Frame", {
-        Name                   = "ResizeIcon",
-        Size                   = UDim2.new(0, 16, 0, 16),
-        AnchorPoint            = Vector2.new(0.5, 0.5),  -- مركز الأيقونة على الزاوية
-        BackgroundTransparency = 1,
+    -- زر الـ resize — يجلس خارج الزاوية السفلى اليمنى
+    local resizeBtn = New("TextButton", {
+        Name                   = "ResizeBtn",
+        Size                   = UDim2.new(0, 24, 0, 24),
+        AnchorPoint            = Vector2.new(0, 0),
+        BackgroundColor3       = T.SurfaceAlt,
+        BackgroundTransparency = 0.3,
+        Text                   = "",
         ZIndex                 = 50,
         Parent                 = sg,
     })
-    -- خط أفقي (⌐)
-    local rh = New("Frame", {
-        Size=UDim2.new(0,12,0,2), AnchorPoint=Vector2.new(1,1),
-        Position=UDim2.new(1,0,1,0),
-        BackgroundColor3=T.TextMuted, BackgroundTransparency=0.4,
-        BorderSizePixel=0, ZIndex=51, Parent=resizeIcon,
-    }); Corner(rh,1)
-    -- خط عمودي
-    local rv = New("Frame", {
-        Size=UDim2.new(0,2,0,12), AnchorPoint=Vector2.new(1,1),
-        Position=UDim2.new(1,0,1,0),
-        BackgroundColor3=T.TextMuted, BackgroundTransparency=0.4,
-        BorderSizePixel=0, ZIndex=51, Parent=resizeIcon,
-    }); Corner(rv,1)
+    Corner(resizeBtn, 6)
+    New("UIStroke", {Color=T.BorderBright, Thickness=1, Transparency=0.3, Parent=resizeBtn})
 
-    -- تحديث موضع الأيقونة — على الزاوية اليمنى السفلى بالضبط
+    -- رسم شكل ⌟ داخل الزر
+    local rl = New("Frame", {  -- خط أفقي
+        Size=UDim2.new(0,13,0,2), Position=UDim2.new(0,5,1,-7),
+        BackgroundColor3=T.TextDim, BorderSizePixel=0, ZIndex=51, Parent=resizeBtn,
+    }); Corner(rl,1)
+    local rt = New("Frame", {  -- خط عمودي
+        Size=UDim2.new(0,2,0,13), Position=UDim2.new(1,-7,0,5),
+        BackgroundColor3=T.TextDim, BorderSizePixel=0, ZIndex=51, Parent=resizeBtn,
+    }); Corner(rt,1)
+
+    -- موضع الزر يلاحق الزاوية السفلى اليمنى بـ offset بسيط خارجها
     RunService.RenderStepped:Connect(function()
         if not mainFrame.Parent then
-            resizeIcon.Visible = false; return
+            resizeBtn.Visible = false; return
         end
-        resizeIcon.Visible = true
+        resizeBtn.Visible = true
         local ap = mainFrame.AbsolutePosition
         local as = mainFrame.AbsoluteSize
-        -- AnchorPoint=0.5,0.5 + موضع على الزاوية = الأيقونة نصفها خارج نصفها داخل
-        resizeIcon.Position = UDim2.new(0, ap.X + as.X, 0, ap.Y + as.Y)
+        -- الزر يجلس على الزاوية، نصفه داخل نصفه خارج
+        resizeBtn.Position = UDim2.new(0, ap.X + as.X - 12, 0, ap.Y + as.Y - 12)
+    end)
+
+    -- Hover animation على الزر
+    resizeBtn.MouseEnter:Connect(function()
+        Tween(resizeBtn, {BackgroundColor3=T.Primary, BackgroundTransparency=0}, 0.15)
+        Tween(rl, {BackgroundColor3=Color3.new(1,1,1)}, 0.15)
+        Tween(rt, {BackgroundColor3=Color3.new(1,1,1)}, 0.15)
+    end)
+    resizeBtn.MouseLeave:Connect(function()
+        Tween(resizeBtn, {BackgroundColor3=T.SurfaceAlt, BackgroundTransparency=0.3}, 0.15)
+        Tween(rl, {BackgroundColor3=T.TextDim}, 0.15)
+        Tween(rt, {BackgroundColor3=T.TextDim}, 0.15)
     end)
 
     -- Resize state
-    local resizing   = false
-    local resizeEdge = {}
-    local rStart     = Vector2.new()
-    local rSize      = Vector2.new()
-    local rPos       = Vector2.new()
+    local rStart = Vector2.new()
+    local rSize  = Vector2.new()
+    local rPos   = Vector2.new()
 
-    local function GetEdge(mousePos)
-        local ap = mainFrame.AbsolutePosition
-        local as = mainFrame.AbsoluteSize
-        local mx, my = mousePos.X, mousePos.Y
-        -- الماوس لازم يكون على حدود الـ frame بالضبط
-        local inX = mx >= ap.X - EDGE and mx <= ap.X + as.X + EDGE
-        local inY = my >= ap.Y - EDGE and my <= ap.Y + as.Y + EDGE
-        if not (inX and inY) then return false,false,false,false end
-        local r = mx >= ap.X + as.X - EDGE and mx <= ap.X + as.X + EDGE
-        local b = my >= ap.Y + as.Y - EDGE and my <= ap.Y + as.Y + EDGE
-        local l = mx >= ap.X - EDGE         and mx <= ap.X + EDGE
-        local t = my >= ap.Y - EDGE         and my <= ap.Y + EDGE
-        return r, b, l, t
-    end
-
-    -- إضاءة الأيقونة فقط لما الماوس قريب من الزاوية
-    RunService.RenderStepped:Connect(function()
-        if not mainFrame.Parent then return end
-        local mp = UserInputService:GetMouseLocation()
-        local ap = mainFrame.AbsolutePosition
-        local as = mainFrame.AbsoluteSize
-        local near = mp.X >= ap.X + as.X - 16 and mp.X <= ap.X + as.X + 16
-                 and mp.Y >= ap.Y + as.Y - 16 and mp.Y <= ap.Y + as.Y + 16
-        rh.BackgroundTransparency = near and 0   or 0.65
-        rv.BackgroundTransparency = near and 0   or 0.65
-        rh.BackgroundColor3 = near and T.Primary or T.BorderBright
-        rv.BackgroundColor3 = near and T.Primary or T.BorderBright
-    end)
-
-    -- بدء الـ resize
-    mainFrame.InputBegan:Connect(function(inp)
+    resizeBtn.InputBegan:Connect(function(inp)
         if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
-        if dragging then return end
+        resizing = true
         local mp = UserInputService:GetMouseLocation()
-        local r,b,l,t = GetEdge(mp)
-        if not (r or b or l or t) then return end
-        resizing   = true
-        resizeEdge = {r=r, b=b, l=l, t=t}
-        rStart     = mp
-        rSize      = Vector2.new(mainFrame.AbsoluteSize.X,     mainFrame.AbsoluteSize.Y)
-        rPos       = Vector2.new(mainFrame.AbsolutePosition.X, mainFrame.AbsolutePosition.Y)
+        rStart   = mp
+        rSize    = Vector2.new(mainFrame.AbsoluteSize.X, mainFrame.AbsoluteSize.Y)
+        rPos     = Vector2.new(mainFrame.AbsolutePosition.X, mainFrame.AbsolutePosition.Y)
+        -- تغيير لون الزر أثناء الـ resize
+        Tween(resizeBtn, {BackgroundColor3=T.Primary, BackgroundTransparency=0}, 0.1)
     end)
-
-    local function ApplyResize(newW, newH)
-        newW = math.clamp(math.round(newW), MIN_W, MAX_W)
-        newH = math.clamp(math.round(newH), MIN_H, MAX_H)
-
-        -- حساب الموضع الجديد بناءً على الحافة المسحوبة
-        local newX = rPos.X
-        local newY = rPos.Y
-        -- resize من اليسار: الحافة اليمنى ثابتة
-        if resizeEdge.l then
-            newX = rPos.X + (rSize.X - newW)
-        end
-        -- resize من الأعلى: الحافة السفلى ثابتة
-        if resizeEdge.t then
-            newY = rPos.Y + (rSize.Y - newH)
-        end
-
-        mainFrame.Size     = UDim2.new(0, newW, 0, newH)
-        mainFrame.Position = UDim2.new(0, newX, 0, newY)
-        size = UDim2.new(0, newW, 0, newH)
-    end
 
     UserInputService.InputChanged:Connect(function(inp)
         if not resizing then return end
@@ -1256,18 +1232,21 @@ function CrozoX:CreateWindow(cfg)
         local mp = UserInputService:GetMouseLocation()
         local dx = mp.X - rStart.X
         local dy = mp.Y - rStart.Y
-        local newW = rSize.X
-        local newH = rSize.Y
-        if resizeEdge.r then newW = rSize.X + dx end
-        if resizeEdge.l then newW = rSize.X - dx end
-        if resizeEdge.b then newH = rSize.Y + dy end
-        if resizeEdge.t then newH = rSize.Y - dy end
-        ApplyResize(newW, newH)
+        local newW = math.clamp(rSize.X + dx, MIN_W, MAX_W)
+        local newH = math.clamp(rSize.Y + dy, MIN_H, MAX_H)
+        -- الموضع ثابت — نكبّر من اليمين والأسفل فقط
+        mainFrame.Size     = UDim2.new(0, newW, 0, newH)
+        mainFrame.Position = UDim2.new(0, rPos.X, 0, rPos.Y)
+        size               = UDim2.new(0, newW, 0, newH)
+        -- تحديث lerpX/lerpY عشان drag ما يقفز
+        lerpX = rPos.X
+        lerpY = rPos.Y
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 and resizing then
             resizing = false
+            Tween(resizeBtn, {BackgroundColor3=T.SurfaceAlt, BackgroundTransparency=0.3}, 0.2)
         end
     end)
 
