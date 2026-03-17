@@ -1099,155 +1099,145 @@ function CrozoX:CreateWindow(cfg)
     })
 
     -- ══════════════════════════════════════════════════════
-    --  DRAG — تحريك من أي مكان في الواجهة
-    --  الـ Lerp يشتغل على RenderStepped بدون قفز
+    --  DRAG — بسيط ومضبوط، بدون lerp بدون قفز
     -- ══════════════════════════════════════════════════════
-    local dragging  = false
-    local resizing  = false   -- forward declare
-    local dragOffX  = 0       -- offset الماوس من أعلى يسار الواجهة
-    local dragOffY  = 0
-    local curTargX  = 0
-    local curTargY  = 0
+    local dragging = false
+    local resizing = false
+    local dragOffX = 0
+    local dragOffY = 0
 
-    -- Drag يبدأ من أي input على الواجهة كلها
+    -- يبدأ drag من أي مكان في الواجهة
     mainFrame.InputBegan:Connect(function(inp)
         if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
         if resizing then return end
-
-        -- هل الماوس على حافة؟ لو آه → resize مش drag
         local mp = UserInputService:GetMouseLocation()
-        local ap = mainFrame.AbsolutePosition
-        local as = mainFrame.AbsoluteSize
-        local EDGE_D = 8
-        local onEdge = (mp.X <= ap.X + EDGE_D or mp.X >= ap.X + as.X - EDGE_D
-                     or mp.Y >= ap.Y + as.Y - EDGE_D)
-        if onEdge then return end  -- الـ resize handler يتولى
-
         dragging = true
-        -- نحسب offset الماوس من موضع الواجهة الحالي
+        -- offset ثابت من أعلى يسار الواجهة
         dragOffX = mp.X - mainFrame.AbsolutePosition.X
         dragOffY = mp.Y - mainFrame.AbsolutePosition.Y
-        curTargX = mainFrame.Position.X.Offset
-        curTargY = mainFrame.Position.Y.Offset
     end)
 
-    mainFrame.InputEnded:Connect(function(inp)
+    UserInputService.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
             dragging = false
         end
     end)
 
-    -- حركة smooth بـ Lerp — target يتحدث فوراً، الواجهة تلحق
-    local lerpX = mainFrame.Position.X.Offset
-    local lerpY = mainFrame.Position.Y.Offset
-
-    RunService.RenderStepped:Connect(function()
-        if not mainFrame.Parent then return end
-        if dragging then
-            local mp = UserInputService:GetMouseLocation()
-            curTargX = mp.X - dragOffX
-            curTargY = mp.Y - dragOffY
-        end
-        if dragging then
-            -- Lerp سلس: 35% كل frame
-            lerpX = lerpX + (curTargX - lerpX) * 0.35
-            lerpY = lerpY + (curTargY - lerpY) * 0.35
-            mainFrame.Position = UDim2.new(0, lerpX, 0, lerpY)
-        end
+    UserInputService.InputChanged:Connect(function(inp)
+        if not dragging then return end
+        if inp.UserInputType ~= Enum.UserInputType.MouseMovement then return end
+        -- الموضع الجديد = موضع الماوس - offset الثابت
+        local mp = UserInputService:GetMouseLocation()
+        mainFrame.Position = UDim2.new(0, mp.X - dragOffX, 0, mp.Y - dragOffY)
     end)
 
     -- ══════════════════════════════════════════════════════
-    --  RESIZE — زر خارج الواجهة، ضغطة طويلة + سحب
+    --  RESIZE BUTTON — خارج الواجهة تماماً، زاوية يمين أسفل
     -- ══════════════════════════════════════════════════════
     local MIN_W, MIN_H = 420, 300
     local MAX_W, MAX_H = 1200, 800
 
-    -- زر الـ resize — يجلس خارج الزاوية السفلى اليمنى
+    -- الزر خارج الواجهة في sg
     local resizeBtn = New("TextButton", {
         Name                   = "ResizeBtn",
-        Size                   = UDim2.new(0, 24, 0, 24),
-        AnchorPoint            = Vector2.new(0, 0),
+        Size                   = UDim2.new(0, 22, 0, 22),
+        AnchorPoint            = Vector2.new(0, 0),  -- AnchorPoint على الزاوية العلوية اليسرى للزر
         BackgroundColor3       = T.SurfaceAlt,
-        BackgroundTransparency = 0.3,
+        BackgroundTransparency = 0.2,
         Text                   = "",
-        ZIndex                 = 50,
+        ZIndex                 = 60,
         Parent                 = sg,
     })
-    Corner(resizeBtn, 6)
-    New("UIStroke", {Color=T.BorderBright, Thickness=1, Transparency=0.3, Parent=resizeBtn})
+    Corner(resizeBtn, 5)
+    Stroke(resizeBtn, T.BorderBright, 1, 0.4)
 
-    -- رسم شكل ⌟ داخل الزر
-    local rl = New("Frame", {  -- خط أفقي
-        Size=UDim2.new(0,13,0,2), Position=UDim2.new(0,5,1,-7),
-        BackgroundColor3=T.TextDim, BorderSizePixel=0, ZIndex=51, Parent=resizeBtn,
-    }); Corner(rl,1)
-    local rt = New("Frame", {  -- خط عمودي
-        Size=UDim2.new(0,2,0,13), Position=UDim2.new(1,-7,0,5),
-        BackgroundColor3=T.TextDim, BorderSizePixel=0, ZIndex=51, Parent=resizeBtn,
-    }); Corner(rt,1)
+    -- شكل ⌟ داخل الزر
+    New("Frame", {
+        Size=UDim2.new(0,12,0,2), Position=UDim2.new(0,4,1,-6),
+        BackgroundColor3=T.TextDim, BorderSizePixel=0, ZIndex=61, Parent=resizeBtn,
+    })
+    New("Frame", {
+        Size=UDim2.new(0,2,0,12), Position=UDim2.new(1,-6,0,4),
+        BackgroundColor3=T.TextDim, BorderSizePixel=0, ZIndex=61, Parent=resizeBtn,
+    })
 
-    -- موضع الزر يلاحق الزاوية السفلى اليمنى بـ offset بسيط خارجها
-    RunService.RenderStepped:Connect(function()
-        if not mainFrame.Parent then
-            resizeBtn.Visible = false; return
-        end
-        resizeBtn.Visible = true
+    -- تحديث موضع الزر ليكون على الزاوية السفلى اليمنى خارج الواجهة
+    -- AnchorPoint=0,0 → Position = نهاية الواجهة + offset صغير للخارج
+    local function UpdateResizeBtnPos()
+        if not mainFrame.Parent then return end
         local ap = mainFrame.AbsolutePosition
         local as = mainFrame.AbsoluteSize
-        -- الزر يجلس على الزاوية، نصفه داخل نصفه خارج
-        resizeBtn.Position = UDim2.new(0, ap.X + as.X - 12, 0, ap.Y + as.Y - 12)
-    end)
+        -- الزر يبدأ من نهاية الواجهة + 4px للخارج
+        resizeBtn.Position = UDim2.new(0, ap.X + as.X + 4, 0, ap.Y + as.Y + 4)
+    end
 
-    -- Hover animation على الزر
-    resizeBtn.MouseEnter:Connect(function()
-        Tween(resizeBtn, {BackgroundColor3=T.Primary, BackgroundTransparency=0}, 0.15)
-        Tween(rl, {BackgroundColor3=Color3.new(1,1,1)}, 0.15)
-        Tween(rt, {BackgroundColor3=Color3.new(1,1,1)}, 0.15)
-    end)
-    resizeBtn.MouseLeave:Connect(function()
-        Tween(resizeBtn, {BackgroundColor3=T.SurfaceAlt, BackgroundTransparency=0.3}, 0.15)
-        Tween(rl, {BackgroundColor3=T.TextDim}, 0.15)
-        Tween(rt, {BackgroundColor3=T.TextDim}, 0.15)
-    end)
-
-    -- Resize state
-    local rStart = Vector2.new()
-    local rSize  = Vector2.new()
-    local rPos   = Vector2.new()
+    -- resize state
+    local rStartX, rStartY = 0, 0
+    local rW, rH           = 0, 0
+    local rPX, rPY         = 0, 0
 
     resizeBtn.InputBegan:Connect(function(inp)
         if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
         resizing = true
-        local mp = UserInputService:GetMouseLocation()
-        rStart   = mp
-        rSize    = Vector2.new(mainFrame.AbsoluteSize.X, mainFrame.AbsoluteSize.Y)
-        rPos     = Vector2.new(mainFrame.AbsolutePosition.X, mainFrame.AbsolutePosition.Y)
-        -- تغيير لون الزر أثناء الـ resize
+        dragging = false
+        local mp  = UserInputService:GetMouseLocation()
+        rStartX   = mp.X
+        rStartY   = mp.Y
+        rW        = mainFrame.AbsoluteSize.X
+        rH        = mainFrame.AbsoluteSize.Y
+        rPX       = mainFrame.AbsolutePosition.X
+        rPY       = mainFrame.AbsolutePosition.Y
         Tween(resizeBtn, {BackgroundColor3=T.Primary, BackgroundTransparency=0}, 0.1)
     end)
 
     UserInputService.InputChanged:Connect(function(inp)
         if not resizing then return end
         if inp.UserInputType ~= Enum.UserInputType.MouseMovement then return end
-        local mp = UserInputService:GetMouseLocation()
-        local dx = mp.X - rStart.X
-        local dy = mp.Y - rStart.Y
-        local newW = math.clamp(rSize.X + dx, MIN_W, MAX_W)
-        local newH = math.clamp(rSize.Y + dy, MIN_H, MAX_H)
-        -- الموضع ثابت — نكبّر من اليمين والأسفل فقط
+        local mp   = UserInputService:GetMouseLocation()
+        local newW = math.clamp(rW + (mp.X - rStartX), MIN_W, MAX_W)
+        local newH = math.clamp(rH + (mp.Y - rStartY), MIN_H, MAX_H)
+        -- الموضع ثابت تماماً — فقط الحجم يتغير
         mainFrame.Size     = UDim2.new(0, newW, 0, newH)
-        mainFrame.Position = UDim2.new(0, rPos.X, 0, rPos.Y)
+        mainFrame.Position = UDim2.new(0, rPX,  0, rPY)
         size               = UDim2.new(0, newW, 0, newH)
-        -- تحديث lerpX/lerpY عشان drag ما يقفز
-        lerpX = rPos.X
-        lerpY = rPos.Y
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 and resizing then
             resizing = false
-            Tween(resizeBtn, {BackgroundColor3=T.SurfaceAlt, BackgroundTransparency=0.3}, 0.2)
+            Tween(resizeBtn, {BackgroundColor3=T.SurfaceAlt, BackgroundTransparency=0.2}, 0.15)
         end
+    end)
+
+    resizeBtn.MouseEnter:Connect(function()
+        if resizing then return end
+        Tween(resizeBtn, {BackgroundColor3=T.Primary, BackgroundTransparency=0}, 0.15)
+    end)
+    resizeBtn.MouseLeave:Connect(function()
+        if resizing then return end
+        Tween(resizeBtn, {BackgroundColor3=T.SurfaceAlt, BackgroundTransparency=0.2}, 0.15)
+    end)
+
+    -- ══════════════════════════════════════════════════════
+    --  SHADOW + RESIZE ICON POSITION — يتحدث مع كل تغيير
+    -- ══════════════════════════════════════════════════════
+    -- نستخدم Changed بدل RenderStepped — أكفأ وأدق
+    local function SyncExtras()
+        if not mainFrame.Parent then return end
+        local ap = mainFrame.AbsolutePosition
+        local as = mainFrame.AbsoluteSize
+        -- Shadow خلف الواجهة بالضبط
+        shadowImg.Size     = UDim2.new(0, as.X + 50, 0, as.Y + 50)
+        shadowImg.Position = UDim2.new(0, ap.X - 25, 0, ap.Y - 20)
+        -- Resize button
+        resizeBtn.Position = UDim2.new(0, ap.X + as.X + 4, 0, ap.Y + as.Y + 4)
+    end
+
+    mainFrame:GetPropertyChangedSignal("Position"):Connect(SyncExtras)
+    mainFrame:GetPropertyChangedSignal("Size"):Connect(SyncExtras)
+
+    -- Initial sync
+    SyncExtras()
     end)
 
     -- ── Open animation — Pop: scale 0.92→1 + fade ─────────
@@ -1268,7 +1258,12 @@ function CrozoX:CreateWindow(cfg)
             Size                   = UDim2.new(0, size.X.Offset*0.9, 0, size.Y.Offset*0.9),
             BackgroundTransparency = 1,
         }, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-        task.delay(0.32, function() mainFrame:Destroy() end)
+        Tween(shadowImg, {ImageTransparency=1}, 0.25)
+        task.delay(0.32, function()
+            mainFrame:Destroy()
+            shadowImg:Destroy()
+            resizeBtn:Destroy()
+        end)
     end)
     minBtn.MouseButton1Click:Connect(function()
         isMin = not isMin
