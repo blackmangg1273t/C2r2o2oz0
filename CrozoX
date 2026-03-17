@@ -765,20 +765,20 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    -- Drop shadow (ImageLabel خارج الـ MainFrame في sg مباشرة)
+    -- Drop shadow — داخل sg خلف mainFrame
+    -- نضعه في sg لكن نربطه بموضع mainFrame
     local shadowImg = New("ImageLabel", {
-        Name             = "Shadow",
-        Size             = UDim2.new(0, 0, 0, 0),
-        AnchorPoint      = Vector2.new(0.5, 0.5),
-        Position         = UDim2.new(0.5, 0, 0.5, 8),
+        Name                  = "Shadow",
+        Size                  = UDim2.new(1, 60, 1, 60),
+        Position              = UDim2.new(0, -30, 0, -20),
         BackgroundTransparency = 1,
-        Image            = "rbxassetid://6014261993",
-        ImageColor3      = Color3.fromRGB(0, 0, 0),
-        ImageTransparency = 0.45,
-        ScaleType        = Enum.ScaleType.Slice,
-        SliceCenter      = Rect.new(49, 49, 450, 450),
-        ZIndex           = 9,
-        Parent           = sg,
+        Image                 = "rbxassetid://6014261993",
+        ImageColor3           = Color3.fromRGB(0, 0, 0),
+        ImageTransparency     = 0.5,
+        ScaleType             = Enum.ScaleType.Slice,
+        SliceCenter           = Rect.new(49, 49, 450, 450),
+        ZIndex                = 9,
+        Parent                = mainFrame,  -- داخل mainFrame يتحرك معها تلقائياً
     })
 
     -- ── Titlebar — شفاف عشان حواف MainFrame تظهر ──────────
@@ -1100,12 +1100,11 @@ function CrozoX:CreateWindow(cfg)
                 if not mainFrame.Parent then
                     smoothConn:Disconnect(); return
                 end
-                -- Lerp السلس: الموضع الحالي → الهدف
                 local cur = mainFrame.Position
                 local lx = cur.X.Offset + (targetPos.X.Offset - cur.X.Offset) * 0.25
                 local ly = cur.Y.Offset + (targetPos.Y.Offset - cur.Y.Offset) * 0.25
                 mainFrame.Position = UDim2.new(0, lx, 0, ly)
-                shadowImg.Position = UDim2.new(0, lx, 0, ly + 10)
+                -- Shadow داخل mainFrame تتحرك تلقائياً
             end)
         end
     end)
@@ -1129,42 +1128,61 @@ function CrozoX:CreateWindow(cfg)
     -- ══════════════════════════════════════════════════════
     local MIN_W, MIN_H = 480, 340
     local MAX_W, MAX_H = 1100, 750
-
-    -- حدود الـ resize — 8px على كل حافة
     local EDGE = 8
 
-    -- أيقونة resize في الزاوية السفلى اليمنى
-    local resizeHint = New("Frame", {
-        Size             = UDim2.new(0, 18, 0, 18),
-        AnchorPoint      = Vector2.new(1, 1),
-        Position         = UDim2.new(1, -2, 1, -2),
+    -- أيقونة resize — خارج mainFrame في sg (برّا الواجهة)
+    -- شكل ⌟ (قوسان متعامدان في الزاوية)
+    local resizeIcon = New("Frame", {
+        Name                  = "ResizeIcon",
+        Size                  = UDim2.new(0, 20, 0, 20),
+        AnchorPoint           = Vector2.new(0, 0),
         BackgroundTransparency = 1,
-        ZIndex           = 30,
-        Parent           = mainFrame,
+        ZIndex                = 50,
+        Parent                = sg,
     })
-    -- ثلاثة خطوط مائلة (resize icon)
-    for i = 1, 3 do
-        local lf = New("Frame", {
-            Size             = UDim2.new(0, 2, 0, (i*4)+2),
-            AnchorPoint      = Vector2.new(1, 1),
-            Position         = UDim2.new(1, -(i-1)*5, 1, 0),
-            BackgroundColor3 = T.TextMuted,
-            BackgroundTransparency = 0.3,
-            BorderSizePixel  = 0,
-            ZIndex           = 31,
-            Parent           = resizeHint,
-        })
-        Corner(lf, 1)
+    -- خط أفقي
+    local rh = New("Frame", {
+        Size=UDim2.new(0,14,0,3), AnchorPoint=Vector2.new(1,1),
+        Position=UDim2.new(1,0,1,0),
+        BackgroundColor3=T.TextMuted, BackgroundTransparency=0.2,
+        BorderSizePixel=0, ZIndex=51, Parent=resizeIcon,
+    }); Corner(rh,1)
+    -- خط عمودي
+    local rv = New("Frame", {
+        Size=UDim2.new(0,3,0,14), AnchorPoint=Vector2.new(1,1),
+        Position=UDim2.new(1,0,1,0),
+        BackgroundColor3=T.TextMuted, BackgroundTransparency=0.2,
+        BorderSizePixel=0, ZIndex=51, Parent=resizeIcon,
+    }); Corner(rv,1)
+    -- نقطة في الزاوية
+    local rd = New("Frame", {
+        Size=UDim2.new(0,5,0,5), AnchorPoint=Vector2.new(1,1),
+        Position=UDim2.new(1,0,1,0),
+        BackgroundColor3=T.Primary, BackgroundTransparency=0.1,
+        BorderSizePixel=0, ZIndex=52, Parent=resizeIcon,
+    }); Corner(rd,3)
+
+    -- تحديث موضع الأيقونة لتبقى خارج الزاوية السفلى اليمنى
+    local function UpdateResizeIconPos()
+        if not mainFrame.Parent then return end
+        local ap = mainFrame.AbsolutePosition
+        local as = mainFrame.AbsoluteSize
+        resizeIcon.Position = UDim2.new(0, ap.X + as.X - 2,
+                                         0, ap.Y + as.Y - 2)
     end
+
+    RunService.RenderStepped:Connect(function()
+        if not mainFrame.Parent then return end
+        UpdateResizeIconPos()
+    end)
 
     -- Resize state
     local resizing   = false
-    local resizeEdge = {}   -- {right, bottom, left, top}
+    local resizeEdge = {}
     local rStart     = Vector2.new()
     local rSize      = Vector2.new()
     local rPos       = Vector2.new()
 
-    -- detect which edge mouse is on
     local function GetEdge(mousePos)
         local ap = mainFrame.AbsolutePosition
         local as = mainFrame.AbsoluteSize
@@ -1176,29 +1194,25 @@ function CrozoX:CreateWindow(cfg)
         return r, b, l, t
     end
 
-    -- cursor hint على الـ edges
-    local edgeDetectConn
-    edgeDetectConn = RunService.RenderStepped:Connect(function()
-        if not mainFrame.Parent then edgeDetectConn:Disconnect() return end
+    -- إضاءة الأيقونة عند قرب الماوس من الحافة
+    RunService.RenderStepped:Connect(function()
+        if not mainFrame.Parent then return end
         if resizing or dragging then return end
         local mp = UserInputService:GetMouseLocation()
         local r,b,l,t = GetEdge(mp)
-        -- تغيير opacity على الـ resize hint
-        local isCorner = r and b
-        resizeHint.BackgroundTransparency = isCorner and 0.5 or 1
-        for _,lf in ipairs(resizeHint:GetChildren()) do
-            if lf:IsA("Frame") then
-                Tween(lf, {
-                    BackgroundTransparency = (r or b or l or t) and 0 or 0.3
-                }, 0.1)
-            end
-        end
+        local onEdge = r or b or l or t
+        local alpha = onEdge and 0 or 0.5
+        rh.BackgroundTransparency = alpha
+        rv.BackgroundTransparency = alpha
+        rd.BackgroundTransparency = onEdge and 0 or 0.3
+        if r and b then rd.BackgroundColor3 = T.Primary
+        else rd.BackgroundColor3 = T.TextMuted end
     end)
 
     -- بدء الـ resize
     mainFrame.InputBegan:Connect(function(inp)
         if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
-        local mp  = UserInputService:GetMouseLocation()
+        local mp = UserInputService:GetMouseLocation()
         local r,b,l,t = GetEdge(mp)
         if not (r or b or l or t) then return end
         resizing     = true
@@ -1208,64 +1222,35 @@ function CrozoX:CreateWindow(cfg)
         rPos         = mainFrame.AbsolutePosition
     end)
 
-    -- resize أثناء الحركة — مع تكيّف فوري للـ sidebar والمحتوى
     local function ApplyResize(newW, newH, newX, newY)
         newW = math.clamp(newW, MIN_W, MAX_W)
         newH = math.clamp(newH, MIN_H, MAX_H)
-
-        -- تحديث mainFrame
         mainFrame.Size     = UDim2.new(0, newW, 0, newH)
         mainFrame.Position = UDim2.new(0, newX, 0, newY)
-
-        -- Shadow تتكيف
-        shadowImg.Size     = UDim2.new(0, newW+60, 0, newH+60)
-
-        -- Sidebar ثابت العرض (220) لكن ارتفاعه يتكيف
-        sidebar.Size     = UDim2.new(0, 220, 1, -54)
-
-        -- Content area يتكيف مع العرض الجديد
-        contentArea.Size = UDim2.new(1, -220, 1, -54)
-
-        -- تحديث current size للـ minimize/close
+        -- Sidebar/Content يتكيفان تلقائياً (relative sizes)
         size = UDim2.new(0, newW, 0, newH)
     end
 
     UserInputService.InputChanged:Connect(function(inp)
         if not resizing then return end
         if inp.UserInputType ~= Enum.UserInputType.MouseMovement then return end
-        local mp  = UserInputService:GetMouseLocation()
-        local dx  = mp.X - rStart.X
-        local dy  = mp.Y - rStart.Y
-
+        local mp = UserInputService:GetMouseLocation()
+        local dx = mp.X - rStart.X
+        local dy = mp.Y - rStart.Y
         local newW = rSize.X
         local newH = rSize.Y
         local newX = rPos.X
         local newY = rPos.Y
-
         if resizeEdge.r then newW = rSize.X + dx end
         if resizeEdge.b then newH = rSize.Y + dy end
-        if resizeEdge.l then
-            newW = rSize.X - dx
-            newX = rPos.X  + dx
-        end
-        if resizeEdge.t then
-            newH = rSize.Y - dy
-            newY = rPos.Y  + dy
-        end
-
+        if resizeEdge.l then newW = rSize.X - dx; newX = rPos.X + dx end
+        if resizeEdge.t then newH = rSize.Y - dy; newY = rPos.Y + dy end
         ApplyResize(newW, newH, newX, newY)
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-            if resizing then
-                resizing = false
-                -- انيميشن snap عند الإفلات
-                Tween(mainFrame, {
-                    Size     = size,
-                    Position = mainFrame.Position,
-                }, 0.1, Enum.EasingStyle.Quad)
-            end
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 and resizing then
+            resizing = false
         end
     end)
 
@@ -1274,19 +1259,11 @@ function CrozoX:CreateWindow(cfg)
     mainFrame.Size = UDim2.new(
         0, size.X.Offset * 0.92,
         0, size.Y.Offset * 0.92)
-    shadowImg.Size             = UDim2.new(0, 0, 0, 0)
-    shadowImg.ImageTransparency = 1
 
     Tween(mainFrame, {
         Size                   = size,
         BackgroundTransparency = 0,
     }, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
-
-    Tween(shadowImg, {
-        Size              = UDim2.new(0, size.X.Offset+60, 0, size.Y.Offset+60),
-        Position          = UDim2.new(0.5, 0, 0.5, 12),
-        ImageTransparency = 0.45,
-    }, 0.4, Enum.EasingStyle.Back)
 
     -- ── Close / Minimize ───────────────────────────────────
     local isMin = false
@@ -1295,31 +1272,14 @@ function CrozoX:CreateWindow(cfg)
             Size                   = UDim2.new(0, size.X.Offset*0.9, 0, size.Y.Offset*0.9),
             BackgroundTransparency = 1,
         }, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-        Tween(shadowImg, {
-            ImageTransparency = 1,
-            Size              = UDim2.new(0, 0, 0, 0),
-        }, 0.25)
-        task.delay(0.32, function()
-            mainFrame:Destroy()
-            shadowImg:Destroy()
-        end)
+        task.delay(0.32, function() mainFrame:Destroy() end)
     end)
     minBtn.MouseButton1Click:Connect(function()
         isMin = not isMin
         if isMin then
-            -- تصغير الواجهة + Shadow تصبح شفافة تماماً
             Tween(mainFrame, {Size=UDim2.new(0,size.X.Offset,0,54)}, 0.3)
-            Tween(shadowImg, {
-                ImageTransparency = 1,
-                Size = UDim2.new(0, size.X.Offset+20, 0, 74),
-            }, 0.3)
         else
-            -- إرجاع الواجهة + Shadow ترجع
             Tween(mainFrame, {Size=size}, 0.35, Enum.EasingStyle.Back)
-            Tween(shadowImg, {
-                ImageTransparency = 0.45,
-                Size = UDim2.new(0, size.X.Offset+60, 0, size.Y.Offset+60),
-            }, 0.35, Enum.EasingStyle.Back)
         end
     end)
 
