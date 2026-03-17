@@ -1119,20 +1119,24 @@ function CrozoX:CreateWindow(cfg)
     local MIN_W, MIN_H = 420, 300
     local MAX_W, MAX_H = 1200, 800
 
-    -- ── Drag ──────────────────────────────────────────────
+    -- ── Drag — titleBar فقط، offset من wrapFrame ──────────
     UserInputService.InputBegan:Connect(function(inp, gp)
         if gp then return end
         if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
         if resizing then return end
+
+        -- تحقق إن الضغط على titleBar فقط
         local mp = UserInputService:GetMouseLocation()
-        local ap = wrapFrame.AbsolutePosition
-        local as = wrapFrame.AbsoluteSize
+        local ap = titleBar.AbsolutePosition
+        local as = titleBar.AbsoluteSize
         if mp.X < ap.X or mp.X > ap.X + as.X then return end
         if mp.Y < ap.Y or mp.Y > ap.Y + as.Y then return end
-        -- AnchorPoint=0,0 دايماً → dragOff = موضع الماوس من الزاوية
+
         dragging = true
-        dragOffX = mp.X - ap.X
-        dragOffY = mp.Y - ap.Y
+        -- الإزاحة من زاوية wrapFrame (مش titleBar)
+        local wp = wrapFrame.AbsolutePosition
+        dragOffX = mp.X - wp.X
+        dragOffY = mp.Y - wp.Y
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
