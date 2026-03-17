@@ -700,6 +700,7 @@ function CrozoX:CreateWindow(cfg)
     local subtitle=cfg.Subtitle or "v4.0.0"
     local logoId  =cfg.Logo     or "rbxassetid://93116857865430"
     local size    =cfg.Size     or UDim2.new(0,660,0,470)
+    size = UDim2.new(0, size.X.Offset, 0, size.Y.Offset)
     local T       =self._Theme
     local L       =self._Lang
     local sg      =self._ScreenGui
@@ -1079,28 +1080,192 @@ function CrozoX:CreateWindow(cfg)
         Parent           = mainFrame,
     })
 
-    -- ── Drag ───────────────────────────────────────────────
-    local dragging, dStart, dPos
+    -- ══════════════════════════════════════════════════════
+    --  SMOOTH DRAG — تحريك سلس مع Lerp
+    -- ══════════════════════════════════════════════════════
+    local dragging   = false
+    local dStart     = Vector2.new()
+    local dPos       = UDim2.new()
+    local targetPos  = mainFrame.Position
+    local smoothConn
+
     titleBar.InputBegan:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging=true; dStart=inp.Position; dPos=mainFrame.Position
+            dragging = true
+            dStart   = inp.Position
+            dPos     = mainFrame.Position
+            targetPos = mainFrame.Position
+            if smoothConn then smoothConn:Disconnect() end
+            smoothConn = RunService.RenderStepped:Connect(function()
+                if not mainFrame.Parent then
+                    smoothConn:Disconnect(); return
+                end
+                -- Lerp السلس: الموضع الحالي → الهدف
+                local cur = mainFrame.Position
+                local lx = cur.X.Offset + (targetPos.X.Offset - cur.X.Offset) * 0.25
+                local ly = cur.Y.Offset + (targetPos.Y.Offset - cur.Y.Offset) * 0.25
+                mainFrame.Position = UDim2.new(0, lx, 0, ly)
+                shadowImg.Position = UDim2.new(0, lx, 0, ly + 10)
+            end)
         end
     end)
     titleBar.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
             dragging = false
+            if smoothConn then smoothConn:Disconnect(); smoothConn=nil end
+            -- Snap انيميشن خفيف عند الإفلات
+            Tween(mainFrame, {Position=targetPos}, 0.12, Enum.EasingStyle.Quad)
         end
     end)
     UserInputService.InputChanged:Connect(function(inp)
-        if dragging and inp.UserInputType==Enum.UserInputType.MouseMovement then
+        if dragging and inp.UserInputType == Enum.UserInputType.MouseMovement then
             local d = inp.Position - dStart
-            mainFrame.Position = UDim2.new(
-                dPos.X.Scale, dPos.X.Offset + d.X,
-                dPos.Y.Scale, dPos.Y.Offset + d.Y)
-            -- Shadow تتحرك مع الواجهة
-            shadowImg.Position = UDim2.new(
-                dPos.X.Scale, dPos.X.Offset + d.X,
-                dPos.Y.Scale, dPos.Y.Offset + d.Y + 8)
+            targetPos = UDim2.new(0, dPos.X.Offset + d.X, 0, dPos.Y.Offset + d.Y)
+        end
+    end)
+
+    -- ══════════════════════════════════════════════════════
+    --  RESIZE — تكبير/تصغير من جميع الحواف
+    -- ══════════════════════════════════════════════════════
+    local MIN_W, MIN_H = 480, 340
+    local MAX_W, MAX_H = 1100, 750
+
+    -- حدود الـ resize — 8px على كل حافة
+    local EDGE = 8
+
+    -- أيقونة resize في الزاوية السفلى اليمنى
+    local resizeHint = New("Frame", {
+        Size             = UDim2.new(0, 18, 0, 18),
+        AnchorPoint      = Vector2.new(1, 1),
+        Position         = UDim2.new(1, -2, 1, -2),
+        BackgroundTransparency = 1,
+        ZIndex           = 30,
+        Parent           = mainFrame,
+    })
+    -- ثلاثة خطوط مائلة (resize icon)
+    for i = 1, 3 do
+        local lf = New("Frame", {
+            Size             = UDim2.new(0, 2, 0, (i*4)+2),
+            AnchorPoint      = Vector2.new(1, 1),
+            Position         = UDim2.new(1, -(i-1)*5, 1, 0),
+            BackgroundColor3 = T.TextMuted,
+            BackgroundTransparency = 0.3,
+            BorderSizePixel  = 0,
+            ZIndex           = 31,
+            Parent           = resizeHint,
+        })
+        Corner(lf, 1)
+    end
+
+    -- Resize state
+    local resizing   = false
+    local resizeEdge = {}   -- {right, bottom, left, top}
+    local rStart     = Vector2.new()
+    local rSize      = Vector2.new()
+    local rPos       = Vector2.new()
+
+    -- detect which edge mouse is on
+    local function GetEdge(mousePos)
+        local ap = mainFrame.AbsolutePosition
+        local as = mainFrame.AbsoluteSize
+        local mx, my = mousePos.X, mousePos.Y
+        local r = mx > ap.X + as.X - EDGE
+        local b = my > ap.Y + as.Y - EDGE
+        local l = mx < ap.X + EDGE
+        local t = my < ap.Y + EDGE and my > ap.Y
+        return r, b, l, t
+    end
+
+    -- cursor hint على الـ edges
+    local edgeDetectConn
+    edgeDetectConn = RunService.RenderStepped:Connect(function()
+        if not mainFrame.Parent then edgeDetectConn:Disconnect() return end
+        if resizing or dragging then return end
+        local mp = UserInputService:GetMouseLocation()
+        local r,b,l,t = GetEdge(mp)
+        -- تغيير opacity على الـ resize hint
+        local isCorner = r and b
+        resizeHint.BackgroundTransparency = isCorner and 0.5 or 1
+        for _,lf in ipairs(resizeHint:GetChildren()) do
+            if lf:IsA("Frame") then
+                Tween(lf, {
+                    BackgroundTransparency = (r or b or l or t) and 0 or 0.3
+                }, 0.1)
+            end
+        end
+    end)
+
+    -- بدء الـ resize
+    mainFrame.InputBegan:Connect(function(inp)
+        if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
+        local mp  = UserInputService:GetMouseLocation()
+        local r,b,l,t = GetEdge(mp)
+        if not (r or b or l or t) then return end
+        resizing     = true
+        resizeEdge   = {r=r, b=b, l=l, t=t}
+        rStart       = mp
+        rSize        = mainFrame.AbsoluteSize
+        rPos         = mainFrame.AbsolutePosition
+    end)
+
+    -- resize أثناء الحركة — مع تكيّف فوري للـ sidebar والمحتوى
+    local function ApplyResize(newW, newH, newX, newY)
+        newW = math.clamp(newW, MIN_W, MAX_W)
+        newH = math.clamp(newH, MIN_H, MAX_H)
+
+        -- تحديث mainFrame
+        mainFrame.Size     = UDim2.new(0, newW, 0, newH)
+        mainFrame.Position = UDim2.new(0, newX, 0, newY)
+
+        -- Shadow تتكيف
+        shadowImg.Size     = UDim2.new(0, newW+60, 0, newH+60)
+
+        -- Sidebar ثابت العرض (220) لكن ارتفاعه يتكيف
+        sidebar.Size     = UDim2.new(0, 220, 1, -54)
+
+        -- Content area يتكيف مع العرض الجديد
+        contentArea.Size = UDim2.new(1, -220, 1, -54)
+
+        -- تحديث current size للـ minimize/close
+        size = UDim2.new(0, newW, 0, newH)
+    end
+
+    UserInputService.InputChanged:Connect(function(inp)
+        if not resizing then return end
+        if inp.UserInputType ~= Enum.UserInputType.MouseMovement then return end
+        local mp  = UserInputService:GetMouseLocation()
+        local dx  = mp.X - rStart.X
+        local dy  = mp.Y - rStart.Y
+
+        local newW = rSize.X
+        local newH = rSize.Y
+        local newX = rPos.X
+        local newY = rPos.Y
+
+        if resizeEdge.r then newW = rSize.X + dx end
+        if resizeEdge.b then newH = rSize.Y + dy end
+        if resizeEdge.l then
+            newW = rSize.X - dx
+            newX = rPos.X  + dx
+        end
+        if resizeEdge.t then
+            newH = rSize.Y - dy
+            newY = rPos.Y  + dy
+        end
+
+        ApplyResize(newW, newH, newX, newY)
+    end)
+
+    UserInputService.InputEnded:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+            if resizing then
+                resizing = false
+                -- انيميشن snap عند الإفلات
+                Tween(mainFrame, {
+                    Size     = size,
+                    Position = mainFrame.Position,
+                }, 0.1, Enum.EasingStyle.Quad)
+            end
         end
     end)
 
