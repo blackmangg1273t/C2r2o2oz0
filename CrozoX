@@ -1119,24 +1119,25 @@ function CrozoX:CreateWindow(cfg)
     local MIN_W, MIN_H = 420, 300
     local MAX_W, MAX_H = 1200, 800
 
-    -- ── Drag — من titleBar مباشرة ─────────────────────────
+    -- ── Drag — titleBar فقط، مع تحقق من موضع الماوس ─────
     titleBar.InputBegan:Connect(function(inp)
         if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
         if resizing then return end
-        local mp = UserInputService:GetMouseLocation()
+
+        local mp  = UserInputService:GetMouseLocation()
+        local tbp = titleBar.AbsolutePosition
+        local tbs = titleBar.AbsoluteSize
+
+        -- تأكد إن الماوس فعلاً فوق titleBar وليس bubble من child
+        if mp.X < tbp.X or mp.X > tbp.X + tbs.X then return end
+        if mp.Y < tbp.Y or mp.Y > tbp.Y + tbs.Y then return end
+
         local wp = wrapFrame.AbsolutePosition
         dragging = true
         dragOffX = mp.X - wp.X
         dragOffY = mp.Y - wp.Y
     end)
 
-    titleBar.InputEnded:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-
-    -- InputEnded عالـ UserInputService كذلك عشان لو الماوس طلع
     UserInputService.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
             dragging = false
