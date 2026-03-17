@@ -1120,6 +1120,8 @@ function CrozoX:CreateWindow(cfg)
     local MAX_W, MAX_H = 1200, 800
 
     -- ── Drag ──────────────────────────────────────────────
+    local anchorFixed = false   -- flag بسيط بدل مقارنة Vector2
+
     UserInputService.InputBegan:Connect(function(inp, gp)
         if gp then return end
         if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
@@ -1132,18 +1134,17 @@ function CrozoX:CreateWindow(cfg)
                     and mp.Y >= ap.Y and mp.Y <= ap.Y + as.Y
         if not inFrame then return end
 
-        -- ← نحوّل AnchorPoint لـ 0,0 فوراً قبل حساب الـ offset
-        -- بدون ده الـ position بيكون مختلف وبيسبب قفز
-        if wrapFrame.AnchorPoint ~= Vector2.new(0, 0) then
+        -- أول لمسة: نحوّل من Scale إلى Offset خالص مرة واحدة
+        if not anchorFixed then
+            anchorFixed           = true
             wrapFrame.AnchorPoint = Vector2.new(0, 0)
             wrapFrame.Position    = UDim2.new(0, ap.X, 0, ap.Y)
         end
 
         dragging = true
-        -- الآن ap صح لأن AnchorPoint=0,0 و Position=Offset
-        local np  = wrapFrame.AbsolutePosition
-        dragOffX  = mp.X - np.X
-        dragOffY  = mp.Y - np.Y
+        local fp = wrapFrame.AbsolutePosition   -- إعادة قراءة بعد التحويل
+        dragOffX = mp.X - fp.X
+        dragOffY = mp.Y - fp.Y
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
