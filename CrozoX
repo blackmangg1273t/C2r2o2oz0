@@ -1176,22 +1176,18 @@ function CrozoX:CreateWindow(cfg)
             ZIndex=13,Parent=tabList})
         Corner(tabBtn,10)
 
-        -- Left indicator — خط ملون واضح بجانب التاب النشط
-        local indicator=New("Frame",{
-            Size=UDim2.new(0,3,0,0),
-            Position=UDim2.new(0,0,0.5,0),
-            AnchorPoint=Vector2.new(0,0.5),
-            BackgroundColor3=T.Primary,
-            BackgroundTransparency=1,
-            BorderSizePixel=0,ZIndex=14,Parent=tabBtn})
-        Corner(indicator,2)
-        -- Glow على الـ indicator
-        New("ImageLabel",{Size=UDim2.new(1,8,1,8),
-            Position=UDim2.new(0,-4,0.5,-4),AnchorPoint=Vector2.new(0,0.5),
-            BackgroundTransparency=1,Image="rbxassetid://6014261993",
-            ImageColor3=T.Primary,ImageTransparency=1,
-            ScaleType=Enum.ScaleType.Slice,SliceCenter=Rect.new(49,49,450,450),
-            ZIndex=13,Name="IndGlow",Parent=tabBtn})
+        -- Left indicator — خط رفيع 3px فقط، بدون Glow
+        local indicator = New("Frame", {
+            Size             = UDim2.new(0, 3, 0, 0),
+            Position         = UDim2.new(0, 0, 0.5, 0),
+            AnchorPoint      = Vector2.new(0, 0.5),
+            BackgroundColor3 = T.Primary,
+            BackgroundTransparency = 1,
+            BorderSizePixel  = 0,
+            ZIndex           = 14,
+            Parent           = tabBtn,
+        })
+        Corner(indicator, 2)
 
         -- Icon
         local tabIcon=Img(tabBtn,iconAsset,17,
@@ -1221,27 +1217,27 @@ function CrozoX:CreateWindow(cfg)
 
         local function SelectTab()
             if activeTab then
-                activeTab.Page.Visible=false
-                Tween(activeTab.Btn,{BackgroundColor3=T.SurfaceAlt},0.2)
-                Tween(activeTab.Lbl,{TextColor3=T.TextMuted},0.2)
-                Tween(activeTab.Icon,{ImageColor3=T.TextMuted},0.2)
-                Tween(activeTab.Ind,{Size=UDim2.new(0,3,0,0),BackgroundTransparency=1},0.2)
-                local g=activeTab.Btn:FindFirstChild("IndGlow")
-                if g then Tween(g,{ImageTransparency=1},0.2) end
+                activeTab.Page.Visible = false
+                Tween(activeTab.Btn,  {BackgroundColor3=T.SurfaceAlt}, 0.2)
+                Tween(activeTab.Lbl,  {TextColor3=T.TextMuted},        0.2)
+                Tween(activeTab.Icon, {ImageColor3=T.TextMuted},       0.2)
+                Tween(activeTab.Ind,  {
+                    Size=UDim2.new(0,3,0,0),
+                    BackgroundTransparency=1,
+                }, 0.2)
             end
-            tabPage.Visible=true
-            Tween(tabBtn,{BackgroundColor3=T.SurfaceHover},0.2)
-            Tween(tabLabel,{TextColor3=T.Text},0.2)
-            Tween(tabIcon,{ImageColor3=T.Primary},0.2)
-            -- Indicator ينمو مع glow
-            Tween(indicator,{
-                Size=UDim2.new(0,3,0.6,0),
+            tabPage.Visible = true
+            Tween(tabBtn,    {BackgroundColor3=T.SurfaceHover}, 0.2)
+            Tween(tabLabel,  {TextColor3=T.Text},               0.2)
+            Tween(tabIcon,   {ImageColor3=T.Primary},           0.2)
+            Tween(indicator, {
+                Size=UDim2.new(0,3,0.55,0),
                 BackgroundTransparency=0,
-            },0.3,Enum.EasingStyle.Back)
-            local g=tabBtn:FindFirstChild("IndGlow")
-            if g then Tween(g,{ImageTransparency=0.7},0.3) end
-            activeTab={Btn=tabBtn,Page=tabPage,Lbl=tabLabel,
-                       Icon=tabIcon,Ind=indicator}
+            }, 0.28, Enum.EasingStyle.Back)
+            activeTab = {
+                Btn=tabBtn, Page=tabPage,
+                Lbl=tabLabel, Icon=tabIcon, Ind=indicator,
+            }
         end
 
         tabClick.MouseButton1Click:Connect(function()
@@ -1377,24 +1373,15 @@ function CrozoX:CreateWindow(cfg)
                 Position         = UDim2.new(1, -94, 0.5, -16),
                 BackgroundColor3 = T.Primary,
                 Text             = txtOn,
-                TextColor3       = Color3.new(1, 1, 1),  -- أبيض صريح
+                TextColor3       = Color3.new(1, 1, 1),   -- أبيض 100%
                 Font             = Enum.Font.GothamBold,
                 TextSize         = FS.Button,
                 BorderSizePixel  = 0,
-                ZIndex           = 14,
+                ZIndex           = 15,   -- أعلى من أي ImageLabel داخله
                 Parent           = f,
             })
             Corner(rb, 8)
-            -- gradient خفيف على الزر
-            New("UIGradient", {
-                Color = ColorSequence.new{
-                    ColorSequenceKeypoint.new(0, T.PrimaryLight),
-                    ColorSequenceKeypoint.new(1, T.Primary),
-                },
-                Rotation = 90,
-                Parent   = rb,
-            })
-            -- stroke خفيف حول الزر
+            -- بدون UIGradient — الخلفية اللونية الصافية تُظهر النص أوضح
             Stroke(rb, T.Primary, 1, 0.6)
 
             -- دالة تغيير الحالة
@@ -1402,22 +1389,9 @@ function CrozoX:CreateWindow(cfg)
                 btnActive = active
                 if active then
                     rb.Text = txtOff
-                    -- إيقاف = رمادي #2A2A2A
-                    local g = rb:FindFirstChildWhichIsA("UIGradient")
-                    if g then g:Destroy() end
                     Tween(rb, {BackgroundColor3=T.BtnStop}, 0.2)
                 else
                     rb.Text = txtOn
-                    -- تفعيل = Primary مع gradient
-                    if not rb:FindFirstChildWhichIsA("UIGradient") then
-                        New("UIGradient", {
-                            Color = ColorSequence.new{
-                                ColorSequenceKeypoint.new(0, T.PrimaryLight),
-                                ColorSequenceKeypoint.new(1, T.Primary),
-                            },
-                            Rotation = 90, Parent = rb,
-                        })
-                    end
                     Tween(rb, {BackgroundColor3=T.Primary}, 0.2)
                 end
             end
