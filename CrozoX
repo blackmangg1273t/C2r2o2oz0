@@ -710,19 +710,51 @@ function CrozoX:CreateWindow(cfg)
     --  السر: ClipsDescendants=true + UICorner على نفس الـ frame
     --  يعمل بدون أي frame خلفي أو wrapper
     -- ════════════════════════════════════════════════════════
+    -- ════════════════════════════════════════════════════════
+    -- الهيكل الصحيح:
+    -- wrapFrame: شفاف، لا clips، يحمل shadow وmainFrame معاً
+    --   └─ shadowImg: خلف الواجهة
+    --   └─ mainFrame: يحمل اللون والـ UICorner والـ ClipsDescendants
+    -- ════════════════════════════════════════════════════════
+    local wrapFrame = New("Frame", {
+        Name                   = "CrozoX_Wrap",
+        Size                   = UDim2.new(0, 0, 0, 0),
+        AnchorPoint            = Vector2.new(0.5, 0.5),
+        Position               = UDim2.new(0.5, 0, 0.5, 0),
+        BackgroundTransparency = 1,
+        BorderSizePixel        = 0,
+        ClipsDescendants       = false,
+        ZIndex                 = 9,
+        Parent                 = sg,
+    })
+
+    -- Shadow داخل wrapFrame — يتحرك معه تلقائياً
+    local shadowImg = New("ImageLabel", {
+        Name                   = "Shadow",
+        Size                   = UDim2.new(1, 60, 1, 60),
+        Position               = UDim2.new(0, -30, 0, -20),
+        BackgroundTransparency = 1,
+        Image                  = "rbxassetid://6014261993",
+        ImageColor3            = Color3.fromRGB(0, 0, 0),
+        ImageTransparency      = 1,
+        ScaleType              = Enum.ScaleType.Slice,
+        SliceCenter            = Rect.new(49, 49, 450, 450),
+        ZIndex                 = 9,
+        Parent                 = wrapFrame,
+    })
+
+    -- mainFrame داخل wrapFrame
     local mainFrame = New("Frame", {
         Name             = "CrozoX_Window",
-        Size             = UDim2.new(0, 0, 0, 0),
-        AnchorPoint      = Vector2.new(0.5, 0.5),
-        Position         = UDim2.new(0.5, 0, 0.5, 0),
+        Size             = UDim2.new(1, 0, 1, 0),
+        Position         = UDim2.new(0, 0, 0, 0),
         BackgroundColor3 = T.Background,
         BackgroundTransparency = 1,
         BorderSizePixel  = 0,
-        ClipsDescendants = true,   -- يقصّ المحتوى داخل الحواف
+        ClipsDescendants = true,
         ZIndex           = 10,
-        Parent           = sg,
+        Parent           = wrapFrame,
     })
-    -- UICorner على MainFrame مباشرة = حواف منحنية حقيقية
     Corner(mainFrame, 16)
 
     -- Gradient يغطي كامل الواجهة بما فيها منطقة TopBar والـ Sidebar
@@ -765,24 +797,10 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    -- Drop shadow — في sg خلف mainFrame، تتبع موضعه تلقائياً
-    local shadowImg = New("ImageLabel", {
-        Name                   = "Shadow",
-        Size                   = UDim2.new(0, 10, 0, 10),
-        Position               = UDim2.new(0, 0, 0, 0),
-        BackgroundTransparency = 1,
-        Image                  = "rbxassetid://6014261993",
-        ImageColor3            = Color3.fromRGB(0, 0, 0),
-        ImageTransparency      = 1,
-        ScaleType              = Enum.ScaleType.Slice,
-        SliceCenter            = Rect.new(49, 49, 450, 450),
-        ZIndex                 = 9,
-        Parent                 = sg,
-    })
     -- Shadow تظهر بعد animation الفتح
     task.delay(0.3, function()
-        if shadowImg.Parent then
-            Tween(shadowImg, {ImageTransparency=0.55}, 0.3)
+        if shadowImg and shadowImg.Parent then
+            Tween(shadowImg, {ImageTransparency=0.5}, 0.35)
         end
     end)
 
@@ -1102,22 +1120,17 @@ function CrozoX:CreateWindow(cfg)
     local MAX_W, MAX_H = 1200, 800
 
     -- ── Drag: يبدأ من UserInputService مش من mainFrame ──
-    -- نستخدم UserInputService عشان نتجنب مشكلة الـ relative position
     UserInputService.InputBegan:Connect(function(inp, gp)
         if gp then return end
         if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
         if resizing then return end
-
-        -- هل الكليك فوق mainFrame؟
         local mp = UserInputService:GetMouseLocation()
-        local ap = mainFrame.AbsolutePosition
-        local as = mainFrame.AbsoluteSize
+        local ap = wrapFrame.AbsolutePosition
+        local as = wrapFrame.AbsoluteSize
         local inFrame = mp.X >= ap.X and mp.X <= ap.X + as.X
                     and mp.Y >= ap.Y and mp.Y <= ap.Y + as.Y
         if not inFrame then return end
-
         dragging = true
-        -- offset الماوس من الزاوية العلوية اليسرى للواجهة
         dragOffX = mp.X - ap.X
         dragOffY = mp.Y - ap.Y
     end)
@@ -1158,10 +1171,10 @@ function CrozoX:CreateWindow(cfg)
         local mp = UserInputService:GetMouseLocation()
         rStartX  = mp.X
         rStartY  = mp.Y
-        rW       = mainFrame.AbsoluteSize.X
-        rH       = mainFrame.AbsoluteSize.Y
-        rPX      = mainFrame.AbsolutePosition.X
-        rPY      = mainFrame.AbsolutePosition.Y
+        rW       = wrapFrame.AbsoluteSize.X
+        rH       = wrapFrame.AbsoluteSize.Y
+        rPX      = wrapFrame.AbsolutePosition.X
+        rPY      = wrapFrame.AbsolutePosition.Y
     end)
 
     resizeBtn.MouseEnter:Connect(function()
@@ -1173,39 +1186,31 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    -- ── RenderStepped: يعالج drag + resize + shadow + btn pos ──
+    -- ── RenderStepped: drag + resize + resize button pos ──
     RunService.RenderStepped:Connect(function()
-        if not mainFrame.Parent then return end
+        if not wrapFrame.Parent then return end
 
-        local ap = mainFrame.AbsolutePosition
-        local as = mainFrame.AbsoluteSize
-
-        -- 1. Drag
+        -- 1. Drag — يحرك wrapFrame
         if dragging then
             local mp = UserInputService:GetMouseLocation()
-            mainFrame.Position = UDim2.new(0, mp.X - dragOffX, 0, mp.Y - dragOffY)
+            wrapFrame.Position = UDim2.new(0, mp.X - dragOffX, 0, mp.Y - dragOffY)
         end
 
-        -- 2. Resize
+        -- 2. Resize — يكبر wrapFrame من الزاوية اليمنى السفلى
         if resizing then
             local mp   = UserInputService:GetMouseLocation()
             local newW = math.clamp(rW + (mp.X - rStartX), MIN_W, MAX_W)
             local newH = math.clamp(rH + (mp.Y - rStartY), MIN_H, MAX_H)
-            mainFrame.Size     = UDim2.new(0, newW, 0, newH)
-            mainFrame.Position = UDim2.new(0, rPX, 0, rPY)
+            wrapFrame.Size     = UDim2.new(0, newW, 0, newH)
+            wrapFrame.Position = UDim2.new(0, rPX, 0, rPY)
             size               = UDim2.new(0, newW, 0, newH)
-            -- إعادة حساب ap/as بعد التغيير
-            ap = mainFrame.AbsolutePosition
-            as = mainFrame.AbsoluteSize
         end
 
-        -- 3. Shadow — خلف الواجهة بالضبط
-        local pad = 28
-        shadowImg.Size     = UDim2.new(0, as.X + pad*2, 0, as.Y + pad*2)
-        shadowImg.Position = UDim2.new(0, ap.X - pad,   0, ap.Y - pad + 8)
-
-        -- 4. Resize button — خارج الزاوية اليمنى السفلى
-        resizeBtn.Position = UDim2.new(0, ap.X + as.X + 2, 0, ap.Y + as.Y + 2)
+        -- 3. Resize button — على الحافة المنحنية خارج الزاوية
+        local ap = wrapFrame.AbsolutePosition
+        local as = wrapFrame.AbsoluteSize
+        -- +(-8) عشان يكون على الحافة المنحنية بالضبط
+        resizeBtn.Position = UDim2.new(0, ap.X + as.X - 8, 0, ap.Y + as.Y - 8)
     end)
 
     -- إيقاف resize عند رفع الماوس
@@ -1216,37 +1221,31 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    -- ── Open animation — Pop: scale 0.92→1 + fade ─────────
+    -- ── Open animation — wrapFrame يتحرك، mainFrame يملأه ─────
+    wrapFrame.Size = UDim2.new(0, size.X.Offset * 0.92, 0, size.Y.Offset * 0.92)
     mainFrame.BackgroundTransparency = 1
-    mainFrame.Size = UDim2.new(
-        0, size.X.Offset * 0.92,
-        0, size.Y.Offset * 0.92)
 
-    Tween(mainFrame, {
-        Size                   = size,
-        BackgroundTransparency = 0,
-    }, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+    Tween(wrapFrame, {Size = size}, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+    Tween(mainFrame, {BackgroundTransparency = 0}, 0.35)
 
     -- ── Close / Minimize ───────────────────────────────────
     local isMin = false
     closeBtn.MouseButton1Click:Connect(function()
-        Tween(mainFrame, {
-            Size                   = UDim2.new(0, size.X.Offset*0.9, 0, size.Y.Offset*0.9),
-            BackgroundTransparency = 1,
+        Tween(wrapFrame, {
+            Size = UDim2.new(0, size.X.Offset*0.9, 0, size.Y.Offset*0.9),
         }, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-        Tween(shadowImg, {ImageTransparency=1}, 0.25)
+        Tween(mainFrame, {BackgroundTransparency=1}, 0.25)
         task.delay(0.32, function()
-            mainFrame:Destroy()
-            shadowImg:Destroy()
-            resizeBtn:Destroy()
+            wrapFrame:Destroy()
+            if resizeBtn and resizeBtn.Parent then resizeBtn:Destroy() end
         end)
     end)
     minBtn.MouseButton1Click:Connect(function()
         isMin = not isMin
         if isMin then
-            Tween(mainFrame, {Size=UDim2.new(0,size.X.Offset,0,54)}, 0.3)
+            Tween(wrapFrame, {Size=UDim2.new(0, size.X.Offset, 0, 54)}, 0.3)
         else
-            Tween(mainFrame, {Size=size}, 0.35, Enum.EasingStyle.Back)
+            Tween(wrapFrame, {Size=size}, 0.35, Enum.EasingStyle.Back)
         end
     end)
 
@@ -1920,13 +1919,13 @@ function CrozoX:CreateWindow(cfg)
     })
     function WAPI:CreateTab(c) return Window:CreateTab(c) end
     function WAPI:Toggle()
-        if mainFrame.Visible then
-            Tween(mainFrame,{Size=UDim2.new(0,size.X.Offset,0,0)},0.3,
+        if wrapFrame.Visible then
+            Tween(wrapFrame,{Size=UDim2.new(0,size.X.Offset,0,0)},0.3,
                 Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-            task.delay(0.32,function() mainFrame.Visible=false end)
+            task.delay(0.32,function() wrapFrame.Visible=false end)
         else
-            mainFrame.Visible=true
-            Tween(mainFrame,{Size=size},0.35,Enum.EasingStyle.Back)
+            wrapFrame.Visible=true
+            Tween(wrapFrame,{Size=size},0.35,Enum.EasingStyle.Back)
         end
     end
     function WAPI:Destroy()
