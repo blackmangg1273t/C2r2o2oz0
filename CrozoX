@@ -1226,33 +1226,30 @@ function CrozoX:CreateWindow(cfg)
     wrapFrame.Size     = UDim2.new(0, 0, 0, 0)
     wrapFrame.Position = UDim2.new(0, 0, 0, 0)
 
-    -- ننتظر frame واحد عشان sg.AbsoluteSize يكون جاهز
+    -- ── Open animation — Position ثابتة، Size بس اللي بيتحرك ──
     task.defer(function()
         local sw = sg.AbsoluteSize.X
         local sh = sg.AbsoluteSize.Y
         local w  = size.X.Offset
         local h  = size.Y.Offset
-        -- موضع المركز بـ AnchorPoint=0,0
+        -- موضع ثابت في المنتصف — مش بيتحرك خلال الـ animation
         local cx = (sw - w) / 2
         local cy = (sh - h) / 2
-        local sx = (sw - w * 0.92) / 2
-        local sy = (sh - h * 0.92) / 2
-        wrapFrame.Size     = UDim2.new(0, w * 0.92, 0, h * 0.92)
-        wrapFrame.Position = UDim2.new(0, sx, 0, sy)
-        Tween(wrapFrame, {
-            Size     = UDim2.new(0, w, 0, h),
-            Position = UDim2.new(0, cx, 0, cy),
-        }, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+        -- نضع الـ position مرة واحدة وما نحركهاش
+        wrapFrame.Position = UDim2.new(0, cx, 0, cy)
+        wrapFrame.Size     = UDim2.new(0, w * 0.88, 0, h * 0.88)
+        -- Tween على الـ Size فقط
+        Tween(wrapFrame, {Size = UDim2.new(0, w, 0, h)},
+            0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
         Tween(mainFrame, {BackgroundTransparency = 0}, 0.35)
     end)
 
     -- ── Close / Minimize ───────────────────────────────────
     local isMin = false
     closeBtn.MouseButton1Click:Connect(function()
-        Tween(wrapFrame, {
-            Size = UDim2.new(0, size.X.Offset*0.9, 0, size.Y.Offset*0.9),
-        }, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
         Tween(mainFrame, {BackgroundTransparency=1}, 0.25)
+        Tween(wrapFrame, {Size=UDim2.new(0,0,0,0)},
+            0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
         task.delay(0.32, function()
             wrapFrame:Destroy()
             if resizeBtn and resizeBtn.Parent then resizeBtn:Destroy() end
@@ -1260,18 +1257,10 @@ function CrozoX:CreateWindow(cfg)
     end)
     minBtn.MouseButton1Click:Connect(function()
         isMin = not isMin
-        local px = wrapFrame.Position.X.Offset
-        local py = wrapFrame.Position.Y.Offset
         if isMin then
-            Tween(wrapFrame, {
-                Size     = UDim2.new(0, size.X.Offset, 0, 54),
-                Position = UDim2.new(0, px, 0, py),
-            }, 0.3)
+            Tween(wrapFrame, {Size=UDim2.new(0, size.X.Offset, 0, 54)}, 0.3)
         else
-            Tween(wrapFrame, {
-                Size     = size,
-                Position = UDim2.new(0, px, 0, py),
-            }, 0.35, Enum.EasingStyle.Back)
+            Tween(wrapFrame, {Size=size}, 0.35, Enum.EasingStyle.Back)
         end
     end)
 
