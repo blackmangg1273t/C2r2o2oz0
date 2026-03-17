@@ -1119,23 +1119,30 @@ function CrozoX:CreateWindow(cfg)
     local MIN_W, MIN_H = 420, 300
     local MAX_W, MAX_H = 1200, 800
 
-    -- ── Drag — titleBar فقط، مع تحقق من موضع الماوس ─────
-    titleBar.InputBegan:Connect(function(inp)
+    -- ── Drag Button — TextButton شفاف فوق titleBar يستقبل الـ input
+    local dragBtn = New("TextButton", {
+        Size                   = UDim2.new(1, -90, 1, 0),  -- كل التايتلبار ماعدا الأزرار
+        Position               = UDim2.new(0, 0, 0, 0),
+        BackgroundTransparency = 1,
+        Text                   = "",
+        ZIndex                 = 20,
+        Parent                 = titleBar,
+    })
+
+    dragBtn.InputBegan:Connect(function(inp)
         if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
         if resizing then return end
-
-        local mp  = UserInputService:GetMouseLocation()
-        local tbp = titleBar.AbsolutePosition
-        local tbs = titleBar.AbsoluteSize
-
-        -- تأكد إن الماوس فعلاً فوق titleBar وليس bubble من child
-        if mp.X < tbp.X or mp.X > tbp.X + tbs.X then return end
-        if mp.Y < tbp.Y or mp.Y > tbp.Y + tbs.Y then return end
-
+        local mp = UserInputService:GetMouseLocation()
         local wp = wrapFrame.AbsolutePosition
         dragging = true
         dragOffX = mp.X - wp.X
         dragOffY = mp.Y - wp.Y
+    end)
+
+    dragBtn.InputEnded:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
@@ -1209,11 +1216,10 @@ function CrozoX:CreateWindow(cfg)
             size               = UDim2.new(0, newW, 0, newH)
         end
 
-        -- 3. Resize button — على الحافة المنحنية خارج الزاوية
+        -- 3. Resize button — خارج الزاوية اليمنى السفلى
         local ap = wrapFrame.AbsolutePosition
         local as = wrapFrame.AbsoluteSize
-        -- +(-8) عشان يكون على الحافة المنحنية بالضبط
-        resizeBtn.Position = UDim2.new(0, ap.X + as.X - 8, 0, ap.Y + as.Y - 8)
+        resizeBtn.Position = UDim2.new(0, ap.X + as.X + 2, 0, ap.Y + as.Y + 2)
     end)
 
     -- إيقاف resize عند رفع الماوس
