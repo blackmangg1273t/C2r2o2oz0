@@ -1381,8 +1381,6 @@ function CrozoX:CreateWindow(cfg)
                 Parent           = f,
             })
             Corner(rb, 8)
-            -- بدون UIGradient — الخلفية اللونية الصافية تُظهر النص أوضح
-            Stroke(rb, T.Primary, 1, 0.6)
 
             -- دالة تغيير الحالة
             local function SetBtnState(active)
