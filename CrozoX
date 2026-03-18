@@ -1106,22 +1106,22 @@ function CrozoX:CreateWindow(cfg)
     -- ══════════════════════════════════════════════════════
     --  DRAG + RESIZE + SHADOW — كل شيء في RenderStepped
     -- ══════════════════════════════════════════════════════
-    local dragging  = false
-    local resizing  = false
-    local dragOffX  = 0
-    local dragOffY  = 0
-    local rStartX   = 0
-    local rStartY   = 0
-    local rW        = 0
-    local rH        = 0
-    local rPX       = 0
-    local rPY       = 0
+    local dragging   = false
+    local resizing   = false
+    local lastMouseX = 0
+    local lastMouseY = 0
+    local rStartX    = 0
+    local rStartY    = 0
+    local rW         = 0
+    local rH         = 0
+    local rPX        = 0
+    local rPY        = 0
     local MIN_W, MIN_H = 420, 300
     local MAX_W, MAX_H = 1200, 800
 
-    -- ── Drag Button — TextButton شفاف فوق titleBar يستقبل الـ input
+    -- ── Drag Button — TextButton شفاف فوق titleBar ─────────
     local dragBtn = New("TextButton", {
-        Size                   = UDim2.new(1, -90, 1, 0),  -- كل التايتلبار ماعدا الأزرار
+        Size                   = UDim2.new(1, -90, 1, 0),
         Position               = UDim2.new(0, 0, 0, 0),
         BackgroundTransparency = 1,
         Text                   = "",
@@ -1129,20 +1129,14 @@ function CrozoX:CreateWindow(cfg)
         Parent                 = titleBar,
     })
 
+    -- نظام drag بـ DELTA
     dragBtn.InputBegan:Connect(function(inp)
         if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
         if resizing then return end
         local mp = UserInputService:GetMouseLocation()
-        local wp = wrapFrame.AbsolutePosition
-        dragging = true
-        dragOffX = mp.X - wp.X
-        dragOffY = mp.Y - wp.Y
-    end)
-
-    dragBtn.InputEnded:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
+        lastMouseX = mp.X
+        lastMouseY = mp.Y
+        dragging   = true
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
@@ -1200,23 +1194,35 @@ function CrozoX:CreateWindow(cfg)
     RunService.RenderStepped:Connect(function()
         if not wrapFrame.Parent then return end
 
-        -- 1. Drag — يحرك wrapFrame
+        local mp = UserInputService:GetMouseLocation()
+
+        -- 1. Drag بـ DELTA — فقط نضيف الفرق بين الـ frames
+        -- مفيش أي حساب لـ AbsolutePosition = مفيش قفز
         if dragging then
-            local mp = UserInputService:GetMouseLocation()
-            wrapFrame.Position = UDim2.new(0, mp.X - dragOffX, 0, mp.Y - dragOffY)
+            local dx = mp.X - lastMouseX
+            local dy = mp.Y - lastMouseY
+            if dx ~= 0 or dy ~= 0 then
+                local cp = wrapFrame.Position
+                wrapFrame.Position = UDim2.new(
+                    0, cp.X.Offset + dx,
+                    0, cp.Y.Offset + dy)
+            end
+            lastMouseX = mp.X
+            lastMouseY = mp.Y
         end
 
-        -- 2. Resize — يكبر wrapFrame من الزاوية اليمنى السفلى
+        -- 2. Resize
         if resizing then
-            local mp   = UserInputService:GetMouseLocation()
             local newW = math.clamp(rW + (mp.X - rStartX), MIN_W, MAX_W)
             local newH = math.clamp(rH + (mp.Y - rStartY), MIN_H, MAX_H)
             wrapFrame.Size     = UDim2.new(0, newW, 0, newH)
             wrapFrame.Position = UDim2.new(0, rPX, 0, rPY)
             size               = UDim2.new(0, newW, 0, newH)
+            lastMouseX = mp.X
+            lastMouseY = mp.Y
         end
 
-        -- 3. Resize button — خارج الزاوية اليمنى السفلى
+        -- 3. Resize button
         local ap = wrapFrame.AbsolutePosition
         local as = wrapFrame.AbsoluteSize
         resizeBtn.Position = UDim2.new(0, ap.X + as.X + 2, 0, ap.Y + as.Y + 2)
@@ -1230,35 +1236,37 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    -- ── Open animation ─────────────────────────────────────
+    -- ── Open animation — الحل النهائي ──────────────────────
+    -- wrapFrame Position لا تتغير أبداً
+    -- Animation على mainFrame Scale فقط
     mainFrame.BackgroundTransparency = 1
-    wrapFrame.Size     = UDim2.new(0, 0, 0, 0)
-    wrapFrame.Position = UDim2.new(0, 0, 0, 0)
 
-    -- ── Open animation — Position ثابتة، Size بس اللي بيتحرك ──
     task.defer(function()
+        if not sg.Parent then return end
         local sw = sg.AbsoluteSize.X
         local sh = sg.AbsoluteSize.Y
         local w  = size.X.Offset
         local h  = size.Y.Offset
-        -- موضع ثابت في المنتصف — مش بيتحرك خلال الـ animation
-        local cx = (sw - w) / 2
-        local cy = (sh - h) / 2
-        -- نضع الـ position مرة واحدة وما نحركهاش
-        wrapFrame.Position = UDim2.new(0, cx, 0, cy)
-        wrapFrame.Size     = UDim2.new(0, w * 0.88, 0, h * 0.88)
-        -- Tween على الـ Size فقط
-        Tween(wrapFrame, {Size = UDim2.new(0, w, 0, h)},
-            0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
-        Tween(mainFrame, {BackgroundTransparency = 0}, 0.35)
+
+        -- wrapFrame بالحجم الكامل في المنتصف — لا يتحرك أبداً
+        wrapFrame.Size     = UDim2.new(0, w, 0, h)
+        wrapFrame.Position = UDim2.new(0, (sw - w) / 2, 0, (sh - h) / 2)
+
+        -- Animation على mainFrame فقط: يبدأ صغير وشفاف ثم يكبر
+        mainFrame.Size = UDim2.new(0.88, 0, 0.88, 0)
+        Tween(mainFrame, {
+            Size                   = UDim2.new(1, 0, 1, 0),
+            BackgroundTransparency = 0,
+        }, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
     end)
 
     -- ── Close / Minimize ───────────────────────────────────
     local isMin = false
     closeBtn.MouseButton1Click:Connect(function()
-        Tween(mainFrame, {BackgroundTransparency=1}, 0.25)
-        Tween(wrapFrame, {Size=UDim2.new(0,0,0,0)},
-            0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+        Tween(mainFrame, {
+            Size                   = UDim2.new(0.9, 0, 0.9, 0),
+            BackgroundTransparency = 1,
+        }, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
         task.delay(0.32, function()
             wrapFrame:Destroy()
             if resizeBtn and resizeBtn.Parent then resizeBtn:Destroy() end
@@ -1267,9 +1275,10 @@ function CrozoX:CreateWindow(cfg)
     minBtn.MouseButton1Click:Connect(function()
         isMin = not isMin
         if isMin then
-            Tween(wrapFrame, {Size=UDim2.new(0, size.X.Offset, 0, 54)}, 0.3)
+            -- تصغير mainFrame للـ titleBar فقط
+            Tween(mainFrame, {Size = UDim2.new(1, 0, 0, 54)}, 0.3)
         else
-            Tween(wrapFrame, {Size=size}, 0.35, Enum.EasingStyle.Back)
+            Tween(mainFrame, {Size = UDim2.new(1, 0, 1, 0)}, 0.35, Enum.EasingStyle.Back)
         end
     end)
 
@@ -1944,12 +1953,14 @@ function CrozoX:CreateWindow(cfg)
     function WAPI:CreateTab(c) return Window:CreateTab(c) end
     function WAPI:Toggle()
         if wrapFrame.Visible then
-            Tween(wrapFrame,{Size=UDim2.new(0,size.X.Offset,0,0)},0.3,
+            Tween(mainFrame,{Size=UDim2.new(1,0,0,0),BackgroundTransparency=1},0.3,
                 Enum.EasingStyle.Quart,Enum.EasingDirection.In)
             task.delay(0.32,function() wrapFrame.Visible=false end)
         else
             wrapFrame.Visible=true
-            Tween(wrapFrame,{Size=size},0.35,Enum.EasingStyle.Back)
+            mainFrame.Size=UDim2.new(0.88,0,0.88,0)
+            Tween(mainFrame,{Size=UDim2.new(1,0,1,0),BackgroundTransparency=0},
+                0.35,Enum.EasingStyle.Back)
         end
     end
     function WAPI:Destroy()
