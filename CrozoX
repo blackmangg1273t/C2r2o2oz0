@@ -1151,7 +1151,7 @@ function CrozoX:CreateWindow(cfg)
         Size                   = UDim2.new(0, 22, 0, 22),
         AnchorPoint            = Vector2.new(0.5, 0.5),
         -- على الزاوية السفلى اليمنى من wrapFrame — خارجها بسبب AnchorPoint
-        Position               = UDim2.new(1, 8, 1, 10),
+        Position               = UDim2.new(1, 10, 1, 10),
         BackgroundColor3       = Color3.fromRGB(30, 30, 30),
         BackgroundTransparency = 0.1,
         Text                   = "",
@@ -1306,13 +1306,27 @@ function CrozoX:CreateWindow(cfg)
         isMin = not isMin
         if isMin then
             Tween(mainFrame, {Size = UDim2.new(1, 0, 0, 54)}, 0.3)
-            -- وقت التصغير: الظل يصغر وresizeBtn يختفي
             Tween(shadowImg, {ImageTransparency = 1}, 0.2)
-            Tween(resizeBtn, {BackgroundTransparency = 1}, 0.2)
+            -- الزر يصغر ويختفي
+            Tween(resizeBtn, {
+                Size                   = UDim2.new(0, 0, 0, 0),
+                BackgroundTransparency = 1,
+            }, 0.2, Enum.EasingStyle.Quart)
+            task.delay(0.2, function()
+                if resizeBtn and resizeBtn.Parent then
+                    resizeBtn.Visible = false
+                end
+            end)
         else
             Tween(mainFrame, {Size = UDim2.new(1, 0, 1, 0)}, 0.35, Enum.EasingStyle.Back)
             Tween(shadowImg, {ImageTransparency = 0.55}, 0.35)
-            Tween(resizeBtn, {BackgroundTransparency = 0.1}, 0.35)
+            -- الزر يرجع بـ animation
+            resizeBtn.Visible = true
+            resizeBtn.Size    = UDim2.new(0, 0, 0, 0)
+            Tween(resizeBtn, {
+                Size                   = UDim2.new(0, 22, 0, 22),
+                BackgroundTransparency = 0.1,
+            }, 0.3, Enum.EasingStyle.Back)
         end
     end)
 
