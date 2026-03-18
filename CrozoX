@@ -773,14 +773,18 @@ function CrozoX:_Init()
     local ok=Safe(function() sg.Parent=CoreGui end)
     if not ok then sg.Parent=LocalPlayer:WaitForChild("PlayerGui") end
     self._ScreenGui=sg
-    -- NotifContainer — responsive بناءً على الجهاز
-    -- موبايل: عرض كامل بـ margin بسيط من الأسفل
-    -- PC: شريط ثابت 345px من اليمين
+    -- NotifContainer — على موبايل: عرض ثابت 280px في المنتصف من الأسفل
+    -- مش full width عشان ده اللي بيخليها تبان "عريضة وغبية"
     if Device.IsMobile or Device.IsTablet then
+        local _nc = workspace.CurrentCamera
+        local _nv = _nc and _nc.ViewportSize or Vector2.new(400,700)
+        local notifW = math.min(300, _nv.X - 24)  -- بحد أقصى 300px
         self._NotifContainer=New("Frame",{Name="NotifContainer",
-            Size=UDim2.new(1,-24,1,0),Position=UDim2.new(0,12,0,0),
+            Size=UDim2.new(0,notifW,1,0),
+            AnchorPoint=Vector2.new(0.5,0),
+            Position=UDim2.new(0.5,0,0,0),
             BackgroundTransparency=1,ZIndex=900,Parent=sg})
-        ListLayout(self._NotifContainer,8,Enum.FillDirection.Vertical,
+        ListLayout(self._NotifContainer,6,Enum.FillDirection.Vertical,
             Enum.HorizontalAlignment.Center,Enum.VerticalAlignment.Bottom)
     else
         self._NotifContainer=New("Frame",{Name="NotifContainer",
@@ -1001,15 +1005,14 @@ function CrozoX:CreateWindow(cfg)
         Parent           = titleBar,
     })
 
-    -- ── Control buttons — أيقونات حقيقية من Icons ────────────
-    -- على موبايل: حجم أكبر (38px) عشان يتضغط بسهولة بالإصبع
-    local _btnSz    = (Device.IsMobile or Device.IsTablet) and 38 or 28
-    local _btnIcoSz = (Device.IsMobile or Device.IsTablet) and 18 or 14
-    local _btnCorner= (Device.IsMobile or Device.IsTablet) and 10 or 7
-    local _btnGap   = (Device.IsMobile or Device.IsTablet) and 46 or 36  -- المسافة بين الأزرار
+    -- ── Control buttons ────────────────────────────────────
+    local _btnSz    = (Device.IsMobile or Device.IsTablet) and 42 or 28
+    local _btnIcoSz = (Device.IsMobile or Device.IsTablet) and 20 or 14
+    local _btnCorner= (Device.IsMobile or Device.IsTablet) and 11 or 7
 
+    -- CtrlBtn يرجع الـ TextButton
+    -- على موبايل نستخدم InputBegan Touch بدل TouchTap (أكثر موثوقية)
     local function CtrlBtn(iconAsset, rightOff, normalBg, hoverBg, iconColor)
-        -- rightOff بيتضاعف على موبايل عشان الأزرار ما تتداخلش
         local mobOff = Device.IsPC and rightOff or (rightOff * (_btnSz / 28))
         local fr = New("Frame", {
             Size             = UDim2.new(0, _btnSz, 0, _btnSz),
@@ -1022,43 +1025,41 @@ function CrozoX:CreateWindow(cfg)
         })
         Corner(fr, _btnCorner)
         Stroke(fr, Color3.fromRGB(255,255,255), 1, 0.88)
-
-        -- الأيقونة الحقيقية
         local icon = New("ImageLabel", {
-            Size                 = UDim2.new(0, _btnIcoSz, 0, _btnIcoSz),
-            AnchorPoint          = Vector2.new(0.5, 0.5),
-            Position             = UDim2.new(0.5, 0, 0.5, 0),
-            BackgroundTransparency = 1,
-            Image                = iconAsset,
-            ImageColor3          = iconColor,
-            ScaleType            = Enum.ScaleType.Fit,
-            ZIndex               = 21,
-            Parent               = fr,
+            Size=UDim2.new(0,_btnIcoSz,0,_btnIcoSz),
+            AnchorPoint=Vector2.new(0.5,0.5), Position=UDim2.new(0.5,0,0.5,0),
+            BackgroundTransparency=1, Image=iconAsset, ImageColor3=iconColor,
+            ScaleType=Enum.ScaleType.Fit, ZIndex=21, Parent=fr,
         })
-
         local btn = New("TextButton", {
             Size=UDim2.new(1,0,1,0), BackgroundTransparency=1,
             Text="", ZIndex=22, Parent=fr,
         })
-        local hoverSz = UDim2.new(0, _btnSz+2, 0, _btnSz+2)
-        local normSz  = UDim2.new(0, _btnSz,   0, _btnSz)
-        local pressSz = UDim2.new(0, _btnSz-3, 0, _btnSz-3)
+        local normSz  = UDim2.new(0,_btnSz,  0,_btnSz)
+        local pressSz = UDim2.new(0,_btnSz-4,0,_btnSz-4)
+        -- PC: hover + click
         btn.MouseEnter:Connect(function()
-            Tween(fr,   {BackgroundColor3=hoverBg},      0.15)
-            Tween(icon, {ImageColor3=Color3.new(1,1,1)}, 0.15)
-            Tween(fr,   {Size=hoverSz}, 0.12, Enum.EasingStyle.Back)
+            Tween(fr,{BackgroundColor3=hoverBg},0.15)
+            Tween(icon,{ImageColor3=Color3.new(1,1,1)},0.15)
+            Tween(fr,{Size=UDim2.new(0,_btnSz+2,0,_btnSz+2)},0.12,Enum.EasingStyle.Back)
         end)
         btn.MouseLeave:Connect(function()
-            Tween(fr,   {BackgroundColor3=normalBg}, 0.15)
-            Tween(icon, {ImageColor3=iconColor},     0.15)
-            Tween(fr,   {Size=normSz}, 0.12)
+            Tween(fr,{BackgroundColor3=normalBg},0.15)
+            Tween(icon,{ImageColor3=iconColor},0.15)
+            Tween(fr,{Size=normSz},0.12)
         end)
         btn.MouseButton1Down:Connect(function() Tween(fr,{Size=pressSz},0.08) end)
-        btn.MouseButton1Up:Connect(function()   Tween(fr,{Size=normSz}, 0.12,Enum.EasingStyle.Back) end)
-        -- touch feedback
-        btn.TouchTap:Connect(function()
-            Tween(fr,{Size=pressSz},0.06)
-            task.delay(0.12,function() Tween(fr,{Size=normSz},0.15,Enum.EasingStyle.Back) end)
+        btn.MouseButton1Up:Connect(function()   Tween(fr,{Size=normSz},0.12,Enum.EasingStyle.Back) end)
+        -- موبايل: InputBegan Touch (أكثر موثوقية من TouchTap)
+        btn.InputBegan:Connect(function(inp)
+            if inp.UserInputType == Enum.UserInputType.Touch then
+                Tween(fr,{BackgroundColor3=hoverBg,Size=pressSz},0.08)
+            end
+        end)
+        btn.InputEnded:Connect(function(inp)
+            if inp.UserInputType == Enum.UserInputType.Touch then
+                Tween(fr,{BackgroundColor3=normalBg,Size=normSz},0.15,Enum.EasingStyle.Back)
+            end
         end)
         return btn
     end
@@ -1540,9 +1541,43 @@ function CrozoX:CreateWindow(cfg)
             New("UIScale", { Scale = scaleVal, Parent = wrapFrame })
         end
 
-        -- على الموبايل/تابلت: نخفي زر الـ resize (مش منطقي هناك)
+        -- على موبايل: نكبّر زر الـ resize عشان يتضغط بسهولة — مش نخفيه
         if not Device.IsPC then
-            resizeBtn.Visible = false
+            resizeBtn.Visible = true
+            -- نكبّره شوية على موبايل
+            resizeBtn.Size = UDim2.new(0, 30, 0, 30)
+            -- نضيف Touch support للـ resize
+            resizeBtn.InputBegan:Connect(function(inp)
+                if inp.UserInputType ~= Enum.UserInputType.Touch then return end
+                resizing  = true
+                dragging  = false
+                local tp  = inp.Position
+                rStartX   = tp.X
+                rStartY   = tp.Y
+                rW        = wrapFrame.AbsoluteSize.X
+                rH        = wrapFrame.AbsoluteSize.Y
+                rPX       = wrapFrame.Position.X.Offset
+                rPY       = wrapFrame.Position.Y.Offset
+                Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.1)
+            end)
+            resizeBtn.InputChanged:Connect(function(inp)
+                if inp.UserInputType == Enum.UserInputType.Touch and resizing then
+                    local sc   = wrapFrame:FindFirstChildWhichIsA("UIScale")
+                    local s    = sc and sc.Scale or 1
+                    local newW = math.clamp(rW + (inp.Position.X-rStartX)/s, MIN_W, MAX_W)
+                    local newH = math.clamp(rH + (inp.Position.Y-rStartY)/s, MIN_H, MAX_H)
+                    wrapFrame.Size     = UDim2.new(0,newW,0,newH)
+                    wrapFrame.Position = UDim2.new(0,rPX,0,rPY)
+                    smoothX=rPX; smoothY=rPY; dispX=rPX; dispY=rPY
+                    size = UDim2.new(0,newW,0,newH)
+                end
+            end)
+            resizeBtn.InputEnded:Connect(function(inp)
+                if inp.UserInputType == Enum.UserInputType.Touch then
+                    resizing = false
+                    Tween(resizeBtn,{BackgroundColor3=Color3.fromRGB(40,40,40),BackgroundTransparency=0.2},0.15)
+                end
+            end)
         end
 
         -- Animation على mainFrame فقط
@@ -1594,11 +1629,18 @@ function CrozoX:CreateWindow(cfg)
         end
     end
 
-    -- ربط الأحداث — Mouse وTouch معاً
-    closeBtn.MouseButton1Click:Connect(DoClose)
-    closeBtn.TouchTap:Connect(DoClose)
-    minBtn.MouseButton1Click:Connect(DoMinimize)
-    minBtn.TouchTap:Connect(DoMinimize)
+    -- ربط الأحداث — MouseButton1Click للـ PC + InputBegan Touch للموبايل
+    -- TouchTap غير موثوق في الـ executors — InputBegan أسرع وأثبت
+    local function ConnectBtn(btn, fn)
+        btn.MouseButton1Click:Connect(fn)
+        btn.InputBegan:Connect(function(inp)
+            if inp.UserInputType == Enum.UserInputType.Touch then
+                fn()
+            end
+        end)
+    end
+    ConnectBtn(closeBtn, DoClose)
+    ConnectBtn(minBtn,   DoMinimize)
 
     -- ============================================================
     --  TAB SYSTEM
@@ -2412,23 +2454,17 @@ function CrozoX:Notify(cfg)
         task.delay(FO+0.05,function() card:Destroy() end)
     end
     task.delay(dur,Dismiss)
-    -- dismiss بـ click أو touch
+    -- dismiss — InputBegan Touch بدل TouchTap (أكثر موثوقية)
     xBtn.MouseButton1Click:Connect(Dismiss)
-    xBtn.TouchTap:Connect(Dismiss)
+    xBtn.InputBegan:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.Touch then Dismiss() end
+    end)
     local hov=New("TextButton",{Size=UDim2.new(1,0,1,0),
         BackgroundTransparency=1,Text="",ZIndex=901,Parent=card})
     hov.MouseEnter:Connect(function()
         Tween(card,{BackgroundColor3=T.SurfaceAlt},0.15) end)
     hov.MouseLeave:Connect(function()
         Tween(card,{BackgroundColor3=T.Surface},0.15) end)
-    -- swipe to dismiss على موبايل
-    if isMob then
-        hov.TouchSwipe:Connect(function(dir)
-            if dir==Enum.SwipeDirection.Down or dir==Enum.SwipeDirection.Right then
-                Dismiss()
-            end
-        end)
-    end
 end
 
 -- ============================================================
