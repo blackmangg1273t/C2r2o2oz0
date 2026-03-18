@@ -1148,25 +1148,31 @@ function CrozoX:CreateWindow(cfg)
     -- ── Resize Button — خارج الواجهة في sg ──────────────
     local resizeBtn = New("TextButton", {
         Name                   = "ResizeBtn",
-        Size                   = UDim2.new(0, 24, 0, 24),
-        AnchorPoint            = Vector2.new(0, 0),
-        BackgroundColor3       = T.SurfaceAlt,
-        BackgroundTransparency = 0.1,
+        Size                   = UDim2.new(0, 22, 0, 22),
+        AnchorPoint            = Vector2.new(0.5, 0.5),  -- مركز على الزاوية
+        BackgroundColor3       = Color3.fromRGB(40, 40, 40),  -- داكن محايد
+        BackgroundTransparency = 0.2,
         Text                   = "",
         ZIndex                 = 60,
         Parent                 = sg,
     })
-    Corner(resizeBtn, 6)
-    Stroke(resizeBtn, T.Primary, 1.5, 0.5)
-    -- أيقونة ⌟
-    New("Frame", {
-        Size=UDim2.new(0,13,0,2), Position=UDim2.new(0,5,1,-7),
-        BackgroundColor3=T.Primary, BorderSizePixel=0, ZIndex=61, Parent=resizeBtn,
+    Corner(resizeBtn, 5)
+    -- Stroke أبيض خفيف
+    New("UIStroke", {
+        Color        = Color3.new(1, 1, 1),
+        Thickness    = 1,
+        Transparency = 0.6,
+        Parent       = resizeBtn,
     })
-    New("Frame", {
-        Size=UDim2.new(0,2,0,13), Position=UDim2.new(1,-7,0,5),
-        BackgroundColor3=T.Primary, BorderSizePixel=0, ZIndex=61, Parent=resizeBtn,
-    })
+    -- أيقونة ⌟ بالأبيض
+    local iconH = New("Frame", {
+        Size=UDim2.new(0,11,0,2), Position=UDim2.new(0,5,1,-6),
+        BackgroundColor3=Color3.new(1,1,1), BorderSizePixel=0, ZIndex=61, Parent=resizeBtn,
+    }); Corner(iconH, 1)
+    local iconV = New("Frame", {
+        Size=UDim2.new(0,2,0,11), Position=UDim2.new(1,-6,0,5),
+        BackgroundColor3=Color3.new(1,1,1), BorderSizePixel=0, ZIndex=61, Parent=resizeBtn,
+    }); Corner(iconV, 1)
 
     resizeBtn.InputBegan:Connect(function(inp)
         if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
@@ -1177,18 +1183,20 @@ function CrozoX:CreateWindow(cfg)
         rStartY  = mp.Y
         rW       = wrapFrame.AbsoluteSize.X
         rH       = wrapFrame.AbsoluteSize.Y
-        -- نستخدم Position.Offset مش AbsolutePosition
         rPX      = wrapFrame.Position.X.Offset
         rPY      = wrapFrame.Position.Y.Offset
+        Tween(resizeBtn, {BackgroundColor3=T.Primary, BackgroundTransparency=0}, 0.1)
     end)
 
     resizeBtn.MouseEnter:Connect(function()
+        if resizing then return end
         Tween(resizeBtn, {BackgroundColor3=T.Primary, BackgroundTransparency=0}, 0.15)
+        Tween(iconH, {BackgroundColor3=Color3.new(1,1,1)}, 0.15)
+        Tween(iconV, {BackgroundColor3=Color3.new(1,1,1)}, 0.15)
     end)
     resizeBtn.MouseLeave:Connect(function()
-        if not resizing then
-            Tween(resizeBtn, {BackgroundColor3=T.SurfaceAlt, BackgroundTransparency=0.1}, 0.15)
-        end
+        if resizing then return end
+        Tween(resizeBtn, {BackgroundColor3=Color3.fromRGB(40,40,40), BackgroundTransparency=0.2}, 0.15)
     end)
 
     -- ── RenderStepped: drag + resize + resize button pos ──
@@ -1243,17 +1251,24 @@ function CrozoX:CreateWindow(cfg)
             size    = UDim2.new(0, newW, 0, newH)
         end
 
-        -- 3. Resize button
+        -- 3. Resize button — على الحافة المنحنية بالضبط
+        -- AnchorPoint=0.5,0.5 + الزاوية = الزر نصفه داخل نصفه خارج
         local ap = wrapFrame.AbsolutePosition
         local as = wrapFrame.AbsoluteSize
-        resizeBtn.Position = UDim2.new(0, ap.X + as.X + 2, 0, ap.Y + as.Y + 2)
+        local cornerOffset = 16 * 0.29  -- تقريب للحافة المنحنية (corner radius * (1-cos45))
+        resizeBtn.Position = UDim2.new(0,
+            ap.X + as.X - cornerOffset,
+            0,
+            ap.Y + as.Y - cornerOffset)
     end)
 
-    -- إيقاف resize عند رفع الماوس
     UserInputService.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 and resizing then
             resizing = false
-            Tween(resizeBtn, {BackgroundColor3=T.SurfaceAlt, BackgroundTransparency=0.1}, 0.15)
+            Tween(resizeBtn, {
+                BackgroundColor3       = Color3.fromRGB(40, 40, 40),
+                BackgroundTransparency = 0.2,
+            }, 0.15)
         end
     end)
 
