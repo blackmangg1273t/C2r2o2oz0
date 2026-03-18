@@ -773,11 +773,22 @@ function CrozoX:_Init()
     local ok=Safe(function() sg.Parent=CoreGui end)
     if not ok then sg.Parent=LocalPlayer:WaitForChild("PlayerGui") end
     self._ScreenGui=sg
-    self._NotifContainer=New("Frame",{Name="NotifContainer",
-        Size=UDim2.new(0,345,1,0),Position=UDim2.new(1,-360,0,0),
-        BackgroundTransparency=1,ZIndex=900,Parent=sg})
-    ListLayout(self._NotifContainer,10,Enum.FillDirection.Vertical,
-        Enum.HorizontalAlignment.Right,Enum.VerticalAlignment.Bottom)
+    -- NotifContainer — responsive بناءً على الجهاز
+    -- موبايل: عرض كامل بـ margin بسيط من الأسفل
+    -- PC: شريط ثابت 345px من اليمين
+    if Device.IsMobile or Device.IsTablet then
+        self._NotifContainer=New("Frame",{Name="NotifContainer",
+            Size=UDim2.new(1,-24,1,0),Position=UDim2.new(0,12,0,0),
+            BackgroundTransparency=1,ZIndex=900,Parent=sg})
+        ListLayout(self._NotifContainer,8,Enum.FillDirection.Vertical,
+            Enum.HorizontalAlignment.Center,Enum.VerticalAlignment.Bottom)
+    else
+        self._NotifContainer=New("Frame",{Name="NotifContainer",
+            Size=UDim2.new(0,345,1,0),Position=UDim2.new(1,-360,0,0),
+            BackgroundTransparency=1,ZIndex=900,Parent=sg})
+        ListLayout(self._NotifContainer,10,Enum.FillDirection.Vertical,
+            Enum.HorizontalAlignment.Right,Enum.VerticalAlignment.Bottom)
+    end
     return sg
 end
 function CrozoX:SetTheme(name)
@@ -991,22 +1002,30 @@ function CrozoX:CreateWindow(cfg)
     })
 
     -- ── Control buttons — أيقونات حقيقية من Icons ────────────
+    -- على موبايل: حجم أكبر (38px) عشان يتضغط بسهولة بالإصبع
+    local _btnSz    = (Device.IsMobile or Device.IsTablet) and 38 or 28
+    local _btnIcoSz = (Device.IsMobile or Device.IsTablet) and 18 or 14
+    local _btnCorner= (Device.IsMobile or Device.IsTablet) and 10 or 7
+    local _btnGap   = (Device.IsMobile or Device.IsTablet) and 46 or 36  -- المسافة بين الأزرار
+
     local function CtrlBtn(iconAsset, rightOff, normalBg, hoverBg, iconColor)
+        -- rightOff بيتضاعف على موبايل عشان الأزرار ما تتداخلش
+        local mobOff = Device.IsPC and rightOff or (rightOff * (_btnSz / 28))
         local fr = New("Frame", {
-            Size             = UDim2.new(0, 28, 0, 28),
+            Size             = UDim2.new(0, _btnSz, 0, _btnSz),
             AnchorPoint      = Vector2.new(1, 0.5),
-            Position         = UDim2.new(1, -rightOff, 0.5, 0),
+            Position         = UDim2.new(1, -mobOff, 0.5, 0),
             BackgroundColor3 = normalBg,
             BorderSizePixel  = 0,
             ZIndex           = 20,
             Parent           = titleBar,
         })
-        Corner(fr, 7)
+        Corner(fr, _btnCorner)
         Stroke(fr, Color3.fromRGB(255,255,255), 1, 0.88)
 
         -- الأيقونة الحقيقية
         local icon = New("ImageLabel", {
-            Size                 = UDim2.new(0, 14, 0, 14),
+            Size                 = UDim2.new(0, _btnIcoSz, 0, _btnIcoSz),
             AnchorPoint          = Vector2.new(0.5, 0.5),
             Position             = UDim2.new(0.5, 0, 0.5, 0),
             BackgroundTransparency = 1,
@@ -1021,21 +1040,25 @@ function CrozoX:CreateWindow(cfg)
             Size=UDim2.new(1,0,1,0), BackgroundTransparency=1,
             Text="", ZIndex=22, Parent=fr,
         })
+        local hoverSz = UDim2.new(0, _btnSz+2, 0, _btnSz+2)
+        local normSz  = UDim2.new(0, _btnSz,   0, _btnSz)
+        local pressSz = UDim2.new(0, _btnSz-3, 0, _btnSz-3)
         btn.MouseEnter:Connect(function()
-            Tween(fr,   {BackgroundColor3=hoverBg},              0.15)
-            Tween(icon, {ImageColor3=Color3.new(1,1,1)},         0.15)
-            Tween(fr,   {Size=UDim2.new(0,30,0,30)},             0.12, Enum.EasingStyle.Back)
+            Tween(fr,   {BackgroundColor3=hoverBg},      0.15)
+            Tween(icon, {ImageColor3=Color3.new(1,1,1)}, 0.15)
+            Tween(fr,   {Size=hoverSz}, 0.12, Enum.EasingStyle.Back)
         end)
         btn.MouseLeave:Connect(function()
-            Tween(fr,   {BackgroundColor3=normalBg},              0.15)
-            Tween(icon, {ImageColor3=iconColor},                  0.15)
-            Tween(fr,   {Size=UDim2.new(0,28,0,28)},             0.12)
+            Tween(fr,   {BackgroundColor3=normalBg}, 0.15)
+            Tween(icon, {ImageColor3=iconColor},     0.15)
+            Tween(fr,   {Size=normSz}, 0.12)
         end)
-        btn.MouseButton1Down:Connect(function()
-            Tween(fr, {Size=UDim2.new(0,25,0,25)}, 0.08)
-        end)
-        btn.MouseButton1Up:Connect(function()
-            Tween(fr, {Size=UDim2.new(0,28,0,28)}, 0.12, Enum.EasingStyle.Back)
+        btn.MouseButton1Down:Connect(function() Tween(fr,{Size=pressSz},0.08) end)
+        btn.MouseButton1Up:Connect(function()   Tween(fr,{Size=normSz}, 0.12,Enum.EasingStyle.Back) end)
+        -- touch feedback
+        btn.TouchTap:Connect(function()
+            Tween(fr,{Size=pressSz},0.06)
+            task.delay(0.12,function() Tween(fr,{Size=normSz},0.15,Enum.EasingStyle.Back) end)
         end)
         return btn
     end
@@ -1296,19 +1319,42 @@ function CrozoX:CreateWindow(cfg)
         Parent                 = titleBar,
     })
 
-    -- نظام drag بـ DELTA
-    dragBtn.InputBegan:Connect(function(inp)
-        if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
+    -- نظام drag — يدعم Mouse (PC) وTouch (موبايل)
+    local function StartDrag(posX, posY)
         if resizing then return end
-        local mp = UserInputService:GetMouseLocation()
-        lastMouseX = mp.X
-        lastMouseY = mp.Y
+        lastMouseX = posX
+        lastMouseY = posY
         dragging   = true
+    end
+    local function StopDrag()
+        dragging = false
+    end
+
+    dragBtn.InputBegan:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+            local mp = UserInputService:GetMouseLocation()
+            StartDrag(mp.X, mp.Y)
+        elseif inp.UserInputType == Enum.UserInputType.Touch then
+            StartDrag(inp.Position.X, inp.Position.Y)
+        end
+    end)
+    dragBtn.InputChanged:Connect(function(inp)
+        -- Touch move — نحدّث lastMouse عشان الـ RenderStepped يلحق
+        if inp.UserInputType == Enum.UserInputType.Touch and dragging then
+            lastMouseX = inp.Position.X
+            lastMouseY = inp.Position.Y
+        end
+    end)
+    dragBtn.InputEnded:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.MouseButton1
+        or inp.UserInputType == Enum.UserInputType.Touch then
+            StopDrag()
+        end
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
+            StopDrag()
         end
     end)
 
@@ -1378,16 +1424,28 @@ function CrozoX:CreateWindow(cfg)
     RunService.RenderStepped:Connect(function()
         if not wrapFrame.Parent then return end
 
+        -- جيب موضع المؤشر — GetMouseLocation شغال للـ Touch كمان في Roblox
         local mp = UserInputService:GetMouseLocation()
+        local mpX = mp.X
+        local mpY = mp.Y
+
+        -- على موبايل: لو في touch active، استخدم lastMouseX/Y اللي بيتحدث من InputChanged
+        if (Device.IsMobile or Device.IsTablet) and dragging then
+            mpX = lastMouseX
+            mpY = lastMouseY
+        end
 
         -- 1. Drag بـ DELTA + SMOOTH
         if dragging then
-            local dx = mp.X - lastMouseX
-            local dy = mp.Y - lastMouseY
+            local dx = mpX - lastMouseX
+            local dy = mpY - lastMouseY
             smoothX = smoothX + dx
             smoothY = smoothY + dy
-            lastMouseX = mp.X
-            lastMouseY = mp.Y
+            -- على PC بس نحدّث lastMouse هنا (موبايل بيتحدث من InputChanged)
+            if Device.IsPC then
+                lastMouseX = mpX
+                lastMouseY = mpY
+            end
         end
 
         -- تهيئة dispX/dispY أول مرة
@@ -2236,46 +2294,61 @@ function CrozoX:Notify(cfg)
     local td=typeMap[ntype] or typeMap.Info
     local color=td.color
     self._NotifCount=self._NotifCount+1
+
+    -- ── Responsive sizes ──────────────────────────────────
+    local isMob = Device.IsMobile or Device.IsTablet
+    local cardH      = isMob and 66  or 82     -- ارتفاع الـ card
+    local panelW     = isMob and 38  or 46     -- عرض الـ panel الملوّن
+    local iconSz     = isMob and 18  or 22     -- حجم الأيقونة
+    local titleSz    = isMob and 12  or 14     -- حجم عنوان الإشعار
+    local bodySz     = isMob and 11  or (L and L.LabelSize or 13)
+    local titleY     = isMob and 10  or 13     -- Y position للعنوان
+    local bodyY      = isMob and 28  or 36     -- Y position للنص
+    local bodyH      = isMob and 26  or 32
+    local txtOffX    = isMob and (panelW+8) or 56  -- X offset النصوص
+
     local card=New("Frame",{Name="Notif_"..self._NotifCount,
-        Size=UDim2.new(1,0,0,82),
+        Size=UDim2.new(1,0,0,cardH),
         BackgroundColor3=T.Surface,BackgroundTransparency=1,
         BorderSizePixel=0,ZIndex=900,Parent=self._NotifContainer})
-    Corner(card,13)
+    Corner(card,11)
     Stroke(card,color,1,0.58)
 
     -- Coloured left panel
-    local panel=New("Frame",{Size=UDim2.new(0,46,1,0),
+    local panel=New("Frame",{Size=UDim2.new(0,panelW,1,0),
         BackgroundColor3=td.bg,BorderSizePixel=0,ZIndex=901,Parent=card})
-    New("UICorner",{CornerRadius=UDim.new(0,13),Parent=panel})
+    New("UICorner",{CornerRadius=UDim.new(0,11),Parent=panel})
     New("Frame",{Size=UDim2.new(0,8,1,0),Position=UDim2.new(1,-8,0,0),
         BackgroundColor3=td.bg,BorderSizePixel=0,ZIndex=901,Parent=panel})
-    local iconImg=Img(panel,td.icon,22,UDim2.new(0.5,-11,0.5,-11),color,903)
+    local iconImg=Img(panel,td.icon,iconSz,
+        UDim2.new(0.5,-iconSz/2,0.5,-iconSz/2),color,903)
     iconImg.ImageTransparency=1
 
-    local titleLbl=New("TextLabel",{Size=UDim2.new(1,-96,0,22),
-        Position=UDim2.new(0,56,0,13),BackgroundTransparency=1,
+    local titleLbl=New("TextLabel",{Size=UDim2.new(1,-(txtOffX+18),0,20),
+        Position=UDim2.new(0,txtOffX,0,titleY),BackgroundTransparency=1,
         Text=title,TextColor3=T.Text,Font=FONTS.Bold,
-        TextSize=14,  -- ← أكبر
-        TextXAlignment=xAlign,TextWrapped=false,
+        TextSize=titleSz,TextXAlignment=xAlign,TextWrapped=false,
         TextTransparency=1,ZIndex=902,Parent=card})
-    local bodyLbl=New("TextLabel",{Size=UDim2.new(1,-96,0,32),
-        Position=UDim2.new(0,56,0,36),BackgroundTransparency=1,
+    local bodyLbl=New("TextLabel",{Size=UDim2.new(1,-(txtOffX+10),0,bodyH),
+        Position=UDim2.new(0,txtOffX,0,bodyY),BackgroundTransparency=1,
         Text=text,TextColor3=T.TextDim,
         Font=L and L.FontBody or FONTS.Body,
-        TextSize=L and L.LabelSize or 13,  -- ← من اللغة
-        TextXAlignment=xAlign,TextWrapped=true,
+        TextSize=bodySz,TextXAlignment=xAlign,TextWrapped=true,
         TextTransparency=1,ZIndex=902,Parent=card})
 
-    -- Close X
-    local xBtn=New("TextButton",{Size=UDim2.new(0,22,0,22),
-        Position=UDim2.new(1,-28,0,8),BackgroundTransparency=1,
+    -- Close X — أكبر على موبايل عشان يتضغط بسهولة
+    local xBtnSz = isMob and 28 or 22
+    local xBtn=New("TextButton",{Size=UDim2.new(0,xBtnSz,0,xBtnSz),
+        Position=UDim2.new(1,-(xBtnSz+6),0,6),BackgroundTransparency=1,
         Text="",ZIndex=904,Parent=card})
-    local xIco=Img(xBtn,Icons.x,12,UDim2.new(0.5,-6,0.5,-6),T.TextMuted,905)
+    local xIcoSz = isMob and 14 or 12
+    local xIco=Img(xBtn,Icons.x,xIcoSz,
+        UDim2.new(0.5,-xIcoSz/2,0.5,-xIcoSz/2),T.TextMuted,905)
     xIco.ImageTransparency=1
 
-    -- Progress
+    -- Progress bar
     local pbg=New("Frame",{Size=UDim2.new(1,-16,0,3),
-        Position=UDim2.new(0,8,1,-7),BackgroundColor3=T.Border,
+        Position=UDim2.new(0,8,1,-6),BackgroundColor3=T.Border,
         BorderSizePixel=0,ZIndex=902,Parent=card})
     Corner(pbg,2)
     local pfill=New("Frame",{Size=UDim2.new(1,0,1,0),
@@ -2283,10 +2356,15 @@ function CrozoX:Notify(cfg)
     Corner(pfill,2)
     pfill.BackgroundTransparency=1
 
-    -- Slide in + fade ALL simultaneously
-    card.Position=UDim2.new(1,30,0,0)
+    -- Slide in — موبايل من الأسفل، PC من اليمين
     local FI=0.4
-    Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0,0,0,0)},FI,Enum.EasingStyle.Back)
+    if isMob then
+        card.Position=UDim2.new(0,0,1,20)
+        Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0,0,0,0)},FI,Enum.EasingStyle.Back)
+    else
+        card.Position=UDim2.new(1,30,0,0)
+        Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0,0,0,0)},FI,Enum.EasingStyle.Back)
+    end
     Tween(iconImg,{ImageTransparency=0},FI)
     Tween(titleLbl,{TextTransparency=0},FI)
     Tween(bodyLbl,{TextTransparency=0},FI)
@@ -2298,7 +2376,10 @@ function CrozoX:Notify(cfg)
     local function Dismiss()
         if dismissed then return end; dismissed=true
         local FO=0.3
-        Tween(card,{BackgroundTransparency=1,Position=UDim2.new(1,30,0,0)},FO,
+        local exitPos = isMob
+            and UDim2.new(0,0,1,20)
+            or  UDim2.new(1,30,0,0)
+        Tween(card,{BackgroundTransparency=1,Position=exitPos},FO,
             Enum.EasingStyle.Quart,Enum.EasingDirection.In)
         Tween(iconImg,{ImageTransparency=1},FO)
         Tween(titleLbl,{TextTransparency=1},FO)
@@ -2308,13 +2389,23 @@ function CrozoX:Notify(cfg)
         task.delay(FO+0.05,function() card:Destroy() end)
     end
     task.delay(dur,Dismiss)
+    -- dismiss بـ click أو touch
     xBtn.MouseButton1Click:Connect(Dismiss)
+    xBtn.TouchTap:Connect(Dismiss)
     local hov=New("TextButton",{Size=UDim2.new(1,0,1,0),
         BackgroundTransparency=1,Text="",ZIndex=901,Parent=card})
     hov.MouseEnter:Connect(function()
         Tween(card,{BackgroundColor3=T.SurfaceAlt},0.15) end)
     hov.MouseLeave:Connect(function()
         Tween(card,{BackgroundColor3=T.Surface},0.15) end)
+    -- swipe to dismiss على موبايل
+    if isMob then
+        hov.TouchSwipe:Connect(function(dir)
+            if dir==Enum.SwipeDirection.Down or dir==Enum.SwipeDirection.Right then
+                Dismiss()
+            end
+        end)
+    end
 end
 
 -- ============================================================
