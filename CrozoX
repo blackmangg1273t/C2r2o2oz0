@@ -1035,12 +1035,15 @@ function CrozoX:CreateWindow(cfg)
         repeat task.wait() until LocalPlayer and LocalPlayer.UserId ~= 0
         local userId = LocalPlayer.UserId
 
-        -- rbxthumb فوري
-        avatarImg.Image = "rbxthumb://type=AvatarHeadShot&id="
-            .. userId .. "&w=150&h=150"
+        -- rbxthumb فوري كـ fallback — يظهر فوراً حتى لو الـ async اتعلق
+        avatarImg.Image = "rbxthumb://type=AvatarHeadShot&id=" .. userId .. "&w=150&h=150"
 
-        -- retry للجودة الأعلى
-        for i = 1, 5 do
+        -- GetUserThumbnailAsync في coroutine منفصلة مع timeout 3 ثواني
+        -- عشان لو اتعلق، منفضلش في الـ loop للأبد
+        local betterUrl = nil
+        local fetchDone = false
+
+        task.spawn(function()
             local ok, content = pcall(function()
                 return Players:GetUserThumbnailAsync(
                     userId,
@@ -1049,22 +1052,36 @@ function CrozoX:CreateWindow(cfg)
                 )
             end)
             if ok and content and content ~= "" then
-                avatarImg.Image = content
-                break
+                betterUrl = content
             end
-            task.wait(1)
+            fetchDone = true
+        end)
+
+        -- انتظر الـ fetch بحد أقصى 3 ثواني
+        local waited = 0
+        while not fetchDone and waited < 3 do
+            task.wait(0.1)
+            waited = waited + 0.1
         end
 
-        -- الصورة جاهزة — نوقف الـ shimmer ونظهر الصورة
-        if shimmerConn then shimmerConn:Disconnect() end
+        -- لو جاب جودة أعلى، استخدمها
+        if betterUrl then
+            avatarImg.Image = betterUrl
+        end
 
-        -- نظهر الصورة مباشرة ثم animation
-        avatarImg.ImageTransparency = 0
-        Tween(avatarImg, {ImageTransparency = 0}, 0.25)
+        -- وقف الـ shimmer
+        if shimmerConn then
+            shimmerConn:Disconnect()
+            shimmerConn = nil
+        end
 
-        -- نشيل الـ loading
-        Tween(loadingFrame, {BackgroundTransparency = 1}, 0.3)
-        task.delay(0.35, function()
+        -- الـ fade-in الصح: من 1 لـ 0 (مش instant set + tween من 0 لـ 0)
+        Tween(avatarImg, {ImageTransparency = 0}, 0.4, Enum.EasingStyle.Quad)
+
+        -- نشيل الـ loading بعد شوية عشان الـ animation يبدأ الأول
+        task.wait(0.1)
+        Tween(loadingFrame, {BackgroundTransparency = 1}, 0.35)
+        task.delay(0.45, function()
             if loadingFrame and loadingFrame.Parent then
                 loadingFrame:Destroy()
             end
