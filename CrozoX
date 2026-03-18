@@ -1149,12 +1149,14 @@ function CrozoX:CreateWindow(cfg)
     local resizeBtn = New("TextButton", {
         Name                   = "ResizeBtn",
         Size                   = UDim2.new(0, 22, 0, 22),
-        AnchorPoint            = Vector2.new(0.5, 0.5),  -- مركز على الزاوية
-        BackgroundColor3       = Color3.fromRGB(40, 40, 40),  -- داكن محايد
-        BackgroundTransparency = 0.2,
+        AnchorPoint            = Vector2.new(0.5, 0.5),
+        -- على الزاوية السفلى اليمنى من wrapFrame — خارجها بسبب AnchorPoint
+        Position               = UDim2.new(1, 0, 1, 0),
+        BackgroundColor3       = Color3.fromRGB(30, 30, 30),
+        BackgroundTransparency = 0.1,
         Text                   = "",
         ZIndex                 = 60,
-        Parent                 = sg,
+        Parent                 = wrapFrame,   -- child من wrapFrame يتحرك معه
     })
     Corner(resizeBtn, 5)
     -- Stroke أبيض خفيف
@@ -1251,11 +1253,7 @@ function CrozoX:CreateWindow(cfg)
             size    = UDim2.new(0, newW, 0, newH)
         end
 
-        -- 3. Resize button — نحسب من dispX/dispY مباشرة
-        -- AnchorPoint=0.5,0.5 → نضعه على الزاوية السفلى اليمنى خارج الواجهة
-        local btnX = dispX + wrapFrame.Size.X.Offset
-        local btnY = dispY + wrapFrame.Size.Y.Offset
-        resizeBtn.Position = UDim2.new(0, btnX, 0, btnY)
+        -- resizeBtn يتحرك تلقائياً مع wrapFrame (child منه)
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
@@ -1299,18 +1297,22 @@ function CrozoX:CreateWindow(cfg)
             Size                   = UDim2.new(0.9, 0, 0.9, 0),
             BackgroundTransparency = 1,
         }, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+        Tween(shadowImg, {ImageTransparency = 1}, 0.25)
         task.delay(0.32, function()
-            wrapFrame:Destroy()
-            if resizeBtn and resizeBtn.Parent then resizeBtn:Destroy() end
+            wrapFrame:Destroy()  -- resizeBtn بيتحذف معاه لأنه child
         end)
     end)
     minBtn.MouseButton1Click:Connect(function()
         isMin = not isMin
         if isMin then
-            -- تصغير mainFrame للـ titleBar فقط
             Tween(mainFrame, {Size = UDim2.new(1, 0, 0, 54)}, 0.3)
+            -- وقت التصغير: الظل يصغر وresizeBtn يختفي
+            Tween(shadowImg, {ImageTransparency = 1}, 0.2)
+            Tween(resizeBtn, {BackgroundTransparency = 1}, 0.2)
         else
             Tween(mainFrame, {Size = UDim2.new(1, 0, 1, 0)}, 0.35, Enum.EasingStyle.Back)
+            Tween(shadowImg, {ImageTransparency = 0.55}, 0.35)
+            Tween(resizeBtn, {BackgroundTransparency = 0.1}, 0.35)
         end
     end)
 
