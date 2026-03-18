@@ -1319,42 +1319,66 @@ function CrozoX:CreateWindow(cfg)
         Parent                 = titleBar,
     })
 
-    -- نظام drag — يدعم Mouse (PC) وTouch (موبايل)
-    local function StartDrag(posX, posY)
-        if resizing then return end
-        lastMouseX = posX
-        lastMouseY = posY
-        dragging   = true
-    end
-    local function StopDrag()
-        dragging = false
-    end
+    -- ══════════════════════════════════════════════════════
+    --  DRAG SYSTEM — منفصل تماماً: Mouse (delta) | Touch (absolute)
+    --  المشكلة في v41: كان lastMouseX/Y بيتحدث من InputChanged
+    --  وبيتحسب منه delta في RenderStepped → conflict
+    --  الحل: Touch يستخدم absolute positioning مش delta
+    -- ══════════════════════════════════════════════════════
+    local touchDragging   = false
+    local touchStartX     = 0   -- موضع الإصبع عند بداية الـ drag
+    local touchStartY     = 0
+    local wrapStartPX     = 0   -- موضع الـ wrapFrame عند بداية الـ drag
+    local wrapStartPY     = 0
 
     dragBtn.InputBegan:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+            -- PC: نفس المنطق القديم بالـ delta
+            if resizing then return end
             local mp = UserInputService:GetMouseLocation()
-            StartDrag(mp.X, mp.Y)
+            lastMouseX = mp.X
+            lastMouseY = mp.Y
+            dragging   = true
+
         elseif inp.UserInputType == Enum.UserInputType.Touch then
-            StartDrag(inp.Position.X, inp.Position.Y)
+            -- موبايل: نحفظ البداية ونحسب absolute
+            touchDragging = true
+            dragging      = false  -- عشان RenderStepped مش يتدخل
+            touchStartX   = inp.Position.X
+            touchStartY   = inp.Position.Y
+            wrapStartPX   = wrapFrame.Position.X.Offset
+            wrapStartPY   = wrapFrame.Position.Y.Offset
         end
     end)
+
     dragBtn.InputChanged:Connect(function(inp)
-        -- Touch move — نحدّث lastMouse عشان الـ RenderStepped يلحق
-        if inp.UserInputType == Enum.UserInputType.Touch and dragging then
-            lastMouseX = inp.Position.X
-            lastMouseY = inp.Position.Y
+        if inp.UserInputType == Enum.UserInputType.Touch and touchDragging then
+            -- حساب مباشر: الموضع الجديد = البداية + الفرق
+            local dx = inp.Position.X - touchStartX
+            local dy = inp.Position.Y - touchStartY
+            -- نطبق UIScale عشان الـ move يكون بنسبة الـ scale
+            local sc = wrapFrame:FindFirstChildWhichIsA("UIScale")
+            local s  = sc and sc.Scale or 1
+            wrapFrame.Position = UDim2.new(0, wrapStartPX + dx/s, 0, wrapStartPY + dy/s)
+            -- sync مع RenderStepped smooth vars
+            smoothX = wrapStartPX + dx/s
+            smoothY = wrapStartPY + dy/s
+            dispX   = smoothX
+            dispY   = smoothY
         end
     end)
+
     dragBtn.InputEnded:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.MouseButton1
-        or inp.UserInputType == Enum.UserInputType.Touch then
-            StopDrag()
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging      = false
+        elseif inp.UserInputType == Enum.UserInputType.Touch then
+            touchDragging = false
         end
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-            StopDrag()
+            dragging = false
         end
     end)
 
@@ -1424,28 +1448,18 @@ function CrozoX:CreateWindow(cfg)
     RunService.RenderStepped:Connect(function()
         if not wrapFrame.Parent then return end
 
-        -- جيب موضع المؤشر — GetMouseLocation شغال للـ Touch كمان في Roblox
+        -- Touch drag بيتعمل في InputChanged مباشرةً — مش هنا
+        -- هنا بس الـ Mouse drag (PC)
         local mp = UserInputService:GetMouseLocation()
-        local mpX = mp.X
-        local mpY = mp.Y
 
-        -- على موبايل: لو في touch active، استخدم lastMouseX/Y اللي بيتحدث من InputChanged
-        if (Device.IsMobile or Device.IsTablet) and dragging then
-            mpX = lastMouseX
-            mpY = lastMouseY
-        end
-
-        -- 1. Drag بـ DELTA + SMOOTH
+        -- 1. Mouse Drag بـ DELTA + SMOOTH (PC فقط)
         if dragging then
-            local dx = mpX - lastMouseX
-            local dy = mpY - lastMouseY
+            local dx = mp.X - lastMouseX
+            local dy = mp.Y - lastMouseY
             smoothX = smoothX + dx
             smoothY = smoothY + dy
-            -- على PC بس نحدّث lastMouse هنا (موبايل بيتحدث من InputChanged)
-            if Device.IsPC then
-                lastMouseX = mpX
-                lastMouseY = mpY
-            end
+            lastMouseX = mp.X
+            lastMouseY = mp.Y
         end
 
         -- تهيئة dispX/dispY أول مرة
@@ -1541,46 +1555,50 @@ function CrozoX:CreateWindow(cfg)
 
     -- ── Close / Minimize ───────────────────────────────────
     local isMin = false
-    closeBtn.MouseButton1Click:Connect(function()
+
+    local function DoClose()
         Tween(mainFrame, {
             Size                   = UDim2.new(0.9, 0, 0.9, 0),
             BackgroundTransparency = 1,
         }, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
         Tween(shadowImg, {ImageTransparency = 1}, 0.25)
         task.delay(0.32, function()
-            wrapFrame:Destroy()  -- resizeBtn بيتحذف معاه لأنه child
+            wrapFrame:Destroy()
         end)
-    end)
-    minBtn.MouseButton1Click:Connect(function()
+    end
+
+    local function DoMinimize()
         isMin = not isMin
         if isMin then
             Tween(mainFrame, {Size = UDim2.new(1, 0, 0, 54)}, 0.3)
             Tween(shadowImg, {ImageTransparency = 1}, 0.2)
-            -- الزر كله يختفي بـ scale animation
-            Tween(resizeBtn, {
-                Size                   = UDim2.new(0, 0, 0, 0),
-                BackgroundTransparency = 1,
-            }, 0.2, Enum.EasingStyle.Quart)
-            Tween(iconH, {BackgroundTransparency = 1}, 0.15)
-            Tween(iconV, {BackgroundTransparency = 1}, 0.15)
-            task.delay(0.2, function()
-                if resizeBtn and resizeBtn.Parent then
-                    resizeBtn.Visible = false
-                end
-            end)
+            -- resizeBtn موجود بس على PC
+            if Device.IsPC then
+                Tween(resizeBtn, {Size=UDim2.new(0,0,0,0), BackgroundTransparency=1}, 0.2, Enum.EasingStyle.Quart)
+                Tween(iconH, {BackgroundTransparency=1}, 0.15)
+                Tween(iconV, {BackgroundTransparency=1}, 0.15)
+                task.delay(0.2, function()
+                    if resizeBtn and resizeBtn.Parent then resizeBtn.Visible=false end
+                end)
+            end
         else
             Tween(mainFrame, {Size = UDim2.new(1, 0, 1, 0)}, 0.35, Enum.EasingStyle.Back)
             Tween(shadowImg, {ImageTransparency = 0.55}, 0.35)
-            resizeBtn.Visible = true
-            resizeBtn.Size    = UDim2.new(0, 0, 0, 0)
-            Tween(resizeBtn, {
-                Size                   = UDim2.new(0, 22, 0, 22),
-                BackgroundTransparency = 0.1,
-            }, 0.3, Enum.EasingStyle.Back)
-            Tween(iconH, {BackgroundTransparency = 0}, 0.2)
-            Tween(iconV, {BackgroundTransparency = 0}, 0.2)
+            if Device.IsPC then
+                resizeBtn.Visible = true
+                resizeBtn.Size    = UDim2.new(0, 0, 0, 0)
+                Tween(resizeBtn, {Size=UDim2.new(0,22,0,22), BackgroundTransparency=0.1}, 0.3, Enum.EasingStyle.Back)
+                Tween(iconH, {BackgroundTransparency=0}, 0.2)
+                Tween(iconV, {BackgroundTransparency=0}, 0.2)
+            end
         end
-    end)
+    end
+
+    -- ربط الأحداث — Mouse وTouch معاً
+    closeBtn.MouseButton1Click:Connect(DoClose)
+    closeBtn.TouchTap:Connect(DoClose)
+    minBtn.MouseButton1Click:Connect(DoMinimize)
+    minBtn.TouchTap:Connect(DoMinimize)
 
     -- ============================================================
     --  TAB SYSTEM
@@ -2296,16 +2314,21 @@ function CrozoX:Notify(cfg)
     self._NotifCount=self._NotifCount+1
 
     -- ── Responsive sizes ──────────────────────────────────
-    local isMob = Device.IsMobile or Device.IsTablet
-    local cardH      = isMob and 66  or 82     -- ارتفاع الـ card
-    local panelW     = isMob and 38  or 46     -- عرض الـ panel الملوّن
-    local iconSz     = isMob and 18  or 22     -- حجم الأيقونة
-    local titleSz    = isMob and 12  or 14     -- حجم عنوان الإشعار
-    local bodySz     = isMob and 11  or (L and L.LabelSize or 13)
-    local titleY     = isMob and 10  or 13     -- Y position للعنوان
-    local bodyY      = isMob and 28  or 36     -- Y position للنص
-    local bodyH      = isMob and 26  or 32
-    local txtOffX    = isMob and (panelW+8) or 56  -- X offset النصوص
+    -- نتحقق مرة ثانية من حجم الشاشة هنا (مش نعتمد على Device بس)
+    -- عشان بعض الـ executors ممكن Device يتحسب غلط
+    local _nCam   = workspace.CurrentCamera
+    local _nVP    = _nCam and _nCam.ViewportSize or Vector2.new(800,600)
+    local _nMin   = math.min(_nVP.X, _nVP.Y)
+    local isMob   = (Device.IsMobile or Device.IsTablet) or (_nMin < 500)
+    local cardH      = isMob and 60  or 82
+    local panelW     = isMob and 36  or 46
+    local iconSz     = isMob and 16  or 22
+    local titleSz    = isMob and 11  or 14
+    local bodySz     = isMob and 10  or (L and L.LabelSize or 13)
+    local titleY     = isMob and 9   or 13
+    local bodyY      = isMob and 26  or 36
+    local bodyH      = isMob and 23  or 32
+    local txtOffX    = isMob and (panelW+7) or 56
 
     local card=New("Frame",{Name="Notif_"..self._NotifCount,
         Size=UDim2.new(1,0,0,cardH),
