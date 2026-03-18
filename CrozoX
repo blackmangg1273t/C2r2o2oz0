@@ -1251,10 +1251,11 @@ function CrozoX:CreateWindow(cfg)
             size    = UDim2.new(0, newW, 0, newH)
         end
 
-        -- 3. Resize button — على الزاوية السفلى اليمنى بالضبط
-        local ap = wrapFrame.AbsolutePosition
-        local as = wrapFrame.AbsoluteSize
-        resizeBtn.Position = UDim2.new(0, ap.X + as.X, 0, ap.Y + as.Y)
+        -- 3. Resize button — نحسب من dispX/dispY مباشرة
+        -- AnchorPoint=0.5,0.5 → نضعه على الزاوية السفلى اليمنى خارج الواجهة
+        local btnX = dispX + wrapFrame.Size.X.Offset
+        local btnY = dispY + wrapFrame.Size.Y.Offset
+        resizeBtn.Position = UDim2.new(0, btnX, 0, btnY)
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
