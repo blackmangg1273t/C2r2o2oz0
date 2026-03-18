@@ -327,6 +327,71 @@ local function LoadCfg(name)
 end
 
 -- ============================================================
+--  DEVICE DETECTION + RESPONSIVE SCALE
+--  يشتغل مرة واحدة عند التحميل ويحفظ النتيجة
+-- ============================================================
+local Device = {}
+
+do
+    local UIS = UserInputService
+    -- موبايل = TouchEnabled بس بدون Keyboard
+    Device.IsMobile = UIS.TouchEnabled and not UIS.KeyboardEnabled
+    Device.IsTablet = UIS.TouchEnabled and UIS.KeyboardEnabled  -- iPad + keyboard
+    Device.IsPC     = not UIS.TouchEnabled
+
+    -- حساب الـ scale المناسب بناءً على حجم الشاشة الفعلي
+    -- البيزلاين = 660px (عرض الواجهة الافتراضي على PC)
+    local function CalcScale()
+        local sg = game:GetService("CoreGui"):FindFirstChild("CrozoX")
+        local sw, sh
+        if sg then
+            sw = sg.AbsoluteSize.X
+            sh = sg.AbsoluteSize.Y
+        else
+            -- fallback — نستخدم Camera viewport
+            local cam = workspace.CurrentCamera
+            sw = cam and cam.ViewportSize.X or 800
+            sh = cam and cam.ViewportSize.Y or 600
+        end
+        -- الشاشة الأصغر هي اللي تحدد الـ scale
+        local minDim = math.min(sw, sh)
+        if Device.IsMobile then
+            -- موبايل: نضمن إن الواجهة تملأ الشاشة بشكل كافي
+            return math.clamp(minDim / 470, 0.72, 1.6)
+        elseif Device.IsTablet then
+            return math.clamp(minDim / 520, 0.85, 1.4)
+        else
+            -- PC: لا تغيير — الـ scale = 1 دايماً
+            return 1
+        end
+    end
+
+    Device.Scale = CalcScale()
+
+    -- حجم الواجهة الـ responsive
+    -- موبايل: 92% من الشاشة | PC: الحجم الثابت المحدد
+    function Device.GetWindowSize(requestedW, requestedH)
+        if Device.IsPC then
+            return requestedW, requestedH
+        end
+        -- نجيب حجم الشاشة
+        local cam = workspace.CurrentCamera
+        local sw = cam and cam.ViewportSize.X or 800
+        local sh = cam and cam.ViewportSize.Y or 600
+        if Device.IsMobile then
+            -- landscape: 92% عرض + 88% ارتفاع | portrait: 96% x 82%
+            if sw > sh then
+                return math.floor(sw * 0.92), math.floor(sh * 0.88)
+            else
+                return math.floor(sw * 0.96), math.floor(sh * 0.82)
+            end
+        else -- tablet
+            return math.floor(sw * 0.85), math.floor(sh * 0.82)
+        end
+    end
+end
+
+-- ============================================================
 --  INTRO ANIMATION
 -- ============================================================
 local function PlayIntro(sg, onDone)
@@ -1343,14 +1408,32 @@ function CrozoX:CreateWindow(cfg)
         if not sg.Parent then return end
         local sw = sg.AbsoluteSize.X
         local sh = sg.AbsoluteSize.Y
-        local w  = size.X.Offset
-        local h  = size.Y.Offset
 
-        -- wrapFrame بالحجم الكامل في المنتصف — لا يتحرك أبداً
+        -- Responsive Size
+        local w, h = Device.GetWindowSize(size.X.Offset, size.Y.Offset)
+
+        -- UIScale للموبايل والتابلت فقط
+        if not Device.IsPC then
+            local baseW   = size.X.Offset
+            local scaleVal = math.clamp(w / baseW, 0.65, 2.0)
+            local existing = wrapFrame:FindFirstChildWhichIsA("UIScale")
+            if existing then existing:Destroy() end
+            New("UIScale", { Scale = scaleVal, Parent = wrapFrame })
+            -- بعد UIScale، نرجع للـ base size
+            w = size.X.Offset
+            h = size.Y.Offset
+        end
+
+        -- wrapFrame بالحجم الكامل في المنتصف
         wrapFrame.Size     = UDim2.new(0, w, 0, h)
         wrapFrame.Position = UDim2.new(0, (sw - w) / 2, 0, (sh - h) / 2)
 
-        -- Animation على mainFrame فقط: يبدأ صغير وشفاف ثم يكبر
+        -- على الموبايل: نخفي زر الـ resize
+        if not Device.IsPC then
+            resizeBtn.Visible = false
+        end
+
+        -- Animation على mainFrame فقط
         mainFrame.Size = UDim2.new(0.88, 0, 0.88, 0)
         Tween(mainFrame, {
             Size                   = UDim2.new(1, 0, 1, 0),
