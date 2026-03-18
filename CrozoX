@@ -991,7 +991,7 @@ function CrozoX:CreateWindow(cfg)
         Position               = UDim2.new(0, 7, 0.5, -21),
         BackgroundColor3       = T.SurfaceHover,
         BackgroundTransparency = 1,
-        ImageTransparency      = 1,   -- شفاف في البداية
+        ImageTransparency      = 1,
         Image                  = "",
         ScaleType              = Enum.ScaleType.Crop,
         ZIndex                 = 15,
@@ -1005,16 +1005,15 @@ function CrozoX:CreateWindow(cfg)
         Parent       = avatarImg,
     })
 
-    -- Loading shimmer — دائرة بتومض وقت التحميل
+    -- Loading shimmer — ZIndex أقل من الصورة
     local loadingFrame = New("Frame", {
         Size                   = UDim2.new(1, 0, 1, 0),
         BackgroundColor3       = T.SurfaceHover,
         BackgroundTransparency = 0,
-        ZIndex                 = 16,
+        ZIndex                 = 14,   -- تحت الصورة
         Parent                 = avatarImg,
     })
     New("UICorner", { CornerRadius = UDim.new(1, 0), Parent = loadingFrame })
-    -- shimmer gradient
     local shimmerGrad = New("UIGradient", {
         Color = ColorSequence.new{
             ColorSequenceKeypoint.new(0,   Color3.fromRGB(40, 40, 40)),
@@ -1024,12 +1023,12 @@ function CrozoX:CreateWindow(cfg)
         Rotation = 45,
         Parent   = loadingFrame,
     })
-    -- shimmer animation
     local shimmerConn
     shimmerConn = RunService.RenderStepped:Connect(function()
-        if not loadingFrame.Parent then shimmerConn:Disconnect() return end
-        shimmerGrad.Offset = Vector2.new(
-            math.sin(tick() * 1.5) * 0.8, 0)
+        if not loadingFrame.Parent then
+            shimmerConn:Disconnect(); return
+        end
+        shimmerGrad.Offset = Vector2.new(math.sin(tick() * 1.5) * 0.8, 0)
     end)
 
     task.spawn(function()
@@ -1056,12 +1055,19 @@ function CrozoX:CreateWindow(cfg)
             task.wait(1)
         end
 
-        -- الصورة جاهزة — نخفي الـ loading ونظهر الصورة
-        shimmerConn:Disconnect()
+        -- الصورة جاهزة — نوقف الـ shimmer ونظهر الصورة
+        if shimmerConn then shimmerConn:Disconnect() end
+
+        -- نظهر الصورة مباشرة ثم animation
+        avatarImg.ImageTransparency = 0
+        Tween(avatarImg, {ImageTransparency = 0}, 0.25)
+
+        -- نشيل الـ loading
         Tween(loadingFrame, {BackgroundTransparency = 1}, 0.3)
-        Tween(avatarImg,    {ImageTransparency = 0},      0.3)
         task.delay(0.35, function()
-            if loadingFrame.Parent then loadingFrame:Destroy() end
+            if loadingFrame and loadingFrame.Parent then
+                loadingFrame:Destroy()
+            end
         end)
     end)
     New("TextLabel", {
