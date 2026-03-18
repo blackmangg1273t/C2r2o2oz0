@@ -1177,8 +1177,9 @@ function CrozoX:CreateWindow(cfg)
         rStartY  = mp.Y
         rW       = wrapFrame.AbsoluteSize.X
         rH       = wrapFrame.AbsoluteSize.Y
-        rPX      = wrapFrame.AbsolutePosition.X
-        rPY      = wrapFrame.AbsolutePosition.Y
+        -- نستخدم Position.Offset مش AbsolutePosition
+        rPX      = wrapFrame.Position.X.Offset
+        rPY      = wrapFrame.Position.Y.Offset
     end)
 
     resizeBtn.MouseEnter:Connect(function()
@@ -1191,35 +1192,55 @@ function CrozoX:CreateWindow(cfg)
     end)
 
     -- ── RenderStepped: drag + resize + resize button pos ──
+    local smoothX = 0   -- الموضع الحقيقي (بدون smooth)
+    local smoothY = 0
+    local dispX   = 0   -- الموضع المعروض (مع smooth)
+    local dispY   = 0
+    local smoothInit = false
+
     RunService.RenderStepped:Connect(function()
         if not wrapFrame.Parent then return end
 
         local mp = UserInputService:GetMouseLocation()
 
-        -- 1. Drag بـ DELTA — فقط نضيف الفرق بين الـ frames
-        -- مفيش أي حساب لـ AbsolutePosition = مفيش قفز
+        -- 1. Drag بـ DELTA + SMOOTH
         if dragging then
             local dx = mp.X - lastMouseX
             local dy = mp.Y - lastMouseY
-            if dx ~= 0 or dy ~= 0 then
-                local cp = wrapFrame.Position
-                wrapFrame.Position = UDim2.new(
-                    0, cp.X.Offset + dx,
-                    0, cp.Y.Offset + dy)
-            end
+            smoothX = smoothX + dx
+            smoothY = smoothY + dy
             lastMouseX = mp.X
             lastMouseY = mp.Y
         end
 
-        -- 2. Resize
+        -- تهيئة dispX/dispY أول مرة
+        if not smoothInit then
+            smoothInit = true
+            smoothX = wrapFrame.Position.X.Offset
+            smoothY = wrapFrame.Position.Y.Offset
+            dispX   = smoothX
+            dispY   = smoothY
+        end
+
+        -- Lerp سلس نحو الهدف
+        if dragging or math.abs(dispX - smoothX) > 0.5 or math.abs(dispY - smoothY) > 0.5 then
+            dispX = dispX + (smoothX - dispX) * 0.25
+            dispY = dispY + (smoothY - dispY) * 0.25
+            wrapFrame.Position = UDim2.new(0, dispX, 0, dispY)
+        end
+
+        -- 2. Resize بـ Position.Offset
         if resizing then
             local newW = math.clamp(rW + (mp.X - rStartX), MIN_W, MAX_W)
             local newH = math.clamp(rH + (mp.Y - rStartY), MIN_H, MAX_H)
             wrapFrame.Size     = UDim2.new(0, newW, 0, newH)
-            wrapFrame.Position = UDim2.new(0, rPX, 0, rPY)
-            size               = UDim2.new(0, newW, 0, newH)
-            lastMouseX = mp.X
-            lastMouseY = mp.Y
+            wrapFrame.Position = UDim2.new(0, rPX,  0, rPY)
+            -- sync smooth vars عشان drag بعد resize ما يقفز
+            smoothX = rPX
+            smoothY = rPY
+            dispX   = rPX
+            dispY   = rPY
+            size    = UDim2.new(0, newW, 0, newH)
         end
 
         -- 3. Resize button
