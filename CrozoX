@@ -773,24 +773,20 @@ function CrozoX:_Init()
     local ok=Safe(function() sg.Parent=CoreGui end)
     if not ok then sg.Parent=LocalPlayer:WaitForChild("PlayerGui") end
     self._ScreenGui=sg
-    -- NotifContainer — على موبايل: عرض ثابت 280px في المنتصف من الأسفل
-    -- مش full width عشان ده اللي بيخليها تبان "عريضة وغبية"
-    if Device.IsMobile or Device.IsTablet then
-        local _nc = workspace.CurrentCamera
-        local _nv = _nc and _nc.ViewportSize or Vector2.new(400,700)
-        local notifW = math.min(300, _nv.X - 24)  -- بحد أقصى 300px
+    -- NotifContainer — على الجانب الأيمن دايماً (موبايل وPC)
+    -- موبايل: عرض 260px من اليمين | PC: 345px
+    do
+        local _nc  = workspace.CurrentCamera
+        local _nv  = _nc and _nc.ViewportSize or Vector2.new(800,600)
+        local isMobInit = (Device.IsMobile or Device.IsTablet) or (math.min(_nv.X,_nv.Y) < 500)
+        local notifW    = isMobInit and 260 or 345
+        local notifOff  = notifW + 12  -- margin من حافة الشاشة
+        local notifGap  = isMobInit and 6 or 10
         self._NotifContainer=New("Frame",{Name="NotifContainer",
             Size=UDim2.new(0,notifW,1,0),
-            AnchorPoint=Vector2.new(0.5,0),
-            Position=UDim2.new(0.5,0,0,0),
+            Position=UDim2.new(1,-notifOff,0,0),
             BackgroundTransparency=1,ZIndex=900,Parent=sg})
-        ListLayout(self._NotifContainer,6,Enum.FillDirection.Vertical,
-            Enum.HorizontalAlignment.Center,Enum.VerticalAlignment.Bottom)
-    else
-        self._NotifContainer=New("Frame",{Name="NotifContainer",
-            Size=UDim2.new(0,345,1,0),Position=UDim2.new(1,-360,0,0),
-            BackgroundTransparency=1,ZIndex=900,Parent=sg})
-        ListLayout(self._NotifContainer,10,Enum.FillDirection.Vertical,
+        ListLayout(self._NotifContainer,notifGap,Enum.FillDirection.Vertical,
             Enum.HorizontalAlignment.Right,Enum.VerticalAlignment.Bottom)
     end
     return sg
@@ -1050,7 +1046,8 @@ function CrozoX:CreateWindow(cfg)
         end)
         btn.MouseButton1Down:Connect(function() Tween(fr,{Size=pressSz},0.08) end)
         btn.MouseButton1Up:Connect(function()   Tween(fr,{Size=normSz},0.12,Enum.EasingStyle.Back) end)
-        -- موبايل: InputBegan Touch (أكثر موثوقية من TouchTap)
+        -- موبايل: InputBegan = visual feedback فقط (مش action)
+        -- الـ action بيتشغل من ConnectBtn بـ InputEnded
         btn.InputBegan:Connect(function(inp)
             if inp.UserInputType == Enum.UserInputType.Touch then
                 Tween(fr,{BackgroundColor3=hoverBg,Size=pressSz},0.08)
@@ -1629,15 +1626,29 @@ function CrozoX:CreateWindow(cfg)
         end
     end
 
-    -- ربط الأحداث — MouseButton1Click للـ PC + InputBegan Touch للموبايل
-    -- TouchTap غير موثوق في الـ executors — InputBegan أسرع وأثبت
+    -- ربط الأحداث
+    -- المشكلة في v43: InputBegan (press-down) + MouseButton1Click (press-up)
+    -- = DoMinimize بيشتغل مرتين → toggle مرتين → يرجع للحالة الأولى
+    -- الحل: على موبايل نستخدم InputEnded فقط (رفع الإصبع = tap مكتمل)
+    -- ونمنع MouseButton1Click من التشغيل على موبايل عشان مش double-fire
     local function ConnectBtn(btn, fn)
-        btn.MouseButton1Click:Connect(fn)
-        btn.InputBegan:Connect(function(inp)
-            if inp.UserInputType == Enum.UserInputType.Touch then
-                fn()
-            end
-        end)
+        if Device.IsPC then
+            btn.MouseButton1Click:Connect(fn)
+        else
+            -- Touch: touchDown flag عشان نتأكد إن الـ InputEnded جه من نفس الـ touch
+            local touchDown = false
+            btn.InputBegan:Connect(function(inp)
+                if inp.UserInputType == Enum.UserInputType.Touch then
+                    touchDown = true
+                end
+            end)
+            btn.InputEnded:Connect(function(inp)
+                if inp.UserInputType == Enum.UserInputType.Touch and touchDown then
+                    touchDown = false
+                    fn()
+                end
+            end)
+        end
     end
     ConnectBtn(closeBtn, DoClose)
     ConnectBtn(minBtn,   DoMinimize)
@@ -2356,80 +2367,77 @@ function CrozoX:Notify(cfg)
     self._NotifCount=self._NotifCount+1
 
     -- ── Responsive sizes ──────────────────────────────────
-    -- نتحقق مرة ثانية من حجم الشاشة هنا (مش نعتمد على Device بس)
-    -- عشان بعض الـ executors ممكن Device يتحسب غلط
     local _nCam   = workspace.CurrentCamera
     local _nVP    = _nCam and _nCam.ViewportSize or Vector2.new(800,600)
     local _nMin   = math.min(_nVP.X, _nVP.Y)
     local isMob   = (Device.IsMobile or Device.IsTablet) or (_nMin < 500)
-    local cardH      = isMob and 60  or 82
-    local panelW     = isMob and 36  or 46
-    local iconSz     = isMob and 16  or 22
-    local titleSz    = isMob and 11  or 14
-    local bodySz     = isMob and 10  or (L and L.LabelSize or 13)
-    local titleY     = isMob and 9   or 13
-    local bodyY      = isMob and 26  or 36
-    local bodyH      = isMob and 23  or 32
-    local txtOffX    = isMob and (panelW+7) or 56
+    -- على موبايل: card أصغر وأنظف
+    local cardH   = isMob and 58  or 82
+    local panelW  = isMob and 34  or 46
+    local iconSz  = isMob and 15  or 22
+    local titleSz = isMob and 11  or 14
+    local bodySz  = isMob and 10  or (L and L.LabelSize or 13)
+    local titleY  = isMob and 8   or 13
+    local bodyY   = isMob and 25  or 36
+    local bodyH   = isMob and 22  or 32
+    local txtOffX = isMob and (panelW+6) or 56
 
     local card=New("Frame",{Name="Notif_"..self._NotifCount,
         Size=UDim2.new(1,0,0,cardH),
         BackgroundColor3=T.Surface,BackgroundTransparency=1,
         BorderSizePixel=0,ZIndex=900,Parent=self._NotifContainer})
-    Corner(card,11)
-    Stroke(card,color,1,0.58)
+    Corner(card, isMob and 9 or 13)
+    Stroke(card,color,1,0.5)
 
     -- Coloured left panel
     local panel=New("Frame",{Size=UDim2.new(0,panelW,1,0),
         BackgroundColor3=td.bg,BorderSizePixel=0,ZIndex=901,Parent=card})
-    New("UICorner",{CornerRadius=UDim.new(0,11),Parent=panel})
+    New("UICorner",{CornerRadius=UDim.new(0, isMob and 9 or 13),Parent=panel})
     New("Frame",{Size=UDim2.new(0,8,1,0),Position=UDim2.new(1,-8,0,0),
         BackgroundColor3=td.bg,BorderSizePixel=0,ZIndex=901,Parent=panel})
     local iconImg=Img(panel,td.icon,iconSz,
         UDim2.new(0.5,-iconSz/2,0.5,-iconSz/2),color,903)
     iconImg.ImageTransparency=1
 
-    local titleLbl=New("TextLabel",{Size=UDim2.new(1,-(txtOffX+18),0,20),
-        Position=UDim2.new(0,txtOffX,0,titleY),BackgroundTransparency=1,
-        Text=title,TextColor3=T.Text,Font=FONTS.Bold,
+    local titleLbl=New("TextLabel",{
+        Size=UDim2.new(1,-(txtOffX+20),0,18),
+        Position=UDim2.new(0,txtOffX,0,titleY),
+        BackgroundTransparency=1,Text=title,TextColor3=T.Text,Font=FONTS.Bold,
         TextSize=titleSz,TextXAlignment=xAlign,TextWrapped=false,
+        TextTruncate=Enum.TextTruncate.AtEnd,
         TextTransparency=1,ZIndex=902,Parent=card})
-    local bodyLbl=New("TextLabel",{Size=UDim2.new(1,-(txtOffX+10),0,bodyH),
-        Position=UDim2.new(0,txtOffX,0,bodyY),BackgroundTransparency=1,
-        Text=text,TextColor3=T.TextDim,
+    local bodyLbl=New("TextLabel",{
+        Size=UDim2.new(1,-(txtOffX+10),0,bodyH),
+        Position=UDim2.new(0,txtOffX,0,bodyY),
+        BackgroundTransparency=1,Text=text,TextColor3=T.TextDim,
         Font=L and L.FontBody or FONTS.Body,
         TextSize=bodySz,TextXAlignment=xAlign,TextWrapped=true,
         TextTransparency=1,ZIndex=902,Parent=card})
 
-    -- Close X — أكبر على موبايل عشان يتضغط بسهولة
-    local xBtnSz = isMob and 28 or 22
+    -- Close X
+    local xBtnSz = isMob and 26 or 22
     local xBtn=New("TextButton",{Size=UDim2.new(0,xBtnSz,0,xBtnSz),
-        Position=UDim2.new(1,-(xBtnSz+6),0,6),BackgroundTransparency=1,
-        Text="",ZIndex=904,Parent=card})
-    local xIcoSz = isMob and 14 or 12
+        Position=UDim2.new(1,-(xBtnSz+5),0,5),
+        BackgroundTransparency=1,Text="",ZIndex=904,Parent=card})
+    local xIcoSz = isMob and 12 or 12
     local xIco=Img(xBtn,Icons.x,xIcoSz,
         UDim2.new(0.5,-xIcoSz/2,0.5,-xIcoSz/2),T.TextMuted,905)
     xIco.ImageTransparency=1
 
     -- Progress bar
-    local pbg=New("Frame",{Size=UDim2.new(1,-16,0,3),
-        Position=UDim2.new(0,8,1,-6),BackgroundColor3=T.Border,
+    local pbg=New("Frame",{Size=UDim2.new(1,-12,0,2),
+        Position=UDim2.new(0,6,1,-5),BackgroundColor3=T.Border,
         BorderSizePixel=0,ZIndex=902,Parent=card})
-    Corner(pbg,2)
+    Corner(pbg,1)
     local pfill=New("Frame",{Size=UDim2.new(1,0,1,0),
         BackgroundColor3=color,BorderSizePixel=0,ZIndex=903,Parent=pbg})
-    Corner(pfill,2)
+    Corner(pfill,1)
     pfill.BackgroundTransparency=1
 
-    -- Slide in — موبايل من الأسفل، PC من اليمين
-    local FI=0.4
-    if isMob then
-        card.Position=UDim2.new(0,0,1,20)
-        Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0,0,0,0)},FI,Enum.EasingStyle.Back)
-    else
-        card.Position=UDim2.new(1,30,0,0)
-        Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0,0,0,0)},FI,Enum.EasingStyle.Back)
-    end
+    -- Slide من اليمين دايماً (موبايل وPC) — أنظف وأوضح
+    local FI = 0.35
+    card.Position = UDim2.new(1, 30, 0, 0)
+    Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0,0,0,0)},FI,Enum.EasingStyle.Back)
     Tween(iconImg,{ImageTransparency=0},FI)
     Tween(titleLbl,{TextTransparency=0},FI)
     Tween(bodyLbl,{TextTransparency=0},FI)
@@ -2440,11 +2448,8 @@ function CrozoX:Notify(cfg)
     local dismissed=false
     local function Dismiss()
         if dismissed then return end; dismissed=true
-        local FO=0.3
-        local exitPos = isMob
-            and UDim2.new(0,0,1,20)
-            or  UDim2.new(1,30,0,0)
-        Tween(card,{BackgroundTransparency=1,Position=exitPos},FO,
+        local FO=0.25
+        Tween(card,{BackgroundTransparency=1,Position=UDim2.new(1,30,0,0)},FO,
             Enum.EasingStyle.Quart,Enum.EasingDirection.In)
         Tween(iconImg,{ImageTransparency=1},FO)
         Tween(titleLbl,{TextTransparency=1},FO)
@@ -2454,9 +2459,8 @@ function CrozoX:Notify(cfg)
         task.delay(FO+0.05,function() card:Destroy() end)
     end
     task.delay(dur,Dismiss)
-    -- dismiss — InputBegan Touch بدل TouchTap (أكثر موثوقية)
     xBtn.MouseButton1Click:Connect(Dismiss)
-    xBtn.InputBegan:Connect(function(inp)
+    xBtn.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.Touch then Dismiss() end
     end)
     local hov=New("TextButton",{Size=UDim2.new(1,0,1,0),
