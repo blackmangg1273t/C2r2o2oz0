@@ -986,13 +986,15 @@ function CrozoX:CreateWindow(cfg)
 
     -- ── Avatar دائري ─────────────────────────────────────
     local avatarImg = New("ImageLabel", {
+        Name                   = "Avatar",
         Size                   = UDim2.new(0, 42, 0, 42),
         Position               = UDim2.new(0, 7, 0.5, -21),
         BackgroundColor3       = T.SurfaceHover,
-        BackgroundTransparency = 0,
+        BackgroundTransparency = 1,
+        ImageTransparency      = 0,
         Image                  = "",
-        ScaleType              = Enum.ScaleType.Fit,
-        ZIndex                 = 14,
+        ScaleType              = Enum.ScaleType.Crop,
+        ZIndex                 = 15,
         Parent                 = profileCard,
     })
     New("UICorner", { CornerRadius = UDim.new(1, 0), Parent = avatarImg })
@@ -1003,22 +1005,16 @@ function CrozoX:CreateWindow(cfg)
         Parent       = avatarImg,
     })
 
-    -- نجرب ثلاث طرق للصورة
     task.spawn(function()
-        -- استنى اللاعب يجهز
         repeat task.wait() until LocalPlayer and LocalPlayer.UserId ~= 0
-
         local userId = LocalPlayer.UserId
 
-        -- 1. fallback افتراضي
-        avatarImg.Image = "rbxassetid://7072718362"
-
-        -- 2. rbxthumb سريع
+        -- rbxthumb فوري
         avatarImg.Image = "rbxthumb://type=AvatarHeadShot&id="
             .. userId .. "&w=150&h=150"
 
-        -- 3. retry system للجودة الأعلى
-        for i = 1, 3 do
+        -- retry للجودة الأعلى
+        for i = 1, 5 do
             local ok, content = pcall(function()
                 return Players:GetUserThumbnailAsync(
                     userId,
