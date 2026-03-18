@@ -1151,7 +1151,7 @@ function CrozoX:CreateWindow(cfg)
         Size                   = UDim2.new(0, 22, 0, 22),
         AnchorPoint            = Vector2.new(0.5, 0.5),
         -- على الزاوية السفلى اليمنى من wrapFrame — خارجها بسبب AnchorPoint
-        Position               = UDim2.new(1, 8, 1, 8),
+        Position               = UDim2.new(1, 8, 1, 10),
         BackgroundColor3       = Color3.fromRGB(30, 30, 30),
         BackgroundTransparency = 0.1,
         Text                   = "",
