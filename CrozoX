@@ -1416,10 +1416,8 @@ function CrozoX:CreateWindow(cfg)
 
     -- Mouse events (PC)
     -- متغيرات الـ hold للموبايل
-    local holdTimer     = nil
-    local holdActive    = false  -- hold اكتمل؟
-    local holdStartX    = 0
-    local holdStartY    = 0
+    local holdTimer  = nil
+    local holdActive = false
 
     resizeBtn.InputBegan:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -1432,56 +1430,41 @@ function CrozoX:CreateWindow(cfg)
             Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.1)
 
         elseif inp.UserInputType == Enum.UserInputType.Touch then
-            -- موبايل: ابدأ hold timer
-            holdActive  = false
-            holdStartX  = inp.Position.X
-            holdStartY  = inp.Position.Y
+            holdActive = false
+            if holdTimer then task.cancel(holdTimer); holdTimer=nil end
             -- تأثير بصري خفيف أثناء الانتظار
-            Tween(resizeBtn,{BackgroundColor3=T.BorderBright,BackgroundTransparency=0},0.1)
-            holdTimer = task.delay(0.3, function()
-                -- Hold اكتمل → ابدأ resize
+            Tween(resizeBtn,{BackgroundColor3=T.BorderBright,BackgroundTransparency=0},0.15)
+            holdTimer = task.delay(0.35, function()
                 holdActive = true
                 dragging   = false
-                rStartX    = holdStartX
-                rStartY    = holdStartY
+                -- نأخذ موضع الإصبع الحالي (مش البداية) عشان resize يبدأ من مكانه
+                local mp2 = UserInputService:GetMouseLocation()
+                rStartX = mp2.X
+                rStartY = mp2.Y
                 rW  = wrapFrame.AbsoluteSize.X
                 rH  = wrapFrame.AbsoluteSize.Y
                 rPX = wrapFrame.Position.X.Offset
                 rPY = wrapFrame.Position.Y.Offset
                 resizing = true
-                -- تأثير: يضيء أحمر عند بدء الـ resize
                 Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.1)
             end)
         end
     end)
 
     resizeBtn.InputChanged:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.Touch then
-            if holdActive and resizing then
-                -- resize نشط
-                local newW = math.clamp(rW+(inp.Position.X-rStartX), MIN_W, MAX_W)
-                local newH = math.clamp(rH+(inp.Position.Y-rStartY), MIN_H, MAX_H)
-                wrapFrame.Size     = UDim2.new(0,newW,0,newH)
-                wrapFrame.Position = UDim2.new(0,rPX,0,rPY)
-                smoothX=rPX; smoothY=rPY; dispX=rPX; dispY=rPY
-                size = UDim2.new(0,newW,0,newH)
-            elseif not holdActive and holdTimer then
-                -- تحرك قبل انتهاء الـ hold → ألغِ الـ resize
-                local moveThreshold = 8
-                local dx = math.abs(inp.Position.X - holdStartX)
-                local dy = math.abs(inp.Position.Y - holdStartY)
-                if dx > moveThreshold or dy > moveThreshold then
-                    task.cancel(holdTimer)
-                    holdTimer = nil
-                    Tween(resizeBtn,{BackgroundColor3=Color3.fromRGB(30,30,30),BackgroundTransparency=0.1},0.15)
-                end
-            end
+        if inp.UserInputType == Enum.UserInputType.Touch and holdActive and resizing then
+            local mp2 = UserInputService:GetMouseLocation()
+            local newW = math.clamp(rW + (mp2.X - rStartX), MIN_W, MAX_W)
+            local newH = math.clamp(rH + (mp2.Y - rStartY), MIN_H, MAX_H)
+            wrapFrame.Size     = UDim2.new(0,newW,0,newH)
+            wrapFrame.Position = UDim2.new(0,rPX,0,rPY)
+            smoothX=rPX; smoothY=rPY; dispX=rPX; dispY=rPY
+            size = UDim2.new(0,newW,0,newH)
         end
     end)
 
     resizeBtn.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.Touch then
-            -- إلغاء الـ timer لو رفع إصبعه قبل 0.3s
             if holdTimer then task.cancel(holdTimer); holdTimer=nil end
             holdActive = false
             resizing   = false
@@ -1658,40 +1641,18 @@ function CrozoX:CreateWindow(cfg)
     -- الحل: على موبايل نستخدم InputEnded فقط (رفع الإصبع = tap مكتمل)
     -- ونمنع MouseButton1Click من التشغيل على موبايل عشان مش double-fire
     local function ConnectBtn(btn, fn)
-        if Device.IsPC then
-            btn.MouseButton1Click:Connect(fn)
-        else
-            -- موبايل: نستخدم UserInputService عشان أكثر موثوقية
-            -- نتحقق إن الإصبع كان فوق الزر وقت الرفع
-            local touching = false
-            btn.InputBegan:Connect(function(inp)
-                if inp.UserInputType == Enum.UserInputType.Touch then
-                    touching = true
-                    -- تأثير بصري
-                    local fr = btn.Parent  -- الـ Frame المحيط
-                    if fr and fr:IsA("Frame") then
-                        Tween(fr,{Size=UDim2.new(0,fr.AbsoluteSize.X-4,0,fr.AbsoluteSize.Y-4)},0.08)
-                    end
-                end
+        -- نفس الأسلوب PC وموبايل — MouseButton1Click موثوق على الاثنين
+        btn.MouseButton1Click:Connect(fn)
+        -- Touch fallback للموبايل
+        if not Device.IsPC then
+            local t = false
+            btn.InputBegan:Connect(function(i)
+                if i.UserInputType == Enum.UserInputType.Touch then t = true end
             end)
-            btn.InputEnded:Connect(function(inp)
-                if inp.UserInputType == Enum.UserInputType.Touch and touching then
-                    touching = false
-                    -- تأكد الإصبع لا يزال فوق الزر
-                    local ap = btn.AbsolutePosition
-                    local as = btn.AbsoluteSize
-                    local tp = inp.Position
-                    local inBtn = tp.X >= ap.X - 10 and tp.X <= ap.X + as.X + 10
-                               and tp.Y >= ap.Y - 10 and tp.Y <= ap.Y + as.Y + 10
-                    if inBtn then
-                        fn()
-                    end
-                end
-            end)
-            -- Fallback: لو InputEnded ما اشتغلش، نستخدم UserInputService
-            UserInputService.InputEnded:Connect(function(inp)
-                if inp.UserInputType == Enum.UserInputType.Touch and touching then
-                    touching = false
+            btn.InputEnded:Connect(function(i)
+                if i.UserInputType == Enum.UserInputType.Touch and t then
+                    t = false
+                    fn()
                 end
             end)
         end
