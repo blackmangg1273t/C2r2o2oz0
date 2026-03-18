@@ -394,6 +394,11 @@ end
 --  INTRO ANIMATION
 -- ============================================================
 local function PlayIntro(sg, onDone)
+    -- ── Responsive scale للإنترو ────────────────────────────
+    local _introCam = workspace.CurrentCamera
+    local _introVP  = _introCam and _introCam.ViewportSize or Vector2.new(800,600)
+    local _introScale = math.clamp(math.min(_introVP.X,_introVP.Y) / 500, 0.45, 1.15)
+
     local CFG={
         Logo="rbxassetid://93116857865430",
         HubName="CrozoX", TagLine="Professional Script Hub",
@@ -408,17 +413,29 @@ local function PlayIntro(sg, onDone)
     local bg=New("Frame",{Size=UDim2.new(1,0,1,0),
         BackgroundColor3=Color3.fromRGB(0,0,0),
         BackgroundTransparency=1,BorderSizePixel=0,ZIndex=100,Parent=sg})
+
+    -- container مع UIScale — كل عناصر الإنترو بتتضغط proportionally
+    -- AnchorPoint(0.5,0.5) + Position(0.5,0.5) → يفضل centered حتى بعد الـ scale
+    local introCont=New("Frame",{
+        Size=UDim2.new(1,0,1,0),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(0.5,0,0.5,0),
+        BackgroundTransparency=1,ZIndex=100,Parent=bg})
+    if _introScale < 0.98 then
+        New("UIScale",{Scale=_introScale,Parent=introCont})
+    end
+
     local glowOuter=New("ImageLabel",{Size=UDim2.new(0,340,0,340),
         AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
         BackgroundTransparency=1,Image="rbxassetid://5028857084",
-        ImageColor3=CFG.GlowColor,ImageTransparency=1,ZIndex=101,Parent=bg})
+        ImageColor3=CFG.GlowColor,ImageTransparency=1,ZIndex=101,Parent=introCont})
     local glowInner=New("ImageLabel",{Size=UDim2.new(0,220,0,220),
         AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
         BackgroundTransparency=1,Image="rbxassetid://5028857084",
-        ImageColor3=CFG.AccentColor,ImageTransparency=1,ZIndex=102,Parent=bg})
+        ImageColor3=CFG.AccentColor,ImageTransparency=1,ZIndex=102,Parent=introCont})
     local logoHolder=New("Frame",{Size=CFG.LogoStart,
         AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
-        BackgroundTransparency=1,ZIndex=103,Parent=bg})
+        BackgroundTransparency=1,ZIndex=103,Parent=introCont})
     local logoImg=New("ImageLabel",{Size=UDim2.new(1,0,1,0),
         BackgroundTransparency=1,Image=CFG.Logo,ImageTransparency=1,
         ScaleType=Enum.ScaleType.Fit,ZIndex=104,Parent=logoHolder})
@@ -428,19 +445,19 @@ local function PlayIntro(sg, onDone)
         AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,110),
         BackgroundTransparency=1,Text=CFG.HubName,
         TextColor3=Color3.fromRGB(255,255,255),Font=Enum.Font.GothamBlack,
-        TextSize=38,TextTransparency=1,ZIndex=104,Parent=bg})
+        TextSize=38,TextTransparency=1,ZIndex=104,Parent=introCont})
     local tagLabel=New("TextLabel",{Size=UDim2.new(0,320,0,22),
         AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,158),
         BackgroundTransparency=1,Text=CFG.TagLine,
         TextColor3=CFG.GlowColor,Font=Enum.Font.GothamSemibold,
-        TextSize=14,TextTransparency=1,ZIndex=104,Parent=bg})
+        TextSize=14,TextTransparency=1,ZIndex=104,Parent=introCont})
     local line=New("Frame",{Size=UDim2.new(0,0,0,2),
         AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,152),
-        BackgroundColor3=CFG.GlowColor,BorderSizePixel=0,ZIndex=104,Parent=bg})
+        BackgroundColor3=CFG.GlowColor,BorderSizePixel=0,ZIndex=104,Parent=introCont})
     local loaderBg=New("Frame",{Size=UDim2.new(0,220,0,4),
         AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,186),
         BackgroundColor3=Color3.fromRGB(40,40,40),BackgroundTransparency=1,
-        BorderSizePixel=0,ZIndex=104,Parent=bg})
+        BorderSizePixel=0,ZIndex=104,Parent=introCont})
     Corner(loaderBg,2)
     local loaderFill=New("Frame",{Size=UDim2.new(0,0,1,0),
         BackgroundColor3=CFG.GlowColor,BorderSizePixel=0,ZIndex=105,Parent=loaderBg})
@@ -539,15 +556,33 @@ local function ShowLangSelect(sg, onDone)
     local W,H = 440,330
     local RING = 4  -- سماكة الحد الملوّن
 
-    -- Overlay
+    -- ── Responsive scale للـ lang card ──────────────────────
+    local _lsCam = workspace.CurrentCamera
+    local _lsVP  = _lsCam and _lsCam.ViewportSize or Vector2.new(800,600)
+    local _lsMinDim = math.min(_lsVP.X, _lsVP.Y)
+    -- على موبايل الشاشة ~400px height → scale ≈ 0.75 → card بيبقى ~330px عرض
+    local _lsScale = math.clamp(_lsMinDim / 500, 0.50, 1.15)
+
+    -- Overlay (full screen — مش محتاج scale)
     local overlay=New("Frame",{Size=UDim2.new(1,0,1,0),
         BackgroundColor3=Color3.fromRGB(0,0,0),
         BackgroundTransparency=1,BorderSizePixel=0,ZIndex=200,Parent=sg})
     Tween(overlay,{BackgroundTransparency=0.52},0.4)
 
-    -- ── Rainbow border (single frame behind card, same corner radius) ──
-    -- We draw ONE frame behind the card. It's the colour of the rainbow.
-    -- The card sits on top, inset by RING pixels. Result: coloured border.
+    -- ── Scale wrapper — بيضم الـ ringBg والـ card ───────────
+    -- AnchorPoint(0.5,0.5) + Position(0.5,0,0.5,0) → centered دايماً
+    -- UIScale بيشغّل على محور المركز → مفيش offset بعد الـ scale
+    local lsWrapper=New("Frame",{
+        Size=UDim2.new(1,0,1,0),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(0.5,0,0.5,0),
+        BackgroundTransparency=1,
+        ZIndex=201,Parent=sg})
+    if _lsScale < 0.98 then
+        New("UIScale",{Scale=_lsScale,Parent=lsWrapper})
+    end
+
+    -- ── Rainbow border ──────────────────────────────────────
     local ringBg=New("Frame",{
         Size=UDim2.new(0,W+RING*2,0,H+RING*2),
         AnchorPoint=Vector2.new(0.5,0.5),
@@ -555,8 +590,8 @@ local function ShowLangSelect(sg, onDone)
         BackgroundColor3=Color3.fromRGB(255,80,80),
         BorderSizePixel=0,
         BackgroundTransparency=1,
-        ZIndex=201,Parent=sg})
-    Corner(ringBg, 22)  -- ← same as card corner + RING
+        ZIndex=201,Parent=lsWrapper})
+    Corner(ringBg, 22)
 
     -- Animate the colour of the ring frame
     local hue=0
@@ -567,7 +602,7 @@ local function ShowLangSelect(sg, onDone)
         ringBg.BackgroundColor3=Color3.fromHSV(hue,0.9,1)
     end)
 
-    -- ── Card (sits ON TOP of ring, inset by RING pixels) ──────
+    -- ── Card ────────────────────────────────────────────────
     local card=New("Frame",{
         Size=UDim2.new(0,W,0,H),
         AnchorPoint=Vector2.new(0.5,0.5),
@@ -575,8 +610,8 @@ local function ShowLangSelect(sg, onDone)
         BackgroundColor3=Color3.fromRGB(17,18,26),
         BorderSizePixel=0,
         BackgroundTransparency=1,
-        ZIndex=203,Parent=sg})
-    Corner(card,18)  -- ← same visual as ring − RING offset = flush edge
+        ZIndex=203,Parent=lsWrapper})
+    Corner(card,18)
 
     -- ── Logo ──────────────────────────────────────────────────
     local cardLogo=New("ImageLabel",{Size=UDim2.new(0,56,0,56),
@@ -702,7 +737,7 @@ local function ShowLangSelect(sg, onDone)
     Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0.5,0,0.5,0)},
         0.5,Enum.EasingStyle.Back)
 
-    -- ── Confirm — لا يتم تشغيل أي شيء إلا بعد ضغط الزر يدوياً ──
+    -- ── Confirm ────────────────────────────────────────────────
     local fired=false
     local function FireConfirm()
         if fired then return end
@@ -712,7 +747,7 @@ local function ShowLangSelect(sg, onDone)
         Tween(card,{BackgroundTransparency=1,Position=UDim2.new(0.5,0,0.44,0)},0.35)
         Tween(ringBg,{BackgroundTransparency=1,Position=UDim2.new(0.5,0,0.44,0)},0.35)
         task.delay(0.44,function()
-            overlay:Destroy(); card:Destroy(); ringBg:Destroy()
+            overlay:Destroy(); lsWrapper:Destroy()
             if onDone then task.spawn(function() onDone(selectedLang) end) end
         end)
     end
