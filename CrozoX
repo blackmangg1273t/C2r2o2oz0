@@ -328,66 +328,65 @@ end
 
 -- ============================================================
 --  DEVICE DETECTION + RESPONSIVE SCALE
---  يشتغل مرة واحدة عند التحميل ويحفظ النتيجة
+--  المنهج الصح: حجم الشاشة هو المعيار — مش TouchEnabled
+--  لأن بعض الـ executors بتعطّل TouchEnabled حتى على موبايل
 -- ============================================================
 local Device = {}
 
 do
-    local UIS = UserInputService
-    -- موبايل = TouchEnabled بس بدون Keyboard
-    Device.IsMobile = UIS.TouchEnabled and not UIS.KeyboardEnabled
-    Device.IsTablet = UIS.TouchEnabled and UIS.KeyboardEnabled  -- iPad + keyboard
-    Device.IsPC     = not UIS.TouchEnabled
+    local cam = workspace.CurrentCamera
+    local vp  = cam and cam.ViewportSize or Vector2.new(800, 600)
+    local sw, sh = vp.X, vp.Y
 
-    -- حساب الـ scale المناسب بناءً على حجم الشاشة الفعلي
-    -- البيزلاين = 660px (عرض الواجهة الافتراضي على PC)
-    local function CalcScale()
-        local sg = game:GetService("CoreGui"):FindFirstChild("CrozoX")
-        local sw, sh
-        if sg then
-            sw = sg.AbsoluteSize.X
-            sh = sg.AbsoluteSize.Y
-        else
-            -- fallback — نستخدم Camera viewport
-            local cam = workspace.CurrentCamera
-            sw = cam and cam.ViewportSize.X or 800
-            sh = cam and cam.ViewportSize.Y or 600
-        end
-        -- الشاشة الأصغر هي اللي تحدد الـ scale
-        local minDim = math.min(sw, sh)
-        if Device.IsMobile then
-            -- موبايل: نضمن إن الواجهة تملأ الشاشة بشكل كافي
-            return math.clamp(minDim / 470, 0.72, 1.6)
-        elseif Device.IsTablet then
-            return math.clamp(minDim / 520, 0.85, 1.4)
-        else
-            -- PC: لا تغيير — الـ scale = 1 دايماً
-            return 1
-        end
+    -- الشاشة الصغيرة (< 800 في أقل بُعد) = موبايل/تابلت
+    -- هذا أكثر موثوقية من TouchEnabled في بيئة الـ executors
+    local minDim = math.min(sw, sh)
+    local maxDim = math.max(sw, sh)
+
+    Device.IsPC     = minDim >= 700   -- PC أو شاشة كبيرة
+    Device.IsTablet = minDim >= 500 and minDim < 700
+    Device.IsMobile = minDim < 500    -- هاتف
+
+    -- أيضاً نضيف TouchEnabled كـ override للتأكيد
+    local UIS = UserInputService
+    if UIS.TouchEnabled and not UIS.KeyboardEnabled then
+        -- موبايل مؤكد
+        Device.IsPC     = false
+        Device.IsTablet = false
+        Device.IsMobile = true
     end
 
-    Device.Scale = CalcScale()
-
-    -- حجم الواجهة الـ responsive
-    -- موبايل: 92% من الشاشة | PC: الحجم الثابت المحدد
-    function Device.GetWindowSize(requestedW, requestedH)
+    --[[
+        CalcUIScale: يحسب الـ UIScale المطلوب عشان الواجهة (baseW x baseH)
+        تملأ الشاشة بنسبة مئوية معينة (fillRatio).
+        بعدين نحسب الـ position بناءً على الـ visual size الفعلي.
+    ]]
+    function Device.CalcLayout(baseW, baseH)
+        local fillW, fillH
         if Device.IsPC then
-            return requestedW, requestedH
+            -- PC: لا تغيير
+            return baseW, baseH, 1.0
+        elseif Device.IsMobile then
+            -- موبايل: 90% من أصغر بُعد — سواء landscape أو portrait
+            fillW = sw * 0.92
+            fillH = sh * 0.88
+        else
+            -- تابلت
+            fillW = sw * 0.88
+            fillH = sh * 0.84
         end
-        -- نجيب حجم الشاشة
-        local cam = workspace.CurrentCamera
-        local sw = cam and cam.ViewportSize.X or 800
-        local sh = cam and cam.ViewportSize.Y or 600
-        if Device.IsMobile then
-            -- landscape: 92% عرض + 88% ارتفاع | portrait: 96% x 82%
-            if sw > sh then
-                return math.floor(sw * 0.92), math.floor(sh * 0.88)
-            else
-                return math.floor(sw * 0.96), math.floor(sh * 0.82)
-            end
-        else -- tablet
-            return math.floor(sw * 0.85), math.floor(sh * 0.82)
-        end
+
+        -- نحسب الـ scale المناسب: نختار أصغر نسبة عشان الواجهة تكون visible كاملاً
+        local scaleByW = fillW / baseW
+        local scaleByH = fillH / baseH
+        local scale    = math.min(scaleByW, scaleByH)
+        scale = math.clamp(scale, 0.4, 3.0)
+
+        -- الـ visual size بعد الـ scale
+        local visualW = math.floor(baseW * scale)
+        local visualH = math.floor(baseH * scale)
+
+        return visualW, visualH, scale
     end
 end
 
@@ -1409,26 +1408,32 @@ function CrozoX:CreateWindow(cfg)
         local sw = sg.AbsoluteSize.X
         local sh = sg.AbsoluteSize.Y
 
-        -- Responsive Size
-        local w, h = Device.GetWindowSize(size.X.Offset, size.Y.Offset)
+        local baseW = size.X.Offset   -- 660 (base PC size)
+        local baseH = size.Y.Offset   -- 470
 
-        -- UIScale للموبايل والتابلت فقط
-        if not Device.IsPC then
-            local baseW   = size.X.Offset
-            local scaleVal = math.clamp(w / baseW, 0.65, 2.0)
-            local existing = wrapFrame:FindFirstChildWhichIsA("UIScale")
-            if existing then existing:Destroy() end
+        -- CalcLayout يرجع: visualW, visualH, scaleVal
+        -- visualW/H = الحجم الفعلي المعروض على الشاشة
+        -- scaleVal  = الـ UIScale المطبّق على wrapFrame
+        local visualW, visualH, scaleVal = Device.CalcLayout(baseW, baseH)
+
+        -- wrapFrame Size = base size دايماً (UIScale هو اللي يكبّره)
+        wrapFrame.Size = UDim2.new(0, baseW, 0, baseH)
+
+        -- Position بناءً على الـ visual size (مش base size!)
+        -- ده هو الخطأ في v38 — كان بيحسب بـ base بدل visual
+        wrapFrame.Position = UDim2.new(
+            0, math.floor((sw - visualW) / 2),
+            0, math.floor((sh - visualH) / 2)
+        )
+
+        -- طبّق UIScale على wrapFrame
+        local existing = wrapFrame:FindFirstChildWhichIsA("UIScale")
+        if existing then existing:Destroy() end
+        if scaleVal ~= 1 then
             New("UIScale", { Scale = scaleVal, Parent = wrapFrame })
-            -- بعد UIScale، نرجع للـ base size
-            w = size.X.Offset
-            h = size.Y.Offset
         end
 
-        -- wrapFrame بالحجم الكامل في المنتصف
-        wrapFrame.Size     = UDim2.new(0, w, 0, h)
-        wrapFrame.Position = UDim2.new(0, (sw - w) / 2, 0, (sh - h) / 2)
-
-        -- على الموبايل: نخفي زر الـ resize
+        -- على الموبايل/تابلت: نخفي زر الـ resize (مش منطقي هناك)
         if not Device.IsPC then
             resizeBtn.Visible = false
         end
