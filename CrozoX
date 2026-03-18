@@ -1005,22 +1005,32 @@ function CrozoX:CreateWindow(cfg)
 
     -- نجرب ثلاث طرق للصورة
     task.spawn(function()
-        -- الطريقة الأولى: rbxthumb (أسرع)
-        local thumb = "rbxthumb://type=AvatarHeadShot&id="
-            .. tostring(LocalPlayer.UserId) .. "&w=150&h=150"
-        avatarImg.Image = thumb
+        -- استنى اللاعب يجهز
+        repeat task.wait() until LocalPlayer and LocalPlayer.UserId ~= 0
 
-        -- الطريقة الثانية: GetUserThumbnailAsync (جودة أعلى)
-        task.wait(0.5)
-        local ok, content = pcall(function()
-            return Players:GetUserThumbnailAsync(
-                LocalPlayer.UserId,
-                Enum.ThumbnailType.HeadShot,
-                Enum.ThumbnailSize.Size420x420
-            )
-        end)
-        if ok and content and content ~= "" then
-            avatarImg.Image = content
+        local userId = LocalPlayer.UserId
+
+        -- 1. fallback افتراضي
+        avatarImg.Image = "rbxassetid://7072718362"
+
+        -- 2. rbxthumb سريع
+        avatarImg.Image = "rbxthumb://type=AvatarHeadShot&id="
+            .. userId .. "&w=150&h=150"
+
+        -- 3. retry system للجودة الأعلى
+        for i = 1, 3 do
+            local ok, content = pcall(function()
+                return Players:GetUserThumbnailAsync(
+                    userId,
+                    Enum.ThumbnailType.HeadShot,
+                    Enum.ThumbnailSize.Size420x420
+                )
+            end)
+            if ok and content and content ~= "" then
+                avatarImg.Image = content
+                break
+            end
+            task.wait(1)
         end
     end)
     New("TextLabel", {
