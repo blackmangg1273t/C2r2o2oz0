@@ -1388,12 +1388,12 @@ function CrozoX:CreateWindow(cfg)
         Name                   = "ResizeBtn",
         Size                   = UDim2.new(0, rBtnSz, 0, rBtnSz),
         AnchorPoint            = Vector2.new(0.5, 0.5),
-        Position               = UDim2.new(0, 0, 0, 0),  -- بيتحدث في RenderStepped
+        Position               = UDim2.new(1, 10, 1, 10),
         BackgroundColor3       = Color3.fromRGB(30, 30, 30),
         BackgroundTransparency = 0.1,
         Text                   = "",
         ZIndex                 = 60,
-        Parent                 = sg,   -- في sg مباشرة — منفصل تماماً عن بقية الـ UI
+        Parent                 = wrapFrame,
     })
     Corner(resizeBtn, 6)
     New("UIStroke", {
@@ -1419,6 +1419,7 @@ function CrozoX:CreateWindow(cfg)
     local holdTimer  = nil
     local holdActive = false
 
+    -- بدء الـ hold على الزر
     resizeBtn.InputBegan:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
             -- PC: مباشر
@@ -1432,13 +1433,12 @@ function CrozoX:CreateWindow(cfg)
         elseif inp.UserInputType == Enum.UserInputType.Touch then
             holdActive = false
             if holdTimer then task.cancel(holdTimer); holdTimer=nil end
-            -- تأثير بصري خفيف أثناء الانتظار
             Tween(resizeBtn,{BackgroundColor3=T.BorderBright,BackgroundTransparency=0},0.15)
             holdTimer = task.delay(0.35, function()
+                -- Hold اكتمل → ابدأ resize من موضع الإصبع الحالي
                 holdActive = true
                 dragging   = false
-                -- نأخذ موضع الإصبع الحالي (مش البداية) عشان resize يبدأ من مكانه
-                local mp2 = UserInputService:GetMouseLocation()
+                local mp2  = UserInputService:GetMouseLocation()
                 rStartX = mp2.X
                 rStartY = mp2.Y
                 rW  = wrapFrame.AbsoluteSize.X
@@ -1451,9 +1451,13 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    resizeBtn.InputChanged:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.Touch and holdActive and resizing then
-            local mp2 = UserInputService:GetMouseLocation()
+    -- الحركة والإنهاء عبر UserInputService
+    -- عشان الـ resize يستمر حتى بعد إبعاد الإصبع عن الزر
+    UserInputService.InputChanged:Connect(function(inp)
+        if not (holdActive and resizing) then return end
+        if inp.UserInputType == Enum.UserInputType.Touch
+        or inp.UserInputType == Enum.UserInputType.MouseMovement then
+            local mp2  = UserInputService:GetMouseLocation()
             local newW = math.clamp(rW + (mp2.X - rStartX), MIN_W, MAX_W)
             local newH = math.clamp(rH + (mp2.Y - rStartY), MIN_H, MAX_H)
             wrapFrame.Size     = UDim2.new(0,newW,0,newH)
@@ -1463,8 +1467,9 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    resizeBtn.InputEnded:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.Touch then
+    UserInputService.InputEnded:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.Touch and holdActive then
+            -- الإصبع رُفع → انتهى الـ resize
             if holdTimer then task.cancel(holdTimer); holdTimer=nil end
             holdActive = false
             resizing   = false
@@ -1536,12 +1541,7 @@ function CrozoX:CreateWindow(cfg)
             size    = UDim2.new(0, newW, 0, newH)
         end
 
-        -- resizeBtn في sg — نحدث موضعه كل frame
-        if resizeBtn and resizeBtn.Parent then
-            local rap = wrapFrame.AbsolutePosition
-            local ras = wrapFrame.AbsoluteSize
-            resizeBtn.Position = UDim2.new(0, rap.X + ras.X + 10, 0, rap.Y + ras.Y + 10)
-        end
+        -- resizeBtn يتحرك تلقائياً مع wrapFrame (child منه)
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
@@ -1611,7 +1611,6 @@ function CrozoX:CreateWindow(cfg)
         Tween(shadowImg, {ImageTransparency = 1}, 0.25)
         task.delay(0.32, function()
             wrapFrame:Destroy()
-            if resizeBtn and resizeBtn.Parent then resizeBtn:Destroy() end
         end)
     end
 
