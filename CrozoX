@@ -1388,12 +1388,12 @@ function CrozoX:CreateWindow(cfg)
         Name                   = "ResizeBtn",
         Size                   = UDim2.new(0, rBtnSz, 0, rBtnSz),
         AnchorPoint            = Vector2.new(0.5, 0.5),
-        Position               = UDim2.new(1, 10, 1, 10),  -- خارج الزاوية
+        Position               = UDim2.new(0, 0, 0, 0),  -- بيتحدث في RenderStepped
         BackgroundColor3       = Color3.fromRGB(30, 30, 30),
         BackgroundTransparency = 0.1,
         Text                   = "",
         ZIndex                 = 60,
-        Parent                 = wrapFrame,   -- child من wrapFrame يتحرك معه
+        Parent                 = sg,   -- في sg مباشرة — منفصل تماماً عن بقية الـ UI
     })
     Corner(resizeBtn, 6)
     New("UIStroke", {
@@ -1536,7 +1536,12 @@ function CrozoX:CreateWindow(cfg)
             size    = UDim2.new(0, newW, 0, newH)
         end
 
-        -- resizeBtn يتحرك تلقائياً مع wrapFrame (child منه)
+        -- resizeBtn في sg — نحدث موضعه كل frame
+        if resizeBtn and resizeBtn.Parent then
+            local rap = wrapFrame.AbsolutePosition
+            local ras = wrapFrame.AbsoluteSize
+            resizeBtn.Position = UDim2.new(0, rap.X + ras.X + 10, 0, rap.Y + ras.Y + 10)
+        end
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
@@ -1606,6 +1611,7 @@ function CrozoX:CreateWindow(cfg)
         Tween(shadowImg, {ImageTransparency = 1}, 0.25)
         task.delay(0.32, function()
             wrapFrame:Destroy()
+            if resizeBtn and resizeBtn.Parent then resizeBtn:Destroy() end
         end)
     end
 
@@ -1644,20 +1650,17 @@ function CrozoX:CreateWindow(cfg)
         if Device.IsPC then
             btn.MouseButton1Click:Connect(fn)
         else
-            -- موبايل: InputEnded فقط مع guard ضد الـ resize
+            -- موبايل: InputBegan + InputEnded على نفس الزر
+            -- resizeBtn منفصل في sg فلا يوجد bubble
             local pressing = false
             btn.InputBegan:Connect(function(i)
                 if i.UserInputType == Enum.UserInputType.Touch then
-                    -- تأكد مش على الـ resizeBtn
-                    if resizing or holdActive then return end
                     pressing = true
                 end
             end)
             btn.InputEnded:Connect(function(i)
                 if i.UserInputType == Enum.UserInputType.Touch and pressing then
                     pressing = false
-                    -- تأكد مش resize بيشتغل
-                    if resizing or holdActive then return end
                     fn()
                 end
             end)
