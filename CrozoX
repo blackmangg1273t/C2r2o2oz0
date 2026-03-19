@@ -1641,17 +1641,23 @@ function CrozoX:CreateWindow(cfg)
     -- الحل: على موبايل نستخدم InputEnded فقط (رفع الإصبع = tap مكتمل)
     -- ونمنع MouseButton1Click من التشغيل على موبايل عشان مش double-fire
     local function ConnectBtn(btn, fn)
-        -- نفس الأسلوب PC وموبايل — MouseButton1Click موثوق على الاثنين
-        btn.MouseButton1Click:Connect(fn)
-        -- Touch fallback للموبايل
-        if not Device.IsPC then
-            local t = false
+        if Device.IsPC then
+            btn.MouseButton1Click:Connect(fn)
+        else
+            -- موبايل: InputEnded فقط مع guard ضد الـ resize
+            local pressing = false
             btn.InputBegan:Connect(function(i)
-                if i.UserInputType == Enum.UserInputType.Touch then t = true end
+                if i.UserInputType == Enum.UserInputType.Touch then
+                    -- تأكد مش على الـ resizeBtn
+                    if resizing or holdActive then return end
+                    pressing = true
+                end
             end)
             btn.InputEnded:Connect(function(i)
-                if i.UserInputType == Enum.UserInputType.Touch and t then
-                    t = false
+                if i.UserInputType == Enum.UserInputType.Touch and pressing then
+                    pressing = false
+                    -- تأكد مش resize بيشتغل
+                    if resizing or holdActive then return end
                     fn()
                 end
             end)
