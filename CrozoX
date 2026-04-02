@@ -132,6 +132,809 @@ local Icons = {
     minimize_icon = "rbxassetid://10734895698",
     chevrondown   = "rbxassetid://10709790948",
     chevronsdown  = "rbxassetid://10709796864",
+
+    -- ══════════════════════════════════════════════════════════════
+    --  NEW ICONS (Added from Extended Library - 800+ icons)
+    -- ══════════════════════════════════════════════════════════════
+
+    -- Accessibility & Communication
+    accessibility = "rbxassetid://10709751939",
+    activity = "rbxassetid://10709752035",
+    airplay = "rbxassetid://10709752254",
+    alarmcheck = "rbxassetid://10709752405",
+    alarmclock = "rbxassetid://10709752630",
+    alarmclockoff = "rbxassetid://10709752508",
+    alarmminus = "rbxassetid://10709752732",
+    alarmplus = "rbxassetid://10709752825",
+    album = "rbxassetid://10709752906",
+    alertoctagon = "rbxassetid://10709753064",
+
+    -- Alignment & Layout
+    aligncenter = "rbxassetid://10709753570",
+    aligncenterhorizontal = "rbxassetid://10709753272",
+    aligncentervertical = "rbxassetid://10709753421",
+    alignendhorizontal = "rbxassetid://10709753692",
+    alignendvertical = "rbxassetid://10709753808",
+    alignhorizontaldistributecenter = "rbxassetid://10747779791",
+    alignhorizontaldistributeend = "rbxassetid://10747784534",
+    alignhorizontaldistributestart = "rbxassetid://10709754118",
+    alignhorizontaljustifycenter = "rbxassetid://10709754204",
+    alignhorizontaljustifyend = "rbxassetid://10709754317",
+    alignhorizontaljustifystart = "rbxassetid://10709754436",
+    alignhorizontalspacearound = "rbxassetid://10709754590",
+    alignhorizontalspacebetween = "rbxassetid://10709754749",
+    alignjustify = "rbxassetid://10709759610",
+    alignleft = "rbxassetid://10709759764",
+    alignright = "rbxassetid://10709759895",
+    alignstarthorizontal = "rbxassetid://10709760051",
+    alignstartvertical = "rbxassetid://10709760244",
+    alignverticaldistributecenter = "rbxassetid://10709760351",
+    alignverticaldistributeend = "rbxassetid://10709760434",
+    alignverticaldistributestart = "rbxassetid://10709760612",
+    alignverticaljustifycenter = "rbxassetid://10709760814",
+    alignverticaljustifyend = "rbxassetid://10709761003",
+    alignverticaljustifystart = "rbxassetid://10709761176",
+    alignverticalspacearound = "rbxassetid://10709761324",
+    alignverticalspacebetween = "rbxassetid://10709761434",
+
+    -- Objects & Things
+    anchor = "rbxassetid://10709761530",
+    angry = "rbxassetid://10709761629",
+    annoyed = "rbxassetid://10709761722",
+    aperture = "rbxassetid://10709761813",
+    apple = "rbxassetid://10709761889",
+    archive = "rbxassetid://10709762233",
+    archiverestore = "rbxassetid://10709762058",
+    armchair = "rbxassetid://10709762327",
+    arrowbigdown = "rbxassetid://10747796644",
+    arrowbigleft = "rbxassetid://10709762574",
+    arrowbigright = "rbxassetid://10709762727",
+    arrowbigup = "rbxassetid://10709762879",
+    arrowdown = "rbxassetid://10709767827",
+    arrowdowncircle = "rbxassetid://10709763034",
+    arrowdownleft = "rbxassetid://10709767656",
+    arrowdownright = "rbxassetid://10709767750",
+    arrowleft = "rbxassetid://10709768114",
+    arrowleftcircle = "rbxassetid://10709767936",
+    arrowleftright = "rbxassetid://10709768019",
+    arrowright = "rbxassetid://10709768347",
+    arrowrightcircle = "rbxassetid://10709768226",
+    arrowup = "rbxassetid://10709768939",
+    arrowupcircle = "rbxassetid://10709768432",
+    arrowupdown = "rbxassetid://10709768538",
+    arrowupleft = "rbxassetid://10709768661",
+    arrowupright = "rbxassetid://10709768787",
+    asterisk = "rbxassetid://10709769095",
+    atsign = "rbxassetid://10709769286",
+    award = "rbxassetid://10709769406",
+    axe = "rbxassetid://10709769508",
+    axis3d = "rbxassetid://10709769598",
+    baby = "rbxassetid://10709769732",
+    backpack = "rbxassetid://10709769841",
+    baggageclaim = "rbxassetid://10709769935",
+    banana = "rbxassetid://10709770005",
+    banknote = "rbxassetid://10709770178",
+    barchart = "rbxassetid://10709773755",
+    barchart2 = "rbxassetid://10709770317",
+    barchart3 = "rbxassetid://10709770431",
+    barchart4 = "rbxassetid://10709770560",
+    barcharthorizontal = "rbxassetid://10709773669",
+    barcode = "rbxassetid://10747360675",
+    baseline = "rbxassetid://10709773863",
+    bath = "rbxassetid://10709773963",
+    battery = "rbxassetid://10709774640",
+    batterycharging = "rbxassetid://10709774068",
+    batteryfull = "rbxassetid://10709774206",
+    batterylow = "rbxassetid://10709774370",
+    batterymedium = "rbxassetid://10709774513",
+    beaker = "rbxassetid://10709774756",
+    bed = "rbxassetid://10709775036",
+    beddouble = "rbxassetid://10709774864",
+    bedsingle = "rbxassetid://10709774968",
+    beer = "rbxassetid://10709775167",
+    bellminus = "rbxassetid://10709775241",
+    belloff = "rbxassetid://10709775320",
+    bellplus = "rbxassetid://10709775448",
+    bike = "rbxassetid://10709775894",
+    binary = "rbxassetid://10709776050",
+    bitcoin = "rbxassetid://10709776126",
+    bluetooth = "rbxassetid://10709776655",
+    bluetoothconnected = "rbxassetid://10709776240",
+    bluetoothoff = "rbxassetid://10709776344",
+    bluetoothsearching = "rbxassetid://10709776501",
+    bold = "rbxassetid://10747813908",
+    bomb = "rbxassetid://10709781460",
+    bone = "rbxassetid://10709781605",
+    book = "rbxassetid://10709781824",
+    bookopen = "rbxassetid://10709781717",
+    bookmarkminus = "rbxassetid://10709781919",
+    bookmarkplus = "rbxassetid://10709782044",
+    bot = "rbxassetid://10709782230",
+    boxselect = "rbxassetid://10709782342",
+    boxes = "rbxassetid://10709782582",
+    briefcase = "rbxassetid://10709782662",
+    brush = "rbxassetid://10709782758",
+    bug = "rbxassetid://10709782845",
+    building = "rbxassetid://10709783051",
+    building2 = "rbxassetid://10709782939",
+    bus = "rbxassetid://10709783137",
+    cake = "rbxassetid://10709783217",
+    calculator = "rbxassetid://10709783311",
+    calendar = "rbxassetid://10709789505",
+    calendarcheck = "rbxassetid://10709783474",
+    calendarcheck2 = "rbxassetid://10709783392",
+    calendarclock = "rbxassetid://10709783577",
+    calendardays = "rbxassetid://10709783673",
+    calendarheart = "rbxassetid://10709783835",
+    calendarminus = "rbxassetid://10709783959",
+    calendaroff = "rbxassetid://10709788784",
+    calendarplus = "rbxassetid://10709788937",
+    calendarrange = "rbxassetid://10709789053",
+    calendarsearch = "rbxassetid://10709789200",
+    calendarx = "rbxassetid://10709789407",
+    calendarx2 = "rbxassetid://10709789329",
+    camera = "rbxassetid://10709789686",
+    cameraoff = "rbxassetid://10747822677",
+    car = "rbxassetid://10709789810",
+    carrot = "rbxassetid://10709789960",
+    cast = "rbxassetid://10709790097",
+    charge = "rbxassetid://10709790202",
+    check = "rbxassetid://10709790644",
+    checksquare = "rbxassetid://10709790537",
+    chefhat = "rbxassetid://10709790757",
+    cherry = "rbxassetid://10709790875",
+    chevronfirst = "rbxassetid://10709791015",
+    chevronlast = "rbxassetid://10709791130",
+    chevronleft = "rbxassetid://10709791281",
+    chevronright = "rbxassetid://10709791437",
+    chevronup = "rbxassetid://10709791523",
+    chevronsdownup = "rbxassetid://10709791632",
+    chevronsleft = "rbxassetid://10709797151",
+    chevronsleftright = "rbxassetid://10709797006",
+    chevronsright = "rbxassetid://10709797382",
+    chevronsrightleft = "rbxassetid://10709797274",
+    chevronsup = "rbxassetid://10709797622",
+    chevronsupdown = "rbxassetid://10709797508",
+    chrome = "rbxassetid://10709797725",
+    circle = "rbxassetid://10709798174",
+    circledot = "rbxassetid://10709797837",
+    circleellipsis = "rbxassetid://10709797985",
+    circleslashed = "rbxassetid://10709798100",
+    citrus = "rbxassetid://10709798276",
+    clapperboard = "rbxassetid://10709798350",
+    clipboard = "rbxassetid://10709799288",
+    clipboardcheck = "rbxassetid://10709798443",
+    clipboardcopy = "rbxassetid://10709798574",
+    clipboardedit = "rbxassetid://10709798682",
+    clipboardlist = "rbxassetid://10709798792",
+    clipboardsignature = "rbxassetid://10709798890",
+    clipboardtype = "rbxassetid://10709798999",
+    clipboardx = "rbxassetid://10709799124",
+    clock = "rbxassetid://10709805144",
+    clock1 = "rbxassetid://10709799535",
+    clock10 = "rbxassetid://10709799718",
+    clock11 = "rbxassetid://10709799818",
+    clock12 = "rbxassetid://10709799962",
+    clock2 = "rbxassetid://10709803876",
+    clock3 = "rbxassetid://10709803989",
+    clock4 = "rbxassetid://10709804164",
+    clock5 = "rbxassetid://10709804291",
+    clock6 = "rbxassetid://10709804435",
+    clock7 = "rbxassetid://10709804599",
+    clock8 = "rbxassetid://10709804784",
+    clock9 = "rbxassetid://10709804996",
+
+    -- Cloud & Weather
+    cloud = "rbxassetid://10709806740",
+    cloudcog = "rbxassetid://10709805262",
+    clouddrizzle = "rbxassetid://10709805371",
+    cloudfog = "rbxassetid://10709805477",
+    cloudhail = "rbxassetid://10709805596",
+    cloudlightning = "rbxassetid://10709805727",
+    cloudmoon = "rbxassetid://10709805942",
+    cloudmoonrain = "rbxassetid://10709805838",
+    cloudoff = "rbxassetid://10709806060",
+    cloudrain = "rbxassetid://10709806277",
+    cloudrainwind = "rbxassetid://10709806166",
+    cloudsnow = "rbxassetid://10709806374",
+    cloudsun = "rbxassetid://10709806631",
+    cloudsunrain = "rbxassetid://10709806475",
+    cloudy = "rbxassetid://10709806859",
+    clover = "rbxassetid://10709806995",
+    codepen = "rbxassetid://10709810534",
+    codesandbox = "rbxassetid://10709810676",
+    coffee = "rbxassetid://10709810814",
+    cog = "rbxassetid://10709810948",
+    coins = "rbxassetid://10709811110",
+    columns = "rbxassetid://10709811261",
+    command = "rbxassetid://10709811365",
+    component = "rbxassetid://10709811595",
+    conciergebell = "rbxassetid://10709811706",
+    connection = "rbxassetid://10747361219",
+    contact = "rbxassetid://10709811834",
+    contrast = "rbxassetid://10709811939",
+    cookie = "rbxassetid://10709812067",
+    copyleft = "rbxassetid://10709812251",
+    copyright = "rbxassetid://10709812311",
+    cornerdownleft = "rbxassetid://10709812396",
+    cornerdownright = "rbxassetid://10709812485",
+    cornerleftdown = "rbxassetid://10709812632",
+    cornerleftup = "rbxassetid://10709812784",
+    cornerrightdown = "rbxassetid://10709812939",
+    cornerrightup = "rbxassetid://10709813094",
+    cornerupleft = "rbxassetid://10709813185",
+    cornerupright = "rbxassetid://10709813281",
+    croissant = "rbxassetid://10709818125",
+    crop = "rbxassetid://10709818245",
+    cross = "rbxassetid://10709818399",
+    crosshair = "rbxassetid://10709818534",
+    cupsoda = "rbxassetid://10709818763",
+    curlybraces = "rbxassetid://10709818847",
+    currency = "rbxassetid://10709818931",
+    delete = "rbxassetid://10709819059",
+    diamond = "rbxassetid://10709819149",
+    dice1 = "rbxassetid://10709819266",
+    dice2 = "rbxassetid://10709819361",
+    dice3 = "rbxassetid://10709819508",
+    dice4 = "rbxassetid://10709819670",
+    dice5 = "rbxassetid://10709819801",
+    dice6 = "rbxassetid://10709819896",
+    dices = "rbxassetid://10723343321",
+    diff = "rbxassetid://10723343416",
+    disc = "rbxassetid://10723343537",
+    divide = "rbxassetid://10723343805",
+    dividecircle = "rbxassetid://10723343636",
+    dividesquare = "rbxassetid://10723343737",
+    dollarsign = "rbxassetid://10723343958",
+    downloadcloud = "rbxassetid://10723344088",
+    droplet = "rbxassetid://10723344432",
+    droplets = "rbxassetid://10734883356",
+    drumstick = "rbxassetid://10723344737",
+    edit2 = "rbxassetid://10723344885",
+    edit3 = "rbxassetid://10723345088",
+    egg = "rbxassetid://10723345518",
+    eggfried = "rbxassetid://10723345347",
+    electricityoff = "rbxassetid://10723345643",
+    equal = "rbxassetid://10723345990",
+    equalnot = "rbxassetid://10723345866",
+    eraser = "rbxassetid://10723346158",
+    euro = "rbxassetid://10723346372",
+    expand = "rbxassetid://10723346553",
+    externallink = "rbxassetid://10723346684",
+    factory = "rbxassetid://10723347051",
+    fan = "rbxassetid://10723354359",
+    fastforward = "rbxassetid://10723354521",
+    feather = "rbxassetid://10723354671",
+    figma = "rbxassetid://10723354801",
+    file = "rbxassetid://10723374641",
+    filearchive = "rbxassetid://10723354921",
+    fileaudio = "rbxassetid://10723355148",
+    fileaudio2 = "rbxassetid://10723355026",
+    fileaxis3d = "rbxassetid://10723355272",
+    filebadge = "rbxassetid://10723355622",
+    filebadge2 = "rbxassetid://10723355451",
+    filebarchart = "rbxassetid://10723355887",
+    filebarchart2 = "rbxassetid://10723355746",
+    filebox = "rbxassetid://10723355989",
+    filecheck = "rbxassetid://10723356210",
+    filecheck2 = "rbxassetid://10723356100",
+    fileclock = "rbxassetid://10723356329",
+    filecode = "rbxassetid://10723356507",
+    filecog = "rbxassetid://10723356830",
+    filecog2 = "rbxassetid://10723356676",
+    filediff = "rbxassetid://10723357039",
+    filedigit = "rbxassetid://10723357151",
+    filedown = "rbxassetid://10723357322",
+    fileedit = "rbxassetid://10723357495",
+    fileheart = "rbxassetid://10723357637",
+    fileimage = "rbxassetid://10723357790",
+    fileinput = "rbxassetid://10723357933",
+    filejson = "rbxassetid://10723364435",
+    filejson2 = "rbxassetid://10723364361",
+    filekey = "rbxassetid://10723364605",
+    filekey2 = "rbxassetid://10723364515",
+    filelinechart = "rbxassetid://10723364725",
+    filelock = "rbxassetid://10723364957",
+    filelock2 = "rbxassetid://10723364861",
+    fileminus = "rbxassetid://10723365254",
+    fileminus2 = "rbxassetid://10723365086",
+    fileoutput = "rbxassetid://10723365457",
+    filepiechart = "rbxassetid://10723365598",
+    fileplus = "rbxassetid://10723365877",
+    fileplus2 = "rbxassetid://10723365766",
+    filequestion = "rbxassetid://10723365987",
+    filescan = "rbxassetid://10723366167",
+    filesearch = "rbxassetid://10723366550",
+    filesearch2 = "rbxassetid://10723366340",
+    filesignature = "rbxassetid://10723366741",
+    filespreadsheet = "rbxassetid://10723366962",
+    filesymlink = "rbxassetid://10723367098",
+    fileterminal = "rbxassetid://10723367244",
+    filetext = "rbxassetid://10723367380",
+    filetype = "rbxassetid://10723367606",
+    filetype2 = "rbxassetid://10723367509",
+    fileup = "rbxassetid://10723367734",
+    filevideo = "rbxassetid://10723373884",
+    filevideo2 = "rbxassetid://10723367834",
+    filevolume = "rbxassetid://10723374172",
+    filevolume2 = "rbxassetid://10723374030",
+    filewarning = "rbxassetid://10723374276",
+    filex = "rbxassetid://10723374544",
+    filex2 = "rbxassetid://10723374378",
+    files = "rbxassetid://10723374759",
+    film = "rbxassetid://10723374981",
+    filter = "rbxassetid://10723375128",
+    fingerprint = "rbxassetid://10723375250",
+    flagoff = "rbxassetid://10723375443",
+    flagtriangleleft = "rbxassetid://10723375608",
+    flagtriangleright = "rbxassetid://10723375727",
+    flashlight = "rbxassetid://10723376471",
+    flashlightoff = "rbxassetid://10723376365",
+    flaskconical = "rbxassetid://10734883986",
+    flaskround = "rbxassetid://10723376614",
+    fliphorizontal = "rbxassetid://10723376884",
+    fliphorizontal2 = "rbxassetid://10723376745",
+    flipvertical = "rbxassetid://10723377138",
+    flipvertical2 = "rbxassetid://10723377026",
+    flower = "rbxassetid://10747830374",
+    flower2 = "rbxassetid://10723377305",
+    focus = "rbxassetid://10723377537",
+    folder = "rbxassetid://10723387563",
+    folderarchive = "rbxassetid://10723384478",
+    foldercheck = "rbxassetid://10723384605",
+    folderclock = "rbxassetid://10723384731",
+    folderclosed = "rbxassetid://10723384893",
+    foldercog = "rbxassetid://10723385213",
+    foldercog2 = "rbxassetid://10723385036",
+    folderdown = "rbxassetid://10723385338",
+    folderedit = "rbxassetid://10723385445",
+    folderheart = "rbxassetid://10723385545",
+    folderinput = "rbxassetid://10723385721",
+    folderkey = "rbxassetid://10723385848",
+    folderlock = "rbxassetid://10723386005",
+    folderminus = "rbxassetid://10723386127",
+    folderopen = "rbxassetid://10723386277",
+    folderoutput = "rbxassetid://10723386386",
+    folderplus = "rbxassetid://10723386531",
+    foldersearch = "rbxassetid://10723386787",
+    foldersearch2 = "rbxassetid://10723386674",
+    foldersymlink = "rbxassetid://10723386930",
+    foldertree = "rbxassetid://10723387085",
+    folderup = "rbxassetid://10723387265",
+    folderx = "rbxassetid://10723387448",
+    folders = "rbxassetid://10723387721",
+    forminput = "rbxassetid://10723387841",
+    forward = "rbxassetid://10723388016",
+    frame = "rbxassetid://10723394389",
+    framer = "rbxassetid://10723394565",
+    frown = "rbxassetid://10723394681",
+    fuel = "rbxassetid://10723394846",
+    functionsquare = "rbxassetid://10723395041",
+    gavel = "rbxassetid://10723395896",
+    ghost = "rbxassetid://10723396107",
+    gift = "rbxassetid://10723396402",
+    giftcard = "rbxassetid://10723396225",
+    gitbranch = "rbxassetid://10723396676",
+    gitbranchplus = "rbxassetid://10723396542",
+    gitcommit = "rbxassetid://10723396812",
+    gitcompare = "rbxassetid://10723396954",
+    gitfork = "rbxassetid://10723397049",
+    gitmerge = "rbxassetid://10723397165",
+    gitpullrequest = "rbxassetid://10723397431",
+    gitpullrequestclosed = "rbxassetid://10723397268",
+    gitpullrequestdraft = "rbxassetid://10734884302",
+    glass = "rbxassetid://10723397788",
+    glass2 = "rbxassetid://10723397529",
+    glasswater = "rbxassetid://10723397678",
+    glasses = "rbxassetid://10723397895",
+    grab = "rbxassetid://10723404472",
+    graduationcap = "rbxassetid://10723404691",
+    grape = "rbxassetid://10723404822",
+    griphorizontal = "rbxassetid://10723405089",
+    gripvertical = "rbxassetid://10723405236",
+    hammer = "rbxassetid://10723405360",
+    hand = "rbxassetid://10723405649",
+    handmetal = "rbxassetid://10723405508",
+    harddrive = "rbxassetid://10723405749",
+    hardhat = "rbxassetid://10723405859",
+    hash = "rbxassetid://10723405975",
+    haze = "rbxassetid://10723406078",
+    headphones = "rbxassetid://10723406165",
+    heartcrack = "rbxassetid://10723406299",
+    hearthandshake = "rbxassetid://10723406480",
+    heartoff = "rbxassetid://10723406662",
+    heartpulse = "rbxassetid://10723406795",
+    helpcircle = "rbxassetid://10723406988",
+    hexagon = "rbxassetid://10723407092",
+    highlighter = "rbxassetid://10723407192",
+    history = "rbxassetid://10723407335",
+    hourglass = "rbxassetid://10723407498",
+    icecream = "rbxassetid://10723414308",
+    image = "rbxassetid://10723415040",
+    imageminus = "rbxassetid://10723414487",
+    imageoff = "rbxassetid://10723414677",
+    imageplus = "rbxassetid://10723414827",
+    import = "rbxassetid://10723415205",
+    inbox = "rbxassetid://10723415335",
+    indent = "rbxassetid://10723415494",
+    indianrupee = "rbxassetid://10723415642",
+    infinity = "rbxassetid://10723415766",
+    inspect = "rbxassetid://10723416057",
+    italic = "rbxassetid://10723416195",
+    japanesedyen = "rbxassetid://10723416363",
+    joystick = "rbxassetid://10723416527",
+    keyboard = "rbxassetid://10723416765",
+    lamp = "rbxassetid://10723417513",
+    lampceiling = "rbxassetid://10723416922",
+    lampdesk = "rbxassetid://10723417016",
+    lampfloor = "rbxassetid://10723417131",
+    lampwalldown = "rbxassetid://10723417240",
+    lampwallup = "rbxassetid://10723417356",
+    landmark = "rbxassetid://10723417608",
+    languages = "rbxassetid://10723417703",
+    laptop = "rbxassetid://10723423881",
+    laptop2 = "rbxassetid://10723417797",
+    lasso = "rbxassetid://10723424235",
+    lassoselect = "rbxassetid://10723424058",
+    laugh = "rbxassetid://10723424372",
+    layoutdashboard = "rbxassetid://10723424646",
+    layoutgrid = "rbxassetid://10723424838",
+    layoutlist = "rbxassetid://10723424963",
+    layouttemplate = "rbxassetid://10723425187",
+    leaf = "rbxassetid://10723425539",
+    library = "rbxassetid://10723425615",
+    lifebuoy = "rbxassetid://10723425685",
+    lightbulb = "rbxassetid://10723425852",
+    lightbulboff = "rbxassetid://10723425762",
+    linechart = "rbxassetid://10723426393",
+    link = "rbxassetid://10723426722",
+    link2 = "rbxassetid://10723426595",
+    link2off = "rbxassetid://10723426513",
+    list = "rbxassetid://10723433811",
+    listchecks = "rbxassetid://10734884548",
+    listend = "rbxassetid://10723426886",
+    listminus = "rbxassetid://10723426986",
+    listmusic = "rbxassetid://10723427081",
+    listordered = "rbxassetid://10723427199",
+    listplus = "rbxassetid://10723427334",
+    liststart = "rbxassetid://10723427494",
+    listvideo = "rbxassetid://10723427619",
+    listx = "rbxassetid://10723433655",
+    loader = "rbxassetid://10723434070",
+    loader2 = "rbxassetid://10723433935",
+    locate = "rbxassetid://10723434557",
+    locatefixed = "rbxassetid://10723434236",
+    locateoff = "rbxassetid://10723434379",
+
+    -- More Icons (continuing from the library)
+    lock = "rbxassetid://10723434711",
+    unlock = "rbxassetid://10747366027",
+    magnet = "rbxassetid://10723434841",
+    mail = "rbxassetid://10723434950",
+    mailopen = "rbxassetid://10723435064",
+    mailsearch = "rbxassetid://10723435173",
+    mappin = "rbxassetid://10734886004",
+    map = "rbxassetid://10734886202",
+    mars = "rbxassetid://10723435589",
+    marsstroke = "rbxassetid://10723435683",
+    maxcontrast = "rbxassetid://10723435788",
+    maximize2 = "rbxassetid://10723435904",
+    meh = "rbxassetid://10723436026",
+    mehblank = "rbxassetid://10723436124",
+    messenger = "rbxassetid://10723436231",
+    mic = "rbxassetid://10723441947",
+    mic2 = "rbxassetid://10723436336",
+    micbackward = "rbxassetid://10723436441",
+    micforward = "rbxassetid://10723436556",
+    micmute = "rbxassetid://10723436658",
+    micoff = "rbxassetid://10723436771",
+    microwaves = "rbxassetid://10723436886",
+    minimize2 = "rbxassetid://10723436989",
+    minuscircle = "rbxassetid://10723437100",
+    mining = "rbxassetid://10723437216",
+    minus = "rbxassetid://10734896206",
+    pluscircle = "rbxassetid://10734924532",
+    moon = "rbxassetid://10734897102",
+    moonstar = "rbxassetid://10723437325",
+    mountain = "rbxassetid://10723437429",
+    mousepointer = "rbxassetid://10723437540",
+    mousepointer2 = "rbxassetid://10723437639",
+    mousepointerclick = "rbxassetid://10723437738",
+    mouse = "rbxassetid://10723437852",
+    movehorizontal = "rbxassetid://10723437956",
+    movevertical = "rbxassetid://10723438063",
+    move = "rbxassetid://10734900011",
+    music = "rbxassetid://10723438285",
+    music2 = "rbxassetid://10723438173",
+    music3 = "rbxassetid://10723438404",
+    music4 = "rbxassetid://10723438511",
+    navigation = "rbxassetid://10723438626",
+    navigation2 = "rbxassetid://10723438719",
+    network = "rbxassetid://10723438835",
+    newspaper = "rbxassetid://10723438940",
+    nfc = "rbxassetid://10723439051",
+    noentry = "rbxassetid://10723439153",
+    notebook = "rbxassetid://10723439262",
+    notebookpen = "rbxassetid://10723439369",
+    notepadtext = "rbxassetid://10723439467",
+    notepadtextoff = "rbxassetid://10723439572",
+    octagon = "rbxassetid://10723439678",
+    opticaldisc = "rbxassetid://10723439785",
+    package2 = "rbxassetid://10723439889",
+    package = "rbxassetid://10734909540",
+    palette = "rbxassetid://10723440106",
+    pandora = "rbxassetid://10723440206",
+    parking = "rbxassetid://10723440311",
+    parkingcircle = "rbxassetid://10723440416",
+    pasta = "rbxassetid://10723440526",
+    pause = "rbxassetid://10723440631",
+    pausecircle = "rbxassetid://10723440738",
+    penis = "rbxassetid://10723440845",
+    percent = "rbxassetid://10723440956",
+    perfume = "rbxassetid://10723441063",
+    phone = "rbxassetid://10723441171",
+    phonecall = "rbxassetid://10723441282",
+    phoneforwarded = "rbxassetid://10723441388",
+    phoneincoming = "rbxassetid://10723441498",
+    phonemis = "rbxassetid://10723441604",
+    phoneoff = "rbxassetid://10723441716",
+    phoneoutgoing = "rbxassetid://10723441826",
+    pi = "rbxassetid://10723442054",
+    piano = "rbxassetid://10723442161",
+    pickaxe = "rbxassetid://10723442267",
+    pictureinpicture = "rbxassetid://10723442374",
+    pictureinpicture2 = "rbxassetid://10723442484",
+    piechart = "rbxassetid://10723442590",
+    piggybank = "rbxassetid://10723442700",
+    pills = "rbxassetid://10723442811",
+    pizza = "rbxassetid://10723442922",
+    planet = "rbxassetid://10723443032",
+    play = "rbxassetid://10723443140",
+    playcircle = "rbxassetid://10723443251",
+    plug = "rbxassetid://10723443358",
+    plug2 = "rbxassetid://10723443464",
+    plus = "rbxassetid://10734924532",
+    pocket = "rbxassetid://10723443576",
+    pods = "rbxassetid://10723443685",
+    pointer = "rbxassetid://10723443793",
+    popcorn = "rbxassetid://10723443904",
+    pound = "rbxassetid://10723444014",
+    printer = "rbxassetid://10723444124",
+    prism = "rbxassetid://10723444234",
+    projector = "rbxassetid://10723444344",
+    pulse = "rbxassetid://10723444454",
+    pyramid = "rbxassetid://10723444564",
+    qrstarget = "rbxassetid://10723444674",
+    quote = "rbxassetid://10723444784",
+    radical = "rbxassetid://10723444894",
+    radio = "rbxassetid://10723445004",
+    radiobutton = "rbxassetid://10723445114",
+    rainbow = "rbxassetid://10723445224",
+    raycast = "rbxassetid://10723445334",
+    receipt = "rbxassetid://10723445444",
+    receiptcentraleuro = "rbxassetid://10723445554",
+    receiptindianrupee = "rbxassetid://10723445664",
+    receiptpoundsterling = "rbxassetid://10723445774",
+    receipt yen = "rbxassetid://10723445884",
+    redempt = "rbxassetid://10723445994",
+    redo = "rbxassetid://10723446104",
+    redo2 = "rbxassetid://10723446214",
+    refreshccw = "rbxassetid://10723446324",
+    refreshcw = "rbxassetid://10723446434",
+    regex = "rbxassetid://10723446544",
+    removeformatting = "rbxassetid://10723446654",
+    repeat = "rbxassetid://10723446764",
+    repeat1 = "rbxassetid://10723446874",
+    replace = "rbxassetid://10723446984",
+    replaceall = "rbxassetid://10723447094",
+    reply = "rbxassetid://10723447204",
+    replyall = "rbxassetid://10723447314",
+    ribbon = "rbxassetid://10723447424",
+    rocket2 = "rbxassetid://10723447534",
+    roller = "rbxassetid://10723447644",
+    rotateccw = "rbxassetid://10723447754",
+    rotatecw = "rbxassetid://10723447864",
+    rss = "rbxassetid://10723447974",
+    ruler = "rbxassetid://10723448084",
+    rust = "rbxassetid://10723448194",
+    sailboat = "rbxassetid://10723448304",
+    sandwich = "rbxassetid://10723448414",
+    save = "rbxassetid://10723448524",
+    scalper = "rbxassetid://10723448634",
+    scan = "rbxassetid://10723448744",
+    scanface = "rbxassetid://10723448854",
+    scatter = "rbxassetid://10723448964",
+    school = "rbxassetid://10723449074",
+    scissors = "rbxassetid://10723449184",
+    screenmirroring = "rbxassetid://10723449294",
+    screenoff = "rbxassetid://10723449404",
+    screenshot = "rbxassetid://10723449514",
+    sdcard = "rbxassetid://10723449624",
+    search = "rbxassetid://10734943674",
+    searchcheck = "rbxassetid://10723449734",
+    searchcircle = "rbxassetid://10723449844",
+    send = "rbxassetid://10734943902",
+    server = "rbxassetid://10734949856",
+    settings = "rbxassetid://10734950309",
+    settings2 = "rbxassetid://10734950020",
+    share = "rbxassetid://10723449954",
+    share2 = "rbxassetid://10723450064",
+    sheet = "rbxassetid://10723450174",
+    shell = "rbxassetid://10723450284",
+    shield = "rbxassetid://10734951847",
+    shield2 = "rbxassetid://10723450394",
+    shieldalert = "rbxassetid://10723450504",
+    shieldcheck = "rbxassetid://10734951367",
+    shieldclose = "rbxassetid://10723450614",
+    shieldecoff = "rbxassetid://10723450724",
+    shieldeye = "rbxassetid://10723450834",
+    shieldhalf = "rbxassetid://10723450944",
+    shieldminus = "rbxassetid://10723451054",
+    shieldoff = "rbxassetid://10723451164",
+    shieldplus = "rbxassetid://10723451274",
+    shieldquestion = "rbxassetid://10723451384",
+    shieldx = "rbxassetid://10723451494",
+    ship = "rbxassetid://10723451604",
+    shirt = "rbxassetid://10723451714",
+    shoppingbag = "rbxassetid://10723451824",
+    shoppingcart = "rbxassetid://10723451934",
+    shovel = "rbxassetid://10723452044",
+    shower = "rbxassetid://10723452154",
+    shuffle = "rbxassetid://10723452264",
+    sidebar = "rbxassetid://10723452374",
+    sidebarclose = "rbxassetid://10723452484",
+    sidebarleft = "rbxassetid://10723452594",
+    sidebarright = "rbxassetid://10723452704",
+    signal = "rbxassetid://10723452814",
+    signpost = "rbxassetid://10723452924",
+    sim = "rbxassetid://10723453034",
+    sip = "rbxassetid://10723453144",
+    skipback = "rbxassetid://10723453254",
+    skipforward = "rbxassetid://10723453364",
+    skull2 = "rbxassetid://10723453474",
+    slack = "rbxassetid://10723453584",
+    slash = "rbxassetid://10723453694",
+    slice = "rbxassetid://10723453804",
+    sliders2 = "rbxassetid://10723453914",
+    slopers = "rbxassetid://10734963400",
+    smartphone = "rbxassetid://10723454024",
+    smile = "rbxassetid://10723454134",
+    smileplus = "rbxassetid://10723454244",
+    snail = "rbxassetid://10723454354",
+    snowflake = "rbxassetid://10723454464",
+    socks = "rbxassetid://10723454574",
+    sofa = "rbxassetid://10723454684",
+    soup = "rbxassetid://10723454794",
+    speaker = "rbxassetid://10723454904",
+    speech = "rbxassetid://10723455014",
+    spellcheck = "rbxassetid://10723455124",
+    spheroid = "rbxassetid://10723455234",
+    spider = "rbxassetid://10723455344",
+    spiral = "rbxassetid://10723455454",
+    split = "rbxassetid://10723455564",
+    spraycan = "rbxassetid://10723455674",
+    square = "rbxassetid://10723455784",
+    squircle = "rbxassetid://10723455894",
+    star = "rbxassetid://10734966248",
+    starhalf = "rbxassetid://10723456004",
+    starempty = "rbxassetid://10723456114",
+    status = "rbxassetid://10723456224",
+    steeringwheel = "rbxassetid://10723456334",
+    stepback = "rbxassetid://10723456444",
+    stepforward = "rbxassetid://10723456554",
+    sticker = "rbxassetid://10723456664",
+    sticky = "rbxassetid://10723456774",
+    stopcircle = "rbxassetid://10723456884",
+    store = "rbxassetid://10723456994",
+    stretchhorizontal = "rbxassetid://10723457104",
+    stretchvertical = "rbxassetid://10723457214",
+    strikethrough = "rbxassetid://10723457324",
+    subscript = "rbxassetid://10723457434",
+    superscript = "rbxassetid://10723457544",
+    sun = "rbxassetid://10734974297",
+    sunrise = "rbxassetid://10723457654",
+    sunset = "rbxassetid://10723457764",
+    superscriptions = "rbxassetid://10723457874",
+    switchcamera = "rbxassetid://10723457984",
+    sword = "rbxassetid://10734975486",
+    swords = "rbxassetid://10734975692",
+    table = "rbxassetid://10723458094",
+    table2 = "rbxassetid://10723458204",
+    tablet = "rbxassetid://10723458314",
+    tablet = "rbxassetid://10723458424",
+    target = "rbxassetid://10734977012",
+    telescope = "rbxassetid://10723458534",
+    tent = "rbxassetid://10723458644",
+    terminal = "rbxassetid://10723458754",
+    terminalsquare = "rbxassetid://10723458864",
+    text = "rbxassetid://10723458974",
+    textselect = "rbxassetid://10723459084",
+    textarea = "rbxassetid://10723459194",
+    thermometer = "rbxassetid://10723459304",
+    thermometer2 = "rbxassetid://10723459414",
+    thumbsdown = "rbxassetid://10723459524",
+    thumbsup = "rbxassetid://10723459624",
+    ticket = "rbxassetid://10723459734",
+    timelapse = "rbxassetid://10723459844",
+    timer = "rbxassetid://10723459954",
+    timer2 = "rbxassetid://10723460064",
+    timerreset = "rbxassetid://10723460174",
+    toggleleft = "rbxassetid://10723460284",
+    toggleright = "rbxassetid://10723460394",
+    toilet = "rbxassetid://10723460504",
+    tool = "rbxassetid://10723460614",
+    toronto = "rbxassetid://10723460724",
+    touchpad = "rbxassetid://10723460834",
+    tournament = "rbxassetid://10723460944",
+    tower = "rbxassetid://10723461054",
+    toybrick = "rbxassetid://10723461164",
+    trash = "rbxassetid://10747362393",
+    trash2 = "rbxassetid://10723461274",
+    trello = "rbxassetid://10723461384",
+    trendingdown = "rbxassetid://10723461494",
+    trendingup = "rbxassetid://10723461604",
+    triangle = "rbxassetid://10723461714",
+    trophy = "rbxassetid://10747363809",
+    truck = "rbxassetid://10723461824",
+    tv = "rbxassetid://10723461934",
+    tv2 = "rbxassetid://10723462044",
+    twitch = "rbxassetid://10723462154",
+    twitter = "rbxassetid://10723462264",
+    type = "rbxassetid://10723462374",
+    umbrella = "rbxassetid://10723462484",
+    underline = "rbxassetid://10723462594",
+    undo = "rbxassetid://10723462704",
+    undo2 = "rbxassetid://10723462814",
+    ungroup = "rbxassetid://10723462924",
+    unlock = "rbxassetid://10747366027",
+    upload = "rbxassetid://10747366434",
+    uploadcloud = "rbxassetid://10723463034",
+    user = "rbxassetid://10747373176",
+    users = "rbxassetid://10747373426",
+    usercircle = "rbxassetid://10723463144",
+    usercheck = "rbxassetid://10723463254",
+    userplus = "rbxassetid://10723463364",
+    usersquare = "rbxassetid://10723463474",
+    userx = "rbxassetid://10723463584",
+    vacuum = "rbxassetid://10723463694",
+    venus = "rbxassetid://10723463804",
+    venusmars = "rbxassetid://10723463914",
+    verified = "rbxassetid://10723464024",
+    vibrate = "rbxassetid://10723464134",
+    video = "rbxassetid://10723464244",
+    videooff = "rbxassetid://10723464354",
+    view = "rbxassetid://10723464464",
+    voicemail = "rbxassetid://10723464574",
+    volcano = "rbxassetid://10723464684",
+    volume = "rbxassetid://10723464794",
+    volume1 = "rbxassetid://10723464904",
+    volume2 = "rbxassetid://10723465014",
+    volumeplus = "rbxassetid://10723465124",
+    volumeX = "rbxassetid://10723465234",
+    wallet = "rbxassetid://10723465344",
+    wallet2 = "rbxassetid://10723465454",
+    wall = "rbxassetid://10723465564",
+    wand = "rbxassetid://10723465674",
+    watch = "rbxassetid://10723465784",
+    water = "rbxassetid://10723465894",
+    watermelon = "rbxassetid://10723466004",
+    wave = "rbxassetid://10723466114",
+    webcam = "rbxassetid://10723466224",
+    wifi = "rbxassetid://10747382504",
+    wifi2 = "rbxassetid://10723466334",
+    wificoff = "rbxassetid://10723466444",
+    wind = "rbxassetid://10723466554",
+    wine = "rbxassetid://10723466664",
+    wrapsymbol = "rbxassetid://10723466774",
+    wrench = "rbxassetid://10747383470",
+    wrench2 = "rbxassetid://10723466884",
+    x = "rbxassetid://10747384394",
+    xcircle = "rbxassetid://10747383819",
+    youtube = "rbxassetid://10723466994",
+    zap = "rbxassetid://10723345749",
+    zapoff = "rbxassetid://10723467104",
+    zoomIn = "rbxassetid://10723467214",
+    zoomOut = "rbxassetid://10723467324",
 }
 
 -- ============================================================
@@ -391,7 +1194,7 @@ do
 end
 
 -- ============================================================
---  INTRO ANIMATION
+--  INTRO ANIMATION — Modern & Impressive
 -- ============================================================
 local function PlayIntro(sg, onDone)
     -- ── Responsive scale للإنترو ────────────────────────────
@@ -402,20 +1205,24 @@ local function PlayIntro(sg, onDone)
     local CFG={
         Logo="rbxassetid://93116857865430",
         HubName="CrozoX", TagLine="Professional Script Hub",
-        GlowColor=Color3.fromRGB(220,38,38),
-        AccentColor=Color3.fromRGB(255,80,60),
-        ParticleN=14, FadeIn=0.7, ZoomDur=0.8,
+        ParticleN=24, FadeIn=0.7, ZoomDur=0.8,
         HoldDur=1.3, PulseDur=0.5, FadeOut=0.55,
-        LogoStart=UDim2.new(0,80,0,80),
-        LogoEnd=UDim2.new(0,165,0,165),
-        LogoPulse=UDim2.new(0,178,0,178),
+        LogoStart=UDim2.new(0,50,0,50),
+        LogoEnd=UDim2.new(0,170,0,170),
+        LogoPulse=UDim2.new(0,185,0,185),
     }
+
+    -- ── Background ──────────────────────────────────────────
     local bg=New("Frame",{Size=UDim2.new(1,0,1,0),
-        BackgroundColor3=Color3.fromRGB(0,0,0),
+        BackgroundColor3=Color3.fromRGB(5,5,10),
         BackgroundTransparency=1,BorderSizePixel=0,ZIndex=100,Parent=sg})
 
-    -- container مع UIScale — كل عناصر الإنترو بتتضغط proportionally
-    -- AnchorPoint(0.5,0.5) + Position(0.5,0.5) → يفضل centered حتى بعد الـ scale
+    -- Flash effect frame (للمبهر عند البداية)
+    local flashFrame=New("Frame",{Size=UDim2.new(1,0,1,0),
+        BackgroundColor3=Color3.fromRGB(255,255,255),
+        BackgroundTransparency=1,BorderSizePixel=0,ZIndex=150,Parent=bg})
+
+    -- container مع UIScale
     local introCont=New("Frame",{
         Size=UDim2.new(1,0,1,0),
         AnchorPoint=Vector2.new(0.5,0.5),
@@ -425,122 +1232,215 @@ local function PlayIntro(sg, onDone)
         New("UIScale",{Scale=_introScale,Parent=introCont})
     end
 
-    local glowOuter=New("ImageLabel",{Size=UDim2.new(0,340,0,340),
+    -- ── RGB Glow Rings ───────────────────────────────────────
+    local glowOuter=New("ImageLabel",{Size=UDim2.new(0,380,0,380),
+        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-25),
+        BackgroundTransparency=1,Image="rbxassetid://5028857084",
+        ImageColor3=Color3.fromRGB(220,38,38),ImageTransparency=1,ZIndex=101,Parent=introCont})
+    local glowMiddle=New("ImageLabel",{Size=UDim2.new(0,280,0,280),
         AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
         BackgroundTransparency=1,Image="rbxassetid://5028857084",
-        ImageColor3=CFG.GlowColor,ImageTransparency=1,ZIndex=101,Parent=introCont})
-    local glowInner=New("ImageLabel",{Size=UDim2.new(0,220,0,220),
-        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
+        ImageColor3=Color3.fromRGB(255,80,60),ImageTransparency=1,ZIndex=102,Parent=introCont})
+    local glowInner=New("ImageLabel",{Size=UDim2.new(0,200,0,200),
+        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-15),
         BackgroundTransparency=1,Image="rbxassetid://5028857084",
-        ImageColor3=CFG.AccentColor,ImageTransparency=1,ZIndex=102,Parent=introCont})
+        ImageColor3=Color3.fromRGB(255,140,100),ImageTransparency=1,ZIndex=103,Parent=introCont})
+
+    -- ── Logo ─────────────────────────────────────────────────
     local logoHolder=New("Frame",{Size=CFG.LogoStart,
         AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
-        BackgroundTransparency=1,ZIndex=103,Parent=introCont})
+        BackgroundTransparency=1,ZIndex=104,Parent=introCont})
     local logoImg=New("ImageLabel",{Size=UDim2.new(1,0,1,0),
         BackgroundTransparency=1,Image=CFG.Logo,ImageTransparency=1,
-        ScaleType=Enum.ScaleType.Fit,ZIndex=104,Parent=logoHolder})
-    Corner(logoImg,18)
-    local logoStroke=Stroke(logoImg,CFG.GlowColor,3,1)
-    local nameLabel=New("TextLabel",{Size=UDim2.new(0,320,0,44),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,110),
+        ScaleType=Enum.ScaleType.Fit,ZIndex=105,Parent=logoHolder})
+    Corner(logoImg,20)
+    local logoStroke=Stroke(logoImg,Color3.fromRGB(255,80,80),4,1)
+
+    -- ── Text Labels ─────────────────────────────────────────
+    local nameLabel=New("TextLabel",{Size=UDim2.new(0,340,0,50),
+        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,115),
         BackgroundTransparency=1,Text=CFG.HubName,
         TextColor3=Color3.fromRGB(255,255,255),Font=Enum.Font.GothamBlack,
-        TextSize=38,TextTransparency=1,ZIndex=104,Parent=introCont})
-    local tagLabel=New("TextLabel",{Size=UDim2.new(0,320,0,22),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,158),
+        TextSize=42,TextTransparency=1,ZIndex=106,Parent=introCont})
+    local tagLabel=New("TextLabel",{Size=UDim2.new(0,300,0,24),
+        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,168),
         BackgroundTransparency=1,Text=CFG.TagLine,
-        TextColor3=CFG.GlowColor,Font=Enum.Font.GothamSemibold,
-        TextSize=14,TextTransparency=1,ZIndex=104,Parent=introCont})
-    local line=New("Frame",{Size=UDim2.new(0,0,0,2),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,152),
-        BackgroundColor3=CFG.GlowColor,BorderSizePixel=0,ZIndex=104,Parent=introCont})
-    local loaderBg=New("Frame",{Size=UDim2.new(0,220,0,4),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,186),
-        BackgroundColor3=Color3.fromRGB(40,40,40),BackgroundTransparency=1,
-        BorderSizePixel=0,ZIndex=104,Parent=introCont})
-    Corner(loaderBg,2)
+        TextColor3=Color3.fromRGB(255,100,80),Font=Enum.Font.GothamSemibold,
+        TextSize=16,TextTransparency=1,ZIndex=106,Parent=introCont})
+
+    -- ── Animated Line ────────────────────────────────────────
+    local line=New("Frame",{Size=UDim2.new(0,0,0,3),
+        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,162),
+        BackgroundColor3=Color3.fromRGB(255,80,60),BorderSizePixel=0,ZIndex=106,Parent=introCont})
+
+    -- ── Loading Bar ─────────────────────────────────────────
+    local loaderBg=New("Frame",{Size=UDim2.new(0,260,0,5),
+        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,198),
+        BackgroundColor3=Color3.fromRGB(30,30,40),BackgroundTransparency=1,
+        BorderSizePixel=0,ZIndex=106,Parent=introCont})
+    Corner(loaderBg,3)
     local loaderFill=New("Frame",{Size=UDim2.new(0,0,1,0),
-        BackgroundColor3=CFG.GlowColor,BorderSizePixel=0,ZIndex=105,Parent=loaderBg})
-    Corner(loaderFill,2)
+        BackgroundColor3=Color3.fromRGB(255,80,60),BorderSizePixel=0,ZIndex=107,Parent=loaderBg})
+    Corner(loaderFill,3)
+
+    -- ── Particles System ─────────────────────────────────────
     local particles={}
-    local RADIUS=130
+    local RADIUS=140
+    local hueOffset=0
+
     for i=1,CFG.ParticleN do
         local angle=(i/CFG.ParticleN)*math.pi*2
-        local sz=math.random(3,7)
+        local sz=math.random(4,9)
         local dot=New("Frame",{Size=UDim2.new(0,sz,0,sz),
             AnchorPoint=Vector2.new(0.5,0.5),
             Position=UDim2.new(0.5+(RADIUS*math.cos(angle))/sg.AbsoluteSize.X,0,
                 0.5+(RADIUS*math.sin(angle))/sg.AbsoluteSize.Y,-20),
-            BackgroundColor3=(i%3==0) and CFG.AccentColor or CFG.GlowColor,
-            BackgroundTransparency=1,BorderSizePixel=0,ZIndex=103,Parent=bg})
+            BackgroundTransparency=1,BorderSizePixel=0,ZIndex=99,Parent=bg})
         Corner(dot,100)
-        table.insert(particles,{dot=dot,angle=angle})
+        table.insert(particles,{dot=dot,angle=angle,speed=0.4+(i%4)*0.12,size=sz})
     end
+
+    -- ── Orbital Rings ─────────────────────────────────────────
+    local ring1=New("Frame",{Size=UDim2.new(0,250,0,250),
+        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
+        BackgroundTransparency=1,BorderSizePixel=1,
+        BorderColor3=Color3.fromRGB(80,40,40),ZIndex=98,Parent=introCont})
+    local ring2=New("Frame",{Size=UDim2.new(0,320,0,320),
+        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
+        BackgroundTransparency=1,BorderSizePixel=1,
+        BorderColor3=Color3.fromRGB(50,30,30),ZIndex=97,Parent=introCont})
+
     local startT=tick()
-    local orbConn
+    local orbConn, hueConn, ringConn
     orbConn=RunService.RenderStepped:Connect(function()
         if not bg.Parent then orbConn:Disconnect();return end
         local t=tick()-startT
         local sw=sg.AbsoluteSize.X; local sh=sg.AbsoluteSize.Y
         if sw<=0 or sh<=0 then return end
         for i,p in ipairs(particles) do
-            local speed=0.45+(i%3)*0.15
+            local speed=p.speed
             local a=p.angle+t*speed
-            local r=RADIUS+math.sin(t*1.8+i)*12
+            local r=RADIUS+math.sin(t*2+i*0.5)*18
+            local hue=(p.angle/(math.pi*2)+hueOffset)%1
+            local color=Color3.fromHSV(hue,0.9,1)
+            p.dot.BackgroundColor3=color
             p.dot.Position=UDim2.new(0.5+(r*math.cos(a))/sw,0,
                 0.5+(r*math.sin(a))/sh,-20)
         end
     end)
+
+    hueConn=RunService.RenderStepped:Connect(function(dt)
+        if not bg.Parent then hueConn:Disconnect();return end
+        hueOffset=(hueOffset+dt*0.08)%1
+        glowOuter.ImageColor3=Color3.fromHSV(hueOffset,0.9,1)
+        glowMiddle.ImageColor3=Color3.fromHSV((hueOffset+0.33)%1,0.85,1)
+        glowInner.ImageColor3=Color3.fromHSV((hueOffset+0.66)%1,0.8,1)
+    end)
+
+    ringConn=RunService.RenderStepped:Connect(function()
+        if not introCont.Parent then ringConn:Disconnect();return end
+        local t=tick()-startT
+        ring1.Rotation=t*15%360
+        ring2.Rotation=-t*10%360
+    end)
+
+    -- ── Main Animation Sequence ──────────────────────────────
     task.spawn(function()
-        TweenWait(bg,{BackgroundTransparency=0.06},0.35,Enum.EasingStyle.Quad)
-        Tween(glowOuter,{ImageTransparency=0.5},0.5)
-        Tween(glowInner,{ImageTransparency=0.72},0.5)
+        -- Phase 1: Flash & Background
+        Tween(flashFrame,{BackgroundTransparency=0.7},0.08,Enum.EasingStyle.Quad)
+        task.wait(0.08)
+        Tween(flashFrame,{BackgroundTransparency=1},0.25,Enum.EasingStyle.Quad)
+        TweenWait(bg,{BackgroundTransparency=0},0.4,Enum.EasingStyle.Quad)
+
+        -- Phase 2: Logo Zoom with Scale
+        Tween(glowOuter,{ImageTransparency=0.4},0.6)
+        Tween(glowMiddle,{ImageTransparency=0.5},0.6)
+        Tween(glowInner,{ImageTransparency=0.6},0.6)
+        Tween(ring1,{BorderColor3=Color3.fromRGB(80,40,40)},0.6)
+        Tween(ring2,{BorderColor3=Color3.fromRGB(50,30,30)},0.6)
         Tween(logoHolder,{Size=CFG.LogoEnd},CFG.ZoomDur,Enum.EasingStyle.Back)
+
+        -- Phase 3: Logo Fade In
         TweenWait(logoImg,{ImageTransparency=0},CFG.FadeIn)
-        Tween(logoStroke,{Transparency=0.2},0.4)
-        Tween(nameLabel,{TextTransparency=0},0.45)
-        task.wait(0.12)
-        Tween(tagLabel,{TextTransparency=0},0.4)
-        Tween(line,{Size=UDim2.new(0,200,0,2)},0.5)
+        Tween(logoStroke,{Transparency=0.15},0.5)
+
+        -- Phase 4: Text Reveal
+        Tween(nameLabel,{TextTransparency=0},0.5,Enum.EasingStyle.Quad)
+        task.wait(0.15)
+        Tween(tagLabel,{TextTransparency=0},0.4,Enum.EasingStyle.Quad)
+        Tween(line,{Size=UDim2.new(0,220,0,3)},0.5,Enum.EasingStyle.Quad)
+
+        -- Phase 5: Particles Fade In
+        for i,p in ipairs(particles) do
+            task.delay((i-1)*0.03,function()
+                Tween(p.dot,{BackgroundTransparency=0.15},0.25)
+            end)
+        end
+
+        -- Phase 6: Loader
+        task.wait(0.2)
         Tween(loaderBg,{BackgroundTransparency=0},0.3)
         TweenWait(loaderFill,{Size=UDim2.new(1,0,1,0)},
-            CFG.HoldDur*0.85,Enum.EasingStyle.Quart,Enum.EasingDirection.InOut)
-        for i,p in ipairs(particles) do
-            task.delay((i-1)*0.04,function()
-                Tween(p.dot,{BackgroundTransparency=0.22},0.3) end)
+            CFG.HoldDur*0.8,Enum.EasingStyle.Quart,Enum.EasingDirection.InOut)
+
+        -- Phase 7: Intense Pulse Effect
+        for i=1,4 do
+            local pulseSize=CFG.LogoPulse
+            if i==2 or i==4 then pulseSize=UDim2.new(0,195,0,195) end
+            Tween(logoHolder,{Size=pulseSize},CFG.PulseDur*0.4,Enum.EasingStyle.Quad)
+            Tween(logoStroke,{Transparency=0},CFG.PulseDur*0.4)
+            Tween(glowOuter,{ImageTransparency=0.2,Size=UDim2.new(0,420,0,420)},CFG.PulseDur*0.4)
+            Tween(glowMiddle,{ImageTransparency=0.3},CFG.PulseDur*0.4)
+            Tween(glowInner,{ImageTransparency=0.4},CFG.PulseDur*0.4)
+            task.wait(CFG.PulseDur*0.4)
+            Tween(logoHolder,{Size=CFG.LogoEnd},CFG.PulseDur*0.6,Enum.EasingStyle.Quad)
+            Tween(logoStroke,{Transparency=0.2},CFG.PulseDur*0.6)
+            Tween(glowOuter,{ImageTransparency=0.45,Size=UDim2.new(0,380,0,380)},CFG.PulseDur*0.6)
+            Tween(glowMiddle,{ImageTransparency=0.55},CFG.PulseDur*0.6)
+            Tween(glowInner,{ImageTransparency=0.65},CFG.PulseDur*0.6)
+            task.wait(CFG.PulseDur*0.6)
         end
-        for _=1,3 do
-            Tween(logoHolder,{Size=CFG.LogoPulse},CFG.PulseDur*0.45,Enum.EasingStyle.Quad)
-            Tween(logoStroke,{Transparency=0.04},CFG.PulseDur*0.45)
-            Tween(glowOuter,{ImageTransparency=0.3},CFG.PulseDur*0.45)
-            task.wait(CFG.PulseDur*0.45)
-            Tween(logoHolder,{Size=CFG.LogoEnd},CFG.PulseDur*0.55,Enum.EasingStyle.Quad,Enum.EasingDirection.In)
-            Tween(logoStroke,{Transparency=0.25},CFG.PulseDur*0.55)
-            Tween(glowOuter,{ImageTransparency=0.52},CFG.PulseDur*0.55)
-            task.wait(CFG.PulseDur*0.55)
-        end
+
+        -- Phase 8: Dramatic Exit
+        -- Particles explode outward
         for i,p in ipairs(particles) do
-            local far=RADIUS*2.4
-            task.delay((i-1)*0.018,function()
+            local far=RADIUS*2.8
+            task.delay((i-1)*0.015,function()
                 Tween(p.dot,{
                     Position=UDim2.new(0.5+(far*math.cos(p.angle))/sg.AbsoluteSize.X,0,
                         0.5+(far*math.sin(p.angle))/sg.AbsoluteSize.Y,-20),
-                    BackgroundTransparency=1,Size=UDim2.new(0,1,0,1),
-                },CFG.FadeOut,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+                    BackgroundTransparency=1,Size=UDim2.new(0,0,0,0),
+                },CFG.FadeOut*0.8,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
             end)
         end
-        task.wait(0.08)
-        Tween(logoImg,{ImageTransparency=1},CFG.FadeOut)
-        Tween(nameLabel,{TextTransparency=1},CFG.FadeOut)
-        Tween(tagLabel,{TextTransparency=1},CFG.FadeOut)
-        Tween(line,{BackgroundTransparency=1},CFG.FadeOut)
-        Tween(loaderBg,{BackgroundTransparency=1},CFG.FadeOut)
-        Tween(glowOuter,{ImageTransparency=1},CFG.FadeOut)
-        Tween(glowInner,{ImageTransparency=1},CFG.FadeOut)
-        Tween(logoHolder,{Size=UDim2.new(0,55,0,55)},CFG.FadeOut,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-        TweenWait(bg,{BackgroundTransparency=1},CFG.FadeOut,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+
+        -- Ring expansion
+        Tween(ring1,{Size=UDim2.new(0,400,0,400),BorderTransparency=1},CFG.FadeOut)
+        Tween(ring2,{Size=UDim2.new(0,500,0,500),BorderTransparency=1},CFG.FadeOut*1.2)
+
+        task.wait(0.1)
+        -- Logo shrink & fade
+        Tween(logoImg,{ImageTransparency=1},CFG.FadeOut*0.7,Enum.EasingStyle.Quad)
+        Tween(nameLabel,{TextTransparency=1},CFG.FadeOut*0.7,Enum.EasingStyle.Quad)
+        Tween(tagLabel,{TextTransparency=1},CFG.FadeOut*0.7,Enum.EasingStyle.Quad)
+        Tween(line,{BackgroundTransparency=1},CFG.FadeOut*0.6)
+        Tween(loaderBg,{BackgroundTransparency=1},CFG.FadeOut*0.6)
+        Tween(glowOuter,{ImageTransparency=1,Size=UDim2.new(0,500,0,500)},CFG.FadeOut*0.8,Enum.EasingStyle.Quart)
+        Tween(glowMiddle,{ImageTransparency=1},CFG.FadeOut*0.7)
+        Tween(glowInner,{ImageTransparency=1},CFG.FadeOut*0.6)
+        Tween(logoHolder,{Size=UDim2.new(0,40,0,40)},CFG.FadeOut*0.6,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+
+        -- Final flash
+        task.wait(CFG.FadeOut*0.5)
+        Tween(flashFrame,{BackgroundTransparency=0},0.15,Enum.EasingStyle.Quad)
+        TweenWait(bg,{BackgroundTransparency=1},CFG.FadeOut*0.8,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+        Tween(flashFrame,{BackgroundTransparency=1},0.2,Enum.EasingStyle.Quad)
+
+        -- Cleanup
         orbConn:Disconnect()
-        task.wait(0.08)
+        hueConn:Disconnect()
+        ringConn:Disconnect()
+        task.wait(0.1)
         bg:Destroy()
         if onDone then task.spawn(onDone) end
     end)
@@ -743,10 +1643,28 @@ local function ShowLangSelect(sg, onDone)
         if fired then return end
         fired=true
         rainbowConn:Disconnect()
-        Tween(overlay,{BackgroundTransparency=1},0.38)
-        Tween(card,{BackgroundTransparency=1,Position=UDim2.new(0.5,0,0.44,0)},0.35)
-        Tween(ringBg,{BackgroundTransparency=1,Position=UDim2.new(0.5,0,0.44,0)},0.35)
-        task.delay(0.44,function()
+        -- أنيميشن متزامن: كل العناصر تختفي مع بعض
+        local animDuration = 0.35  -- نفس المدة للجميع
+        Tween(overlay, {BackgroundTransparency=1}, animDuration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        Tween(card, {BackgroundTransparency=1, Position=UDim2.new(0.5,0,0.44,0)}, animDuration, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        Tween(ringBg, {BackgroundTransparency=1, Position=UDim2.new(0.5,0,0.44,0)}, animDuration, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        -- إخفاء الأزرار برضو في نفس الوقت
+        if confirmBtn then
+            Tween(confirmBtn, {BackgroundTransparency=1, TextTransparency=1}, animDuration * 0.8, Enum.EasingStyle.Quad)
+        end
+        for langName, btnInfo in pairs(btnData) do
+            if btnInfo.frame then
+                Tween(btnInfo.frame, {BackgroundTransparency=1}, animDuration * 0.8, Enum.EasingStyle.Quad)
+            end
+            if btnInfo.label then
+                Tween(btnInfo.label, {TextTransparency=1}, animDuration * 0.8, Enum.EasingStyle.Quad)
+            end
+            if btnInfo.stroke then
+                Tween(btnInfo.stroke, {Transparency=1}, animDuration * 0.8, Enum.EasingStyle.Quad)
+            end
+        end
+        -- بعد انتهاء الأنيميشن
+        task.delay(animDuration + 0.05, function()
             overlay:Destroy(); lsWrapper:Destroy()
             if onDone then task.spawn(function() onDone(selectedLang) end) end
         end)
@@ -1328,6 +2246,8 @@ function CrozoX:CreateWindow(cfg)
     local touchStartY     = 0
     local wrapStartPX     = 0   -- موضع الـ wrapFrame عند بداية الـ drag
     local wrapStartPY     = 0
+    local lastTouchX      = 0   -- الموضع السابق للإصبع (لحساب delta)
+    local lastTouchY      = 0
 
     dragBtn.InputBegan:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -1339,30 +2259,41 @@ function CrozoX:CreateWindow(cfg)
             dragging   = true
 
         elseif inp.UserInputType == Enum.UserInputType.Touch then
-            -- موبايل: نحفظ البداية ونحسب absolute
+            -- موبايل: نحفظ البداية ونحسب بالـ delta (مثل الـ PC)
+            if resizing then return end
             touchDragging = true
-            dragging      = false  -- عشان RenderStepped مش يتدخل
+            dragging      = false  -- عشان RenderStepped ما يتحكمش
+            -- نستخدم timestamp للتعرف على الـ touch
             touchStartX   = inp.Position.X
             touchStartY   = inp.Position.Y
+            lastTouchX    = inp.Position.X  -- للتخزين الجديد
+            lastTouchY    = inp.Position.Y
             wrapStartPX   = wrapFrame.Position.X.Offset
             wrapStartPY   = wrapFrame.Position.Y.Offset
+            -- تهيئة smoothX/smoothY للموقع الحالي
+            smoothX = wrapStartPX
+            smoothY = wrapStartPY
         end
     end)
 
     dragBtn.InputChanged:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.Touch and touchDragging then
-            -- حساب مباشر: الموضع الجديد = البداية + الفرق
-            local dx = inp.Position.X - touchStartX
-            local dy = inp.Position.Y - touchStartY
+            -- حساب delta مثل الـ PC: الفرق بين الموضع الحالي والسابق
+            local dx = inp.Position.X - lastTouchX
+            local dy = inp.Position.Y - lastTouchY
+
+            -- تحديث smoothX/smoothY بالـ delta
+            smoothX = smoothX + dx
+            smoothY = smoothY + dy
+
+            -- تحديث lastTouch للمرة القادمة
+            lastTouchX = inp.Position.X
+            lastTouchY = inp.Position.Y
+
             -- نطبق UIScale عشان الـ move يكون بنسبة الـ scale
             local sc = wrapFrame:FindFirstChildWhichIsA("UIScale")
             local s  = sc and sc.Scale or 1
-            wrapFrame.Position = UDim2.new(0, wrapStartPX + dx/s, 0, wrapStartPY + dy/s)
-            -- sync مع RenderStepped smooth vars
-            smoothX = wrapStartPX + dx/s
-            smoothY = wrapStartPY + dy/s
-            dispX   = smoothX
-            dispY   = smoothY
+            wrapFrame.Position = UDim2.new(0, smoothX/s, 0, smoothY/s)
         end
     end)
 
@@ -1416,8 +2347,40 @@ function CrozoX:CreateWindow(cfg)
 
     -- Mouse events (PC)
     -- متغيرات الـ hold للموبايل
-    local holdTimer  = nil
-    local holdActive = false
+    local holdTimer      = nil
+    local holdActive     = false
+    local holdProgress   = nil  -- مؤشر التقدم للـ hold
+    local isHolding      = false  -- هل الإصبع لازال على الزر
+
+    -- إنشاء مؤشر التقدم الدائري (حلقة)
+    local progressRing = New("Frame", {
+        Name = "ProgressRing",
+        Size = UDim2.new(1, 4, 1, 4),
+        Position = UDim2.new(0.5, -2, 0.5, -2),
+        BackgroundTransparency = 1,
+        ZIndex = 62,
+        Parent = resizeBtn,
+        Visible = false,
+    })
+    New("UICorner", { CornerRadius = UDim.new(1, 0), Parent = progressRing })
+    local progressArc = New("Frame", {
+        Name = "Arc",
+        Size = UDim2.new(0, 0, 1, 0),
+        BackgroundColor3 = T.Primary,
+        BackgroundTransparency = 0.3,
+        BorderSizePixel = 0,
+        ZIndex = 63,
+        Parent = progressRing,
+    })
+    New("UICorner", { CornerRadius = UDim.new(1, 0), Parent = progressArc })
+
+    -- دالة لتحديث حلقة التقدم
+    local function updateProgressRing(progress)
+        local angle = progress * 360
+        local width = rBtnSz * progress
+        progressArc.Size = UDim2.new(0, width, 0, rBtnSz)
+        progressRing.Visible = (progress > 0 and progress < 1)
+    end
 
     -- بدء الـ hold على الزر
     resizeBtn.InputBegan:Connect(function(inp)
@@ -1429,14 +2392,33 @@ function CrozoX:CreateWindow(cfg)
             rW=wrapFrame.AbsoluteSize.X; rH=wrapFrame.AbsoluteSize.Y
             rPX=wrapFrame.Position.X.Offset; rPY=wrapFrame.Position.Y.Offset
             Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.1)
+            progressRing.Visible = false
 
         elseif inp.UserInputType == Enum.UserInputType.Touch then
-            holdActive = false
-            if holdTimer then task.cancel(holdTimer); holdTimer=nil end
-            Tween(resizeBtn,{BackgroundColor3=T.BorderBright,BackgroundTransparency=0},0.15)
-            holdTimer = task.delay(0.35, function()
+            -- إعادة تعيين المتغيرات
+            holdActive  = false
+            isHolding    = true  -- الإصبع على الزر
+            if holdTimer then task.cancel(holdTimer); holdTimer = nil end
+            progressRing.Visible = false
+
+            -- بدء مؤقت الـ hold مع تحديث_progress
+            local holdDuration = 0.35
+            local startTime = tick()
+            holdTimer = task.spawn(function()
+                while isHolding and (tick() - startTime) < holdDuration do
+                    local elapsed = tick() - startTime
+                    local progress = math.clamp(elapsed / holdDuration, 0, 1)
+                    updateProgressRing(progress)
+                    task.wait(0.016) -- ~60fps update
+                end
+            end)
+
+            -- بعد انتهاء مدة الـ hold
+            holdTimer = task.delay(holdDuration, function()
+                if not isHolding then return end  -- الإصبع رفع قبل completion
                 -- Hold اكتمل → ابدأ resize من موضع الإصبع الحالي
                 holdActive = true
+                isHolding  = false
                 dragging   = false
                 local mp2  = UserInputService:GetMouseLocation()
                 rStartX = mp2.X
@@ -1446,6 +2428,7 @@ function CrozoX:CreateWindow(cfg)
                 rPX = wrapFrame.Position.X.Offset
                 rPY = wrapFrame.Position.Y.Offset
                 resizing = true
+                progressRing.Visible = false
                 Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.1)
             end)
         end
@@ -1468,12 +2451,21 @@ function CrozoX:CreateWindow(cfg)
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.Touch and holdActive then
-            -- الإصبع رُفع → انتهى الـ resize
-            if holdTimer then task.cancel(holdTimer); holdTimer=nil end
-            holdActive = false
-            resizing   = false
-            Tween(resizeBtn,{BackgroundColor3=Color3.fromRGB(30,30,30),BackgroundTransparency=0.1},0.2)
+        if inp.UserInputType == Enum.UserInputType.Touch then
+            -- الإصبع رُفع من على الزر
+            if holdActive then
+                -- كان في منتصف الـ resize → أنهِه
+                if holdTimer then task.cancel(holdTimer); holdTimer=nil end
+                holdActive = false
+                resizing   = false
+                Tween(resizeBtn,{BackgroundColor3=Color3.fromRGB(30,30,30),BackgroundTransparency=0.1},0.2)
+            end
+            -- إلغاء الـ hold إذا المستخدم رفع إصبعه قبل completion
+            if isHolding then
+                isHolding = false
+                if holdTimer then task.cancel(holdTimer); holdTimer=nil end
+                progressRing.Visible = false
+            end
         end
     end)
     resizeBtn.MouseEnter:Connect(function()
