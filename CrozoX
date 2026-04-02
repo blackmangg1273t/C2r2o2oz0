@@ -1,6 +1,23 @@
--- CrozoX v7.0.0 -- Modern Professional UI Library
--- Author: Crozo
--- License: MIT
+--[[
+   ██████╗██████╗  ██████╗ ███████╗ ██████╗ ██╗  ██╗
+  ██╔════╝██╔══██╗██╔═══██╗╚════██║██╔═══██╗╚██╗██╔╝
+  ██║     ██████╔╝██║   ██║    ██╔╝██║   ██║ ╚███╔╝
+  ██║     ██╔══██╗██║   ██║   ██╔╝ ██║   ██║ ██╔██╗
+  ╚██████╗██║  ██║╚██████╔╝   ██║  ╚██████╔╝██╔╝ ██╗
+   ╚═════╝╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═════╝ ╚═╝  ╚═╝
+
+    CrozoX v7.0.0 — Modern Professional UI Library
+    ✦ Gradient background (black→primary)
+    ✦ Neon pulsing glow border
+    ✦ User profile in sidebar
+    ✦ Search bar for tabs
+    ✦ Enhanced Run button (glow+scale)
+    ✦ Animated tab indicator (grow/shrink)
+    ✦ Element depth shadows
+    ✦ Micro-animations throughout
+    Author: Crozo | github.com/Crozo
+    License: MIT
+--]]
 
 -- ============================================================
 --  SERVICES
@@ -16,15 +33,23 @@ local LocalPlayer = Players.LocalPlayer
 local Mouse       = LocalPlayer:GetMouse()
 
 -- ============================================================
---  FONT CONFIG
+--  FONT CONFIG — يمكنك تغيير الخط هنا
 -- ============================================================
 local FONTS = {
-    Title   = Enum.Font.GothamBlack,
-    Bold    = Enum.Font.GothamBold,
-    Semi    = Enum.Font.GothamSemibold,
-    Body    = Enum.Font.Gotham,
+    -- أنت تختار من هنا:
+    -- Enum.Font.GothamBlack      ← أثقل / أوضح
+    -- Enum.Font.Oswald           ← عصري للعناوين
+    -- Enum.Font.FredokaOne       ← مدوّر حيوي
+    -- Enum.Font.Bangers           ← بولد جداً
+    -- Enum.Font.Ubuntu            ← واضح للعربي والإنجليزي
+
+    Title   = Enum.Font.GothamBlack,    -- عناوين التابات والنوافذ
+    Bold    = Enum.Font.GothamBold,     -- نصوص عناصر مهمة
+    Semi    = Enum.Font.GothamSemibold, -- تسميات العناصر
+    Body    = Enum.Font.Gotham,         -- نصوص عادية
+    -- للعربي: نفس الخط — Roblox يدعم العربي بـ Gotham
     ArabicTitle = Enum.Font.GothamBlack,
-    ArabicBody  = Enum.Font.GothamBold,
+    ArabicBody  = Enum.Font.GothamBold,  -- أثقل قليلاً للوضوح
 }
 
 -- ============================================================
@@ -127,32 +152,34 @@ local Languages = {
         IsRTL=false,
         Font=FONTS.Title, FontBold=FONTS.Bold,
         FontSemi=FONTS.Semi, FontBody=FONTS.Body,
-        LabelSize=14,
-        TitleSize=16,
-        TabSize=13,
+        LabelSize=14,   -- حجم نص التسميات
+        TitleSize=16,   -- حجم عناوين العناصر
+        TabSize=13,     -- حجم نص التابات
     },
     Arabic = {
-        Close="Close", Minimize="Minimize", Search="Search...",
-        Toggle="Toggle", Button="Button", Slider="Slider",
-        Dropdown="Dropdown", Keybind="Keybind",
-        Success="Success", Warning="Warning", Error="Error", Info="Info",
-        SaveConfig="Save Config", LoadConfig="Load Config",
-        AutoFarm="Auto Farm", AutoCollect="Auto Collect",
-        Speed="Speed", SelectEnemy="Select Enemy", ToggleUI="Toggle UI",
-        LanguageTitle="Select Language",
-        LanguageDesc="Choose your preferred language",
-        Confirm="Continue",
+        Close="إغلاق", Minimize="تصغير", Search="بحث...",
+        Toggle="تفعيل", Button="زر", Slider="تمرير",
+        Dropdown="قائمة", Keybind="اختصار",
+        Success="نجاح", Warning="تحذير", Error="خطأ", Info="معلومة",
+        SaveConfig="حفظ الإعدادات", LoadConfig="تحميل الإعدادات",
+        AutoFarm="زراعة تلقائية", AutoCollect="جمع تلقائي",
+        Speed="السرعة", SelectEnemy="اختر العدو", ToggleUI="تبديل الواجهة",
+        LanguageTitle="اختر اللغة",
+        LanguageDesc="اختر لغتك المفضلة للمتابعة",
+        Confirm="متابعة",
         IsRTL=true,
         Font=FONTS.ArabicTitle, FontBold=FONTS.ArabicBody,
         FontSemi=FONTS.ArabicBody, FontBody=FONTS.ArabicBody,
-        LabelSize=16,
-        TitleSize=18,
-        TabSize=14,
+        LabelSize=16,   -- أكبر للعربية
+        TitleSize=18,   -- أكبر للعربية
+        TabSize=14,     -- أكبر للعربية
     },
 }
 
 -- ============================================================
---  THEMES
+--  THEMES — Professional Dark System
+--  Red = Arabic | Blue = English
+--  Accent فقط للعناصر المهمة، الباقي dark neutral
 -- ============================================================
 local Themes = {
     Blue = {
@@ -162,18 +189,18 @@ local Themes = {
         PrimaryGlow  = Color3.fromRGB(42,  120, 255),
         Background   = Color3.fromRGB(10,  10,  10),
         Surface      = Color3.fromRGB(17,  17,  17),
-        SurfaceAlt   = Color3.fromRGB(21,  21,  21),
+        SurfaceAlt   = Color3.fromRGB(21,  21,  21),   -- #151515
         SurfaceHover = Color3.fromRGB(30,  30,  30),
-        SurfaceCard  = Color3.fromRGB(21,  21,  21),
+        SurfaceCard  = Color3.fromRGB(21,  21,  21),   -- #151515
         Border       = Color3.fromRGB(32,  32,  32),
         BorderBright = Color3.fromRGB(50,  50,  50),
         BorderAccent = Color3.fromRGB(42,  120, 255),
         Text         = Color3.fromRGB(255, 255, 255),
-        TextDim      = Color3.fromRGB(154, 154, 154),
+        TextDim      = Color3.fromRGB(154, 154, 154),  -- #9A9A9A
         TextMuted    = Color3.fromRGB(100, 100, 100),
         BtnText      = Color3.fromRGB(255, 255, 255),
-        BtnStop      = Color3.fromRGB(42,  42,  42),
-        BtnStopHov   = Color3.fromRGB(51,  51,  51),
+        BtnStop      = Color3.fromRGB(42,  42,  42),   -- #2A2A2A زر إيقاف
+        BtnStopHov   = Color3.fromRGB(51,  51,  51),   -- #333333 hover
         Success      = Color3.fromRGB(34,  197, 94),
         Warning      = Color3.fromRGB(234, 179, 8),
         Error        = Color3.fromRGB(239, 68,  68),
@@ -184,24 +211,24 @@ local Themes = {
         NotifBgInfo  = Color3.fromRGB(12,  20,  36),
     },
     Red = {
-        Primary      = Color3.fromRGB(255, 58,  58),
+        Primary      = Color3.fromRGB(255, 58,  58),   -- #FF3A3A
         PrimaryDark  = Color3.fromRGB(210, 30,  30),
         PrimaryLight = Color3.fromRGB(255, 100, 100),
         PrimaryGlow  = Color3.fromRGB(255, 58,  58),
         Background   = Color3.fromRGB(10,  10,  10),
         Surface      = Color3.fromRGB(17,  17,  17),
-        SurfaceAlt   = Color3.fromRGB(21,  21,  21),
+        SurfaceAlt   = Color3.fromRGB(21,  21,  21),   -- #151515
         SurfaceHover = Color3.fromRGB(30,  30,  30),
-        SurfaceCard  = Color3.fromRGB(21,  21,  21),
+        SurfaceCard  = Color3.fromRGB(21,  21,  21),   -- #151515
         Border       = Color3.fromRGB(32,  32,  32),
         BorderBright = Color3.fromRGB(50,  50,  50),
         BorderAccent = Color3.fromRGB(255, 58,  58),
         Text         = Color3.fromRGB(255, 255, 255),
-        TextDim      = Color3.fromRGB(154, 154, 154),
+        TextDim      = Color3.fromRGB(154, 154, 154),  -- #9A9A9A
         TextMuted    = Color3.fromRGB(100, 100, 100),
         BtnText      = Color3.fromRGB(255, 255, 255),
-        BtnStop      = Color3.fromRGB(42,  42,  42),
-        BtnStopHov   = Color3.fromRGB(51,  51,  51),
+        BtnStop      = Color3.fromRGB(42,  42,  42),   -- #2A2A2A
+        BtnStopHov   = Color3.fromRGB(51,  51,  51),   -- #333333
         Success      = Color3.fromRGB(34,  197, 94),
         Warning      = Color3.fromRGB(234, 179, 8),
         Error        = Color3.fromRGB(239, 68,  68),
@@ -232,6 +259,7 @@ local function New(class, props)
     if props and props.Parent then o.Parent=props.Parent end
     return o
 end
+-- ← حواف منحنية — الرقم الكبير = أكثر استدارة
 local function Corner(p, r)
     return New("UICorner",{CornerRadius=UDim.new(0,r or 10),Parent=p})
 end
@@ -258,6 +286,7 @@ local function Img(parent,asset,sz,pos,color,zi)
         ScaleType=Enum.ScaleType.Fit,ZIndex=zi or 14,Parent=parent})
 end
 local function Ripple(target)
+    -- target ممكن يكون Frame أو TextButton
     local absPos  = target.AbsolutePosition
     local absSize = target.AbsoluteSize
     local r=New("Frame",{Size=UDim2.new(0,0,0,0),AnchorPoint=Vector2.new(0.5,0.5),
@@ -299,6 +328,8 @@ end
 
 -- ============================================================
 --  DEVICE DETECTION + RESPONSIVE SCALE
+--  المنهج الصح: حجم الشاشة هو المعيار — مش TouchEnabled
+--  لأن بعض الـ executors بتعطّل TouchEnabled حتى على موبايل
 -- ============================================================
 local Device = {}
 
@@ -306,36 +337,55 @@ do
     local cam = workspace.CurrentCamera
     local vp  = cam and cam.ViewportSize or Vector2.new(800, 600)
     local sw, sh = vp.X, vp.Y
+
+    -- الشاشة الصغيرة (< 800 في أقل بُعد) = موبايل/تابلت
+    -- هذا أكثر موثوقية من TouchEnabled في بيئة الـ executors
     local minDim = math.min(sw, sh)
+    local maxDim = math.max(sw, sh)
 
-    Device.IsPC     = minDim >= 700
+    Device.IsPC     = minDim >= 700   -- PC أو شاشة كبيرة
     Device.IsTablet = minDim >= 500 and minDim < 700
-    Device.IsMobile = minDim < 500
+    Device.IsMobile = minDim < 500    -- هاتف
 
+    -- أيضاً نضيف TouchEnabled كـ override للتأكيد
     local UIS = UserInputService
     if UIS.TouchEnabled and not UIS.KeyboardEnabled then
+        -- موبايل مؤكد
         Device.IsPC     = false
         Device.IsTablet = false
         Device.IsMobile = true
     end
 
+    --[[
+        CalcUIScale: يحسب الـ UIScale المطلوب عشان الواجهة (baseW x baseH)
+        تملأ الشاشة بنسبة مئوية معينة (fillRatio).
+        بعدين نحسب الـ position بناءً على الـ visual size الفعلي.
+    ]]
     function Device.CalcLayout(baseW, baseH)
         local fillW, fillH
         if Device.IsPC then
+            -- PC: لا تغيير
             return baseW, baseH, 1.0
         elseif Device.IsMobile then
+            -- موبايل: 90% من أصغر بُعد — سواء landscape أو portrait
             fillW = sw * 0.92
             fillH = sh * 0.88
         else
+            -- تابلت
             fillW = sw * 0.88
             fillH = sh * 0.84
         end
+
+        -- نحسب الـ scale المناسب: نختار أصغر نسبة عشان الواجهة تكون visible كاملاً
         local scaleByW = fillW / baseW
         local scaleByH = fillH / baseH
         local scale    = math.min(scaleByW, scaleByH)
         scale = math.clamp(scale, 0.4, 3.0)
+
+        -- الـ visual size بعد الـ scale
         local visualW = math.floor(baseW * scale)
         local visualH = math.floor(baseH * scale)
+
         return visualW, visualH, scale
     end
 end
@@ -344,6 +394,7 @@ end
 --  INTRO ANIMATION
 -- ============================================================
 local function PlayIntro(sg, onDone)
+    -- ── Responsive scale للإنترو ────────────────────────────
     local _introCam = workspace.CurrentCamera
     local _introVP  = _introCam and _introCam.ViewportSize or Vector2.new(800,600)
     local _introScale = math.clamp(math.min(_introVP.X,_introVP.Y) / 500, 0.45, 1.15)
@@ -363,6 +414,8 @@ local function PlayIntro(sg, onDone)
         BackgroundColor3=Color3.fromRGB(0,0,0),
         BackgroundTransparency=1,BorderSizePixel=0,ZIndex=100,Parent=sg})
 
+    -- container مع UIScale — كل عناصر الإنترو بتتضغط proportionally
+    -- AnchorPoint(0.5,0.5) + Position(0.5,0.5) → يفضل centered حتى بعد الـ scale
     local introCont=New("Frame",{
         Size=UDim2.new(1,0,1,0),
         AnchorPoint=Vector2.new(0.5,0.5),
@@ -495,21 +548,30 @@ end
 
 -- ============================================================
 --  LANGUAGE SELECT
+--  ← FIX: auto-confirm English after 15 seconds
+--  ← FIX: fully rounded corners everywhere
+--  ← FIX: RGB border runs along rounded edges properly
 -- ============================================================
 local function ShowLangSelect(sg, onDone)
     local W,H = 440,330
-    local RING = 4
+    local RING = 4  -- سماكة الحد الملوّن
 
+    -- ── Responsive scale للـ lang card ──────────────────────
     local _lsCam = workspace.CurrentCamera
     local _lsVP  = _lsCam and _lsCam.ViewportSize or Vector2.new(800,600)
     local _lsMinDim = math.min(_lsVP.X, _lsVP.Y)
+    -- على موبايل الشاشة ~400px height → scale ≈ 0.75 → card بيبقى ~330px عرض
     local _lsScale = math.clamp(_lsMinDim / 500, 0.50, 1.15)
 
+    -- Overlay (full screen — مش محتاج scale)
     local overlay=New("Frame",{Size=UDim2.new(1,0,1,0),
         BackgroundColor3=Color3.fromRGB(0,0,0),
         BackgroundTransparency=1,BorderSizePixel=0,ZIndex=200,Parent=sg})
     Tween(overlay,{BackgroundTransparency=0.52},0.4)
 
+    -- ── Scale wrapper — بيضم الـ ringBg والـ card ───────────
+    -- AnchorPoint(0.5,0.5) + Position(0.5,0,0.5,0) → centered دايماً
+    -- UIScale بيشغّل على محور المركز → مفيش offset بعد الـ scale
     local lsWrapper=New("Frame",{
         Size=UDim2.new(1,0,1,0),
         AnchorPoint=Vector2.new(0.5,0.5),
@@ -520,6 +582,7 @@ local function ShowLangSelect(sg, onDone)
         New("UIScale",{Scale=_lsScale,Parent=lsWrapper})
     end
 
+    -- ── Rainbow border ──────────────────────────────────────
     local ringBg=New("Frame",{
         Size=UDim2.new(0,W+RING*2,0,H+RING*2),
         AnchorPoint=Vector2.new(0.5,0.5),
@@ -530,6 +593,7 @@ local function ShowLangSelect(sg, onDone)
         ZIndex=201,Parent=lsWrapper})
     Corner(ringBg, 22)
 
+    -- Animate the colour of the ring frame
     local hue=0
     local rainbowConn
     rainbowConn=RunService.RenderStepped:Connect(function(dt)
@@ -538,6 +602,7 @@ local function ShowLangSelect(sg, onDone)
         ringBg.BackgroundColor3=Color3.fromHSV(hue,0.9,1)
     end)
 
+    -- ── Card ────────────────────────────────────────────────
     local card=New("Frame",{
         Size=UDim2.new(0,W,0,H),
         AnchorPoint=Vector2.new(0.5,0.5),
@@ -548,6 +613,7 @@ local function ShowLangSelect(sg, onDone)
         ZIndex=203,Parent=lsWrapper})
     Corner(card,18)
 
+    -- ── Logo ──────────────────────────────────────────────────
     local cardLogo=New("ImageLabel",{Size=UDim2.new(0,56,0,56),
         AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0,16),
         BackgroundTransparency=1,Image="rbxassetid://93116857865430",
@@ -561,7 +627,7 @@ local function ShowLangSelect(sg, onDone)
 
     New("TextLabel",{Size=UDim2.new(1,-32,0,20),Position=UDim2.new(0,16,0,112),
         BackgroundTransparency=1,
-        Text="Select Language / Choose Your Language",
+        Text="Select Language  /  اختر اللغة",
         TextColor3=Color3.fromRGB(125,130,158),Font=Enum.Font.Gotham,
         TextSize=13,ZIndex=205,Parent=card})
 
@@ -569,6 +635,7 @@ local function ShowLangSelect(sg, onDone)
         Position=UDim2.new(0.5,0,0,138),BackgroundColor3=Color3.fromRGB(42,46,68),
         BorderSizePixel=0,ZIndex=205,Parent=card})
 
+    -- ── Language buttons ──────────────────────────────────────
     local row=New("Frame",{Size=UDim2.new(1,-48,0,94),
         Position=UDim2.new(0,24,0,152),BackgroundTransparency=1,
         ZIndex=205,Parent=card})
@@ -579,14 +646,12 @@ local function ShowLangSelect(sg, onDone)
     local btnData={}
     local THEME_COLORS={English=Color3.fromRGB(56,132,255),Arabic=Color3.fromRGB(220,38,38)}
 
-    local confirmBtn
-
     local function MakeLangBtn(langName,flagEmoji,labelText,isDefault)
         local tc=THEME_COLORS[langName]
         local frame=New("Frame",{Size=UDim2.new(0,165,0,88),
             BackgroundColor3=isDefault and Color3.fromRGB(20,26,46) or Color3.fromRGB(18,18,24),
             BorderSizePixel=0,ZIndex=206,Parent=row})
-        Corner(frame,14)
+        Corner(frame,14)  -- ← حواف منحنية كبيرة
         local fStroke=Stroke(frame,isDefault and tc or Color3.fromRGB(42,46,68),
             isDefault and 2 or 1,0)
         New("TextLabel",{Size=UDim2.new(1,0,0,40),Position=UDim2.new(0,0,0,8),
@@ -616,8 +681,10 @@ local function ShowLangSelect(sg, onDone)
             color=tc,clickBtn=clickBtn}
         return clickBtn
     end
-    MakeLangBtn("English","English","English",true)
-    MakeLangBtn("Arabic","Arabic","Arabic",false)
+    MakeLangBtn("English","🇺🇸","English",true)
+    MakeLangBtn("Arabic","🇸🇦","العربية",false)
+
+    local confirmBtn  -- forward-declare for use in SelectLang
 
     local function SelectLang(name)
         if selectedLang==name then return end
@@ -644,10 +711,11 @@ local function ShowLangSelect(sg, onDone)
         d.clickBtn.MouseButton1Click:Connect(function() SelectLang(ln) end)
     end
 
+    -- ── Confirm button ─────────────────────────────────────────
     confirmBtn=New("TextButton",{Size=UDim2.new(1,-48,0,44),
         Position=UDim2.new(0,24,1,-58),
         BackgroundColor3=THEME_COLORS.English,
-        Text="Continue ->",
+        Text="Continue  →",
         TextColor3=Color3.fromRGB(255,255,255),
         Font=Enum.Font.GothamBold,TextSize=15,
         BorderSizePixel=0,ZIndex=206,Parent=card})
@@ -661,6 +729,7 @@ local function ShowLangSelect(sg, onDone)
         Tween(confirmBtn,{BackgroundColor3=THEME_COLORS[selectedLang]},0.15)
     end)
 
+    -- ── Entrance animation ─────────────────────────────────────
     ringBg.Position=UDim2.new(0.5,0,0.65,0)
     card.Position=UDim2.new(0.5,0,0.65,0)
     Tween(ringBg,{BackgroundTransparency=0,Position=UDim2.new(0.5,0,0.5,0)},
@@ -668,6 +737,7 @@ local function ShowLangSelect(sg, onDone)
     Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0.5,0,0.5,0)},
         0.5,Enum.EasingStyle.Back)
 
+    -- ── Confirm ────────────────────────────────────────────────
     local fired=false
     local function FireConfirm()
         if fired then return end
@@ -703,12 +773,14 @@ function CrozoX:_Init()
     local ok=Safe(function() sg.Parent=CoreGui end)
     if not ok then sg.Parent=LocalPlayer:WaitForChild("PlayerGui") end
     self._ScreenGui=sg
+    -- NotifContainer — على الجانب الأيمن دايماً (موبايل وPC)
+    -- موبايل: عرض 260px من اليمين | PC: 345px
     do
         local _nc  = workspace.CurrentCamera
         local _nv  = _nc and _nc.ViewportSize or Vector2.new(800,600)
         local isMobInit = (Device.IsMobile or Device.IsTablet) or (math.min(_nv.X,_nv.Y) < 500)
         local notifW    = isMobInit and 260 or 345
-        local notifOff  = notifW + 12
+        local notifOff  = notifW + 12  -- margin من حافة الشاشة
         local notifGap  = isMobInit and 6 or 10
         self._NotifContainer=New("Frame",{Name="NotifContainer",
             Size=UDim2.new(0,notifW,1,0),
@@ -735,7 +807,7 @@ end
 function CrozoX:CreateWindow(cfg)
     cfg=cfg or {}
     local title   =cfg.Title    or "CrozoX"
-    local subtitle=cfg.Subtitle or "v7.0.0"
+    local subtitle=cfg.Subtitle or "v4.0.0"
     local logoId  =cfg.Logo     or "rbxassetid://93116857865430"
     local size    =cfg.Size     or UDim2.new(0,660,0,470)
     size = UDim2.new(0, size.X.Offset, 0, size.Y.Offset)
@@ -743,6 +815,17 @@ function CrozoX:CreateWindow(cfg)
     local L       =self._Lang
     local sg      =self._ScreenGui
 
+    -- ════════════════════════════════════════════════════════
+    --  MAIN FRAME — frame واحد فقط، UICorner عليه مباشرة
+    --  السر: ClipsDescendants=true + UICorner على نفس الـ frame
+    --  يعمل بدون أي frame خلفي أو wrapper
+    -- ════════════════════════════════════════════════════════
+    -- ════════════════════════════════════════════════════════
+    -- الهيكل الصحيح:
+    -- wrapFrame: شفاف، لا clips، يحمل shadow وmainFrame معاً
+    --   └─ shadowImg: خلف الواجهة
+    --   └─ mainFrame: يحمل اللون والـ UICorner والـ ClipsDescendants
+    -- ════════════════════════════════════════════════════════
     local wrapFrame = New("Frame", {
         Name                   = "CrozoX_Wrap",
         Size                   = UDim2.new(0, 0, 0, 0),
@@ -755,6 +838,7 @@ function CrozoX:CreateWindow(cfg)
         Parent                 = sg,
     })
 
+    -- Shadow داخل wrapFrame — يتحرك معه تلقائياً
     local shadowImg = New("ImageLabel", {
         Name                   = "Shadow",
         Size                   = UDim2.new(1, 60, 1, 60),
@@ -769,6 +853,7 @@ function CrozoX:CreateWindow(cfg)
         Parent                 = wrapFrame,
     })
 
+    -- mainFrame داخل wrapFrame
     local mainFrame = New("Frame", {
         Name             = "CrozoX_Window",
         Size             = UDim2.new(1, 0, 1, 0),
@@ -782,6 +867,7 @@ function CrozoX:CreateWindow(cfg)
     })
     Corner(mainFrame, 16)
 
+    -- Gradient يغطي كامل الواجهة بما فيها منطقة TopBar والـ Sidebar
     New("UIGradient", {
         Color = ColorSequence.new{
             ColorSequenceKeypoint.new(0,    T.Background),
@@ -792,9 +878,11 @@ function CrozoX:CreateWindow(cfg)
         Parent   = mainFrame,
     })
 
+
+    -- Animated border — Elegant rotating gradient (Thickness 1.5, not too thick)
     local glowStroke = New("UIStroke", {
         Thickness    = 1.5,
-        Transparency = 0.3,
+        Transparency = 0.3,   -- elegant, not neon
         Parent       = mainFrame,
     })
     New("UIGradient", {
@@ -808,6 +896,7 @@ function CrozoX:CreateWindow(cfg)
         Rotation = 0,
         Parent   = glowStroke,
     })
+    -- slow elegant rotation
     task.spawn(function()
         local rot = 0
         while mainFrame and mainFrame.Parent do
@@ -818,21 +907,25 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
+    -- Shadow تظهر بعد animation الفتح
     task.delay(0.3, function()
         if shadowImg and shadowImg.Parent then
             Tween(shadowImg, {ImageTransparency=0.5}, 0.35)
         end
     end)
 
+    -- ── Titlebar — شفاف عشان حواف MainFrame تظهر ──────────
     local titleBar = New("Frame", {
         Size                   = UDim2.new(1, 0, 0, 54),
         Position               = UDim2.new(0, 0, 0, 0),
-        BackgroundTransparency = 1,
+        BackgroundTransparency = 1,   -- ← شفاف: لا يغطي الحواف
         BorderSizePixel        = 0,
         ZIndex                 = 11,
         Parent                 = mainFrame,
     })
+    -- لا gradient على الـ titleBar — الـ MainFrame هو من يحمل اللون
 
+    -- Separator
     New("Frame", {
         Size             = UDim2.new(1, 0, 0, 1),
         Position         = UDim2.new(0, 0, 1, -1),
@@ -842,6 +935,7 @@ function CrozoX:CreateWindow(cfg)
         ZIndex           = 12,
         Parent           = titleBar,
     })
+    -- Accent bar
     local accentBar = New("Frame", {
         Size             = UDim2.new(0, 0, 0, 2),
         Position         = UDim2.new(0, 14, 1, -2),
@@ -859,6 +953,7 @@ function CrozoX:CreateWindow(cfg)
     })
     Tween(accentBar, {Size=UDim2.new(0,90,0,2)}, 0.8, Enum.EasingStyle.Back)
 
+    -- Logo
     local titleLogo = New("ImageLabel", {
         Size             = UDim2.new(0, 30, 0, 30),
         Position         = UDim2.new(0, 12, 0.5, -15),
@@ -869,6 +964,7 @@ function CrozoX:CreateWindow(cfg)
         Parent           = titleBar,
     })
     Corner(titleLogo, 7)
+    -- Glow ring
     New("ImageLabel", {
         Size             = UDim2.new(0, 42, 0, 42),
         Position         = UDim2.new(0, 6, 0.5, -21),
@@ -905,10 +1001,13 @@ function CrozoX:CreateWindow(cfg)
         Parent           = titleBar,
     })
 
+    -- ── Control buttons ────────────────────────────────────
     local _btnSz    = (Device.IsMobile or Device.IsTablet) and 42 or 28
     local _btnIcoSz = (Device.IsMobile or Device.IsTablet) and 20 or 14
     local _btnCorner= (Device.IsMobile or Device.IsTablet) and 11 or 7
 
+    -- CtrlBtn يرجع الـ TextButton
+    -- على موبايل نستخدم InputBegan Touch بدل TouchTap (أكثر موثوقية)
     local function CtrlBtn(iconAsset, rightOff, normalBg, hoverBg, iconColor)
         local mobOff = Device.IsPC and rightOff or (rightOff * (_btnSz / 28))
         local fr = New("Frame", {
@@ -934,6 +1033,7 @@ function CrozoX:CreateWindow(cfg)
         })
         local normSz  = UDim2.new(0,_btnSz,  0,_btnSz)
         local pressSz = UDim2.new(0,_btnSz-4,0,_btnSz-4)
+        -- PC: hover + click
         btn.MouseEnter:Connect(function()
             Tween(fr,{BackgroundColor3=hoverBg},0.15)
             Tween(icon,{ImageColor3=Color3.new(1,1,1)},0.15)
@@ -946,6 +1046,8 @@ function CrozoX:CreateWindow(cfg)
         end)
         btn.MouseButton1Down:Connect(function() Tween(fr,{Size=pressSz},0.08) end)
         btn.MouseButton1Up:Connect(function()   Tween(fr,{Size=normSz},0.12,Enum.EasingStyle.Back) end)
+        -- موبايل: InputBegan = visual feedback فقط (مش action)
+        -- الـ action بيتشغل من ConnectBtn بـ InputEnded
         btn.InputBegan:Connect(function(inp)
             if inp.UserInputType == Enum.UserInputType.Touch then
                 Tween(fr,{BackgroundColor3=hoverBg,Size=pressSz},0.08)
@@ -959,19 +1061,24 @@ function CrozoX:CreateWindow(cfg)
         return btn
     end
 
+    -- ✕ إغلاق — أيقونة X الحقيقية (xcircle أو x)
     local closeBtn = CtrlBtn(
-        Icons.xcircle, 10,
-        Color3.fromRGB(44, 14, 14),
-        Color3.fromRGB(200, 30, 30),
-        Color3.fromRGB(220, 60, 60)
+        Icons.xcircle,    -- أيقونة دائرة X احترافية
+        10,
+        Color3.fromRGB(44, 14, 14),    -- خلفية عادية
+        Color3.fromRGB(200, 30, 30),   -- hover أحمر
+        Color3.fromRGB(220, 60, 60)    -- لون الأيقونة
     )
+    -- ⊟ تصغير — أيقونة minus الحقيقية
     local minBtn = CtrlBtn(
-        Icons.minimize_icon, 46,
-        Color3.fromRGB(20, 24, 40),
-        Color3.fromRGB(38, 50, 82),
-        Color3.fromRGB(120, 140, 195)
+        Icons.minimize_icon,  -- أيقونة التصغير الحقيقية
+        46,
+        Color3.fromRGB(20, 24, 40),    -- خلفية عادية
+        Color3.fromRGB(38, 50, 82),    -- hover
+        Color3.fromRGB(120, 140, 195)  -- لون الأيقونة
     )
 
+    -- ── Sidebar — width 220 ───────────────────────────────
     local sidebar = New("Frame", {
         Size                   = UDim2.new(0, 220, 1, -54),
         Position               = UDim2.new(0, 0, 0, 54),
@@ -981,12 +1088,14 @@ function CrozoX:CreateWindow(cfg)
         ZIndex                 = 11,
         Parent                 = mainFrame,
     })
+    -- Right border — subtle
     New("Frame", {
         Size=UDim2.new(0,1,1,0), Position=UDim2.new(1,0,0,0),
         BackgroundColor3=T.Border, BorderSizePixel=0,
         ZIndex=12, Parent=sidebar,
     })
 
+    -- Profile card — أكبر قليلاً عشان الصورة تظهر كاملة
     local profileCard = New("Frame", {
         Size=UDim2.new(1,-14,0,56), Position=UDim2.new(0,7,0,6),
         BackgroundColor3=T.SurfaceAlt, BorderSizePixel=0,
@@ -995,6 +1104,7 @@ function CrozoX:CreateWindow(cfg)
     Corner(profileCard, 10)
     Stroke(profileCard, T.Border, 1, 0)
 
+    -- ── Avatar دائري ─────────────────────────────────────
     local avatarImg = New("ImageLabel", {
         Name                   = "Avatar",
         Size                   = UDim2.new(0, 42, 0, 42),
@@ -1015,11 +1125,12 @@ function CrozoX:CreateWindow(cfg)
         Parent       = avatarImg,
     })
 
+    -- Loading shimmer — ZIndex أقل من الصورة
     local loadingFrame = New("Frame", {
         Size                   = UDim2.new(1, 0, 1, 0),
         BackgroundColor3       = T.SurfaceHover,
         BackgroundTransparency = 0,
-        ZIndex                 = 14,
+        ZIndex                 = 14,   -- تحت الصورة
         Parent                 = avatarImg,
     })
     New("UICorner", { CornerRadius = UDim.new(1, 0), Parent = loadingFrame })
@@ -1043,9 +1154,15 @@ function CrozoX:CreateWindow(cfg)
     task.spawn(function()
         repeat task.wait() until LocalPlayer and LocalPlayer.UserId ~= 0
         local userId = LocalPlayer.UserId
+
+        -- rbxthumb فوري كـ fallback — يظهر فوراً حتى لو الـ async اتعلق
         avatarImg.Image = "rbxthumb://type=AvatarHeadShot&id=" .. userId .. "&w=150&h=150"
+
+        -- GetUserThumbnailAsync في coroutine منفصلة مع timeout 3 ثواني
+        -- عشان لو اتعلق، منفضلش في الـ loop للأبد
         local betterUrl = nil
         local fetchDone = false
+
         task.spawn(function()
             local ok, content = pcall(function()
                 return Players:GetUserThumbnailAsync(
@@ -1059,19 +1176,29 @@ function CrozoX:CreateWindow(cfg)
             end
             fetchDone = true
         end)
+
+        -- انتظر الـ fetch بحد أقصى 3 ثواني
         local waited = 0
         while not fetchDone and waited < 3 do
             task.wait(0.1)
             waited = waited + 0.1
         end
+
+        -- لو جاب جودة أعلى، استخدمها
         if betterUrl then
             avatarImg.Image = betterUrl
         end
+
+        -- وقف الـ shimmer
         if shimmerConn then
             shimmerConn:Disconnect()
             shimmerConn = nil
         end
+
+        -- الـ fade-in الصح: من 1 لـ 0 (مش instant set + tween من 0 لـ 0)
         Tween(avatarImg, {ImageTransparency = 0}, 0.4, Enum.EasingStyle.Quad)
+
+        -- نشيل الـ loading بعد شوية عشان الـ animation يبدأ الأول
         task.wait(0.1)
         Tween(loadingFrame, {BackgroundTransparency = 1}, 0.35)
         task.delay(0.45, function()
@@ -1102,6 +1229,7 @@ function CrozoX:CreateWindow(cfg)
         ZIndex=13, Parent=profileCard,
     })
 
+    -- Search bar
     local searchFrame = New("Frame", {
         Size=UDim2.new(1,-14,0,27), Position=UDim2.new(0,7,0,62),
         BackgroundColor3=T.SurfaceAlt, BorderSizePixel=0,
@@ -1127,6 +1255,7 @@ function CrozoX:CreateWindow(cfg)
         Tween(searchFrame,  {BackgroundColor3=T.SurfaceAlt}, 0.15)
     end)
 
+    -- Tab list
     local tabList = New("ScrollingFrame", {
         Size=UDim2.new(1,0,1,-96), Position=UDim2.new(0,0,0,96),
         BackgroundTransparency=1, ScrollBarThickness=2,
@@ -1139,6 +1268,7 @@ function CrozoX:CreateWindow(cfg)
         tabList.CanvasSize = UDim2.new(0,0,0,tlLayout.AbsoluteContentSize.Y+12)
     end)
 
+    -- Search filter
     searchBox:GetPropertyChangedSignal("Text"):Connect(function()
         local q = string.lower(searchBox.Text)
         for _, tb in ipairs(tabList:GetChildren()) do
@@ -1150,6 +1280,7 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
+    -- ── Content area ───────────────────────────────────────
     local contentArea = New("Frame", {
         Size             = UDim2.new(1, -220, 1, -54),
         Position         = UDim2.new(0, 220, 0, 54),
@@ -1160,6 +1291,9 @@ function CrozoX:CreateWindow(cfg)
         Parent           = mainFrame,
     })
 
+    -- ══════════════════════════════════════════════════════
+    --  DRAG + RESIZE + SHADOW — كل شيء في RenderStepped
+    -- ══════════════════════════════════════════════════════
     local dragging   = false
     local resizing   = false
     local lastMouseX = 0
@@ -1173,6 +1307,7 @@ function CrozoX:CreateWindow(cfg)
     local MIN_W, MIN_H = 420, 300
     local MAX_W, MAX_H = 1200, 800
 
+    -- ── Drag Button — TextButton شفاف فوق titleBar ─────────
     local dragBtn = New("TextButton", {
         Size                   = UDim2.new(1, -90, 1, 0),
         Position               = UDim2.new(0, 0, 0, 0),
@@ -1182,22 +1317,31 @@ function CrozoX:CreateWindow(cfg)
         Parent                 = titleBar,
     })
 
+    -- ══════════════════════════════════════════════════════
+    --  DRAG SYSTEM — منفصل تماماً: Mouse (delta) | Touch (absolute)
+    --  المشكلة في v41: كان lastMouseX/Y بيتحدث من InputChanged
+    --  وبيتحسب منه delta في RenderStepped → conflict
+    --  الحل: Touch يستخدم absolute positioning مش delta
+    -- ══════════════════════════════════════════════════════
     local touchDragging   = false
-    local touchStartX     = 0
+    local touchStartX     = 0   -- موضع الإصبع عند بداية الـ drag
     local touchStartY     = 0
-    local wrapStartPX     = 0
+    local wrapStartPX     = 0   -- موضع الـ wrapFrame عند بداية الـ drag
     local wrapStartPY     = 0
 
     dragBtn.InputBegan:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+            -- PC: نفس المنطق القديم بالـ delta
             if resizing then return end
             local mp = UserInputService:GetMouseLocation()
             lastMouseX = mp.X
             lastMouseY = mp.Y
             dragging   = true
+
         elseif inp.UserInputType == Enum.UserInputType.Touch then
+            -- موبايل: نحفظ البداية ونحسب absolute
             touchDragging = true
-            dragging      = false
+            dragging      = false  -- عشان RenderStepped مش يتدخل
             touchStartX   = inp.Position.X
             touchStartY   = inp.Position.Y
             wrapStartPX   = wrapFrame.Position.X.Offset
@@ -1207,11 +1351,14 @@ function CrozoX:CreateWindow(cfg)
 
     dragBtn.InputChanged:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.Touch and touchDragging then
+            -- حساب مباشر: الموضع الجديد = البداية + الفرق
             local dx = inp.Position.X - touchStartX
             local dy = inp.Position.Y - touchStartY
+            -- نطبق UIScale عشان الـ move يكون بنسبة الـ scale
             local sc = wrapFrame:FindFirstChildWhichIsA("UIScale")
             local s  = sc and sc.Scale or 1
             wrapFrame.Position = UDim2.new(0, wrapStartPX + dx/s, 0, wrapStartPY + dy/s)
+            -- sync مع RenderStepped smooth vars
             smoothX = wrapStartPX + dx/s
             smoothY = wrapStartPY + dy/s
             dispX   = smoothX
@@ -1233,7 +1380,9 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    local rBtnSz = Device.IsPC and 22 or 28
+    -- ── Resize Handle — تصميم عصري: خطوط متوازية زي iOS
+    -- ── Resize Button — نفس تصميم PC على الموبايل، خارج الواجهة
+    local rBtnSz = Device.IsPC and 22 or 28   -- أكبر شوية على موبايل
 
     local resizeBtn = New("TextButton", {
         Name                   = "ResizeBtn",
@@ -1253,6 +1402,7 @@ function CrozoX:CreateWindow(cfg)
         Transparency = 0.6,
         Parent       = resizeBtn,
     })
+    -- أيقونة ⌟ بالأبيض
     local iconH = New("Frame", {
         Size=UDim2.new(0, Device.IsPC and 11 or 13, 0, 2),
         Position=UDim2.new(0, Device.IsPC and 5 or 6, 1, Device.IsPC and -6 or -7),
@@ -1264,22 +1414,28 @@ function CrozoX:CreateWindow(cfg)
         BackgroundColor3=Color3.new(1,1,1), BorderSizePixel=0, ZIndex=61, Parent=resizeBtn,
     }); Corner(iconV, 1)
 
+    -- Mouse events (PC)
+    -- متغيرات الـ hold للموبايل
     local holdTimer  = nil
     local holdActive = false
 
+    -- بدء الـ hold على الزر
     resizeBtn.InputBegan:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+            -- PC: مباشر
             resizing = true; dragging = false
             local mp = UserInputService:GetMouseLocation()
             rStartX=mp.X; rStartY=mp.Y
             rW=wrapFrame.AbsoluteSize.X; rH=wrapFrame.AbsoluteSize.Y
             rPX=wrapFrame.Position.X.Offset; rPY=wrapFrame.Position.Y.Offset
             Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.1)
+
         elseif inp.UserInputType == Enum.UserInputType.Touch then
             holdActive = false
             if holdTimer then task.cancel(holdTimer); holdTimer=nil end
             Tween(resizeBtn,{BackgroundColor3=T.BorderBright,BackgroundTransparency=0},0.15)
             holdTimer = task.delay(0.35, function()
+                -- Hold اكتمل → ابدأ resize من موضع الإصبع الحالي
                 holdActive = true
                 dragging   = false
                 local mp2  = UserInputService:GetMouseLocation()
@@ -1295,6 +1451,8 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
+    -- الحركة والإنهاء عبر UserInputService
+    -- عشان الـ resize يستمر حتى بعد إبعاد الإصبع عن الزر
     UserInputService.InputChanged:Connect(function(inp)
         if not (holdActive and resizing) then return end
         if inp.UserInputType == Enum.UserInputType.Touch
@@ -1311,6 +1469,7 @@ function CrozoX:CreateWindow(cfg)
 
     UserInputService.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.Touch and holdActive then
+            -- الإصبع رُفع → انتهى الـ resize
             if holdTimer then task.cancel(holdTimer); holdTimer=nil end
             holdActive = false
             resizing   = false
@@ -1328,16 +1487,21 @@ function CrozoX:CreateWindow(cfg)
         Tween(resizeBtn,{BackgroundColor3=Color3.fromRGB(30,30,30),BackgroundTransparency=0.1},0.15)
     end)
 
-    local smoothX = 0
+    -- ── RenderStepped: drag + resize + resize button pos ──
+    local smoothX = 0   -- الموضع الحقيقي (بدون smooth)
     local smoothY = 0
-    local dispX   = 0
+    local dispX   = 0   -- الموضع المعروض (مع smooth)
     local dispY   = 0
     local smoothInit = false
 
     RunService.RenderStepped:Connect(function()
         if not wrapFrame.Parent then return end
+
+        -- Touch drag بيتعمل في InputChanged مباشرةً — مش هنا
+        -- هنا بس الـ Mouse drag (PC)
         local mp = UserInputService:GetMouseLocation()
 
+        -- 1. Mouse Drag بـ DELTA + SMOOTH (PC فقط)
         if dragging then
             local dx = mp.X - lastMouseX
             local dy = mp.Y - lastMouseY
@@ -1347,6 +1511,7 @@ function CrozoX:CreateWindow(cfg)
             lastMouseY = mp.Y
         end
 
+        -- تهيئة dispX/dispY أول مرة
         if not smoothInit then
             smoothInit = true
             smoothX = wrapFrame.Position.X.Offset
@@ -1355,23 +1520,28 @@ function CrozoX:CreateWindow(cfg)
             dispY   = smoothY
         end
 
+        -- Lerp سلس نحو الهدف
         if dragging or math.abs(dispX - smoothX) > 0.5 or math.abs(dispY - smoothY) > 0.5 then
             dispX = dispX + (smoothX - dispX) * 0.25
             dispY = dispY + (smoothY - dispY) * 0.25
             wrapFrame.Position = UDim2.new(0, dispX, 0, dispY)
         end
 
+        -- 2. Resize بـ Position.Offset
         if resizing then
             local newW = math.clamp(rW + (mp.X - rStartX), MIN_W, MAX_W)
             local newH = math.clamp(rH + (mp.Y - rStartY), MIN_H, MAX_H)
             wrapFrame.Size     = UDim2.new(0, newW, 0, newH)
             wrapFrame.Position = UDim2.new(0, rPX,  0, rPY)
+            -- sync smooth vars عشان drag بعد resize ما يقفز
             smoothX = rPX
             smoothY = rPY
             dispX   = rPX
             dispY   = rPY
             size    = UDim2.new(0, newW, 0, newH)
         end
+
+        -- resizeBtn يتحرك تلقائياً مع wrapFrame (child منه)
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
@@ -1384,25 +1554,45 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
+    -- ── Open animation — الحل النهائي ──────────────────────
+    -- wrapFrame Position لا تتغير أبداً
+    -- Animation على mainFrame Scale فقط
     mainFrame.BackgroundTransparency = 1
 
     task.defer(function()
         if not sg.Parent then return end
         local sw = sg.AbsoluteSize.X
         local sh = sg.AbsoluteSize.Y
-        local baseW = size.X.Offset
-        local baseH = size.Y.Offset
+
+        local baseW = size.X.Offset   -- 660 (base PC size)
+        local baseH = size.Y.Offset   -- 470
+
+        -- CalcLayout يرجع: visualW, visualH, scaleVal
+        -- visualW/H = الحجم الفعلي المعروض على الشاشة
+        -- scaleVal  = الـ UIScale المطبّق على wrapFrame
         local visualW, visualH, scaleVal = Device.CalcLayout(baseW, baseH)
+
+        -- wrapFrame Size = base size دايماً (UIScale هو اللي يكبّره)
         wrapFrame.Size = UDim2.new(0, baseW, 0, baseH)
+
+        -- Position بناءً على الـ visual size (مش base size!)
+        -- ده هو الخطأ في v38 — كان بيحسب بـ base بدل visual
         wrapFrame.Position = UDim2.new(
             0, math.floor((sw - visualW) / 2),
             0, math.floor((sh - visualH) / 2)
         )
+
+        -- طبّق UIScale على wrapFrame
         local existing = wrapFrame:FindFirstChildWhichIsA("UIScale")
         if existing then existing:Destroy() end
         if scaleVal ~= 1 then
             New("UIScale", { Scale = scaleVal, Parent = wrapFrame })
         end
+
+        -- resizeBtn موجود دايماً — PC وموبايل
+        -- الـ hold-to-resize على موبايل اتعمل فوق عند التعريف
+
+        -- Animation على mainFrame فقط
         mainFrame.Size = UDim2.new(0.88, 0, 0.88, 0)
         Tween(mainFrame, {
             Size                   = UDim2.new(1, 0, 1, 0),
@@ -1410,6 +1600,7 @@ function CrozoX:CreateWindow(cfg)
         }, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
     end)
 
+    -- ── Close / Minimize ───────────────────────────────────
     local isMin = false
 
     local function DoClose()
@@ -1449,10 +1640,17 @@ function CrozoX:CreateWindow(cfg)
         end
     end
 
+    -- ربط الأحداث
+    -- المشكلة في v43: InputBegan (press-down) + MouseButton1Click (press-up)
+    -- = DoMinimize بيشتغل مرتين → toggle مرتين → يرجع للحالة الأولى
+    -- الحل: على موبايل نستخدم InputEnded فقط (رفع الإصبع = tap مكتمل)
+    -- ونمنع MouseButton1Click من التشغيل على موبايل عشان مش double-fire
     local function ConnectBtn(btn, fn)
         if Device.IsPC then
             btn.MouseButton1Click:Connect(fn)
         else
+            -- موبايل: InputBegan + InputEnded على نفس الزر
+            -- resizeBtn منفصل في sg فلا يوجد bubble
             local pressing = false
             btn.InputBegan:Connect(function(i)
                 if i.UserInputType == Enum.UserInputType.Touch then
@@ -1481,6 +1679,7 @@ function CrozoX:CreateWindow(cfg)
         local iconKey  =tcfg.Icon or "layers"
         local iconAsset=Icons[iconKey] or Icons.layers
 
+        -- Tab button frame
         local _tabH = (Device.IsMobile or Device.IsTablet) and 48 or 38
         local tabBtn=New("Frame",{Name="Tab_"..tabName,
             Size=UDim2.new(1,0,0,_tabH),
@@ -1488,6 +1687,7 @@ function CrozoX:CreateWindow(cfg)
             ZIndex=13,Parent=tabList})
         Corner(tabBtn,10)
 
+        -- Left indicator — خط رفيع 3px فقط، بدون Glow
         local indicator = New("Frame", {
             Size             = UDim2.new(0, 3, 0, 0),
             Position         = UDim2.new(0, 0, 0.5, 0),
@@ -1500,10 +1700,12 @@ function CrozoX:CreateWindow(cfg)
         })
         Corner(indicator, 2)
 
+        -- Icon
         local _icoSz = (Device.IsMobile or Device.IsTablet) and 20 or 17
         local tabIcon=Img(tabBtn,iconAsset,_icoSz,
             UDim2.new(0,12,0.5,-_icoSz/2),T.TextMuted,14)
 
+        -- Label
         local _tabTxtSz = (Device.IsMobile or Device.IsTablet) and 15 or L.TabSize
         local tabLabel=New("TextLabel",{Size=UDim2.new(1,-36,1,0),
             Position=UDim2.new(0,36,0,0),BackgroundTransparency=1,
@@ -1515,11 +1717,12 @@ function CrozoX:CreateWindow(cfg)
         local tabClick=New("TextButton",{Size=UDim2.new(1,0,1,0),
             BackgroundTransparency=1,Text="",ZIndex=15,Parent=tabBtn})
 
+        -- Content page
         local tabPage=New("ScrollingFrame",{Name="Page_"..tabName,
             Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,
             ScrollBarThickness=3,ScrollBarImageColor3=T.BorderBright,
             BorderSizePixel=0,Visible=false,ZIndex=12,Parent=contentArea})
-        local pageLayout=ListLayout(tabPage,12)
+        local pageLayout=ListLayout(tabPage,12)   -- 12px spacing
         Pad(tabPage,16,16,16,16)
         pageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
             tabPage.CanvasSize=UDim2.new(0,0,0,pageLayout.AbsoluteContentSize.Y+32)
@@ -1578,17 +1781,20 @@ function CrozoX:CreateWindow(cfg)
         -- ============================================================
         local Tab={}
 
+        -- Element frame — card background + proper depth
         local function EF(h)
             local f=New("Frame",{Size=UDim2.new(1,0,0,h or 48),
                 BackgroundColor3=T.SurfaceCard,BorderSizePixel=0,
                 ZIndex=13,Parent=tabPage})
             Corner(f,10)
             Stroke(f,T.Border,1,0)
+            -- Top highlight
             New("Frame",{Size=UDim2.new(1,-2,0,1),
                 Position=UDim2.new(0,1,0,0),
                 BackgroundColor3=Color3.fromRGB(255,255,255),
                 BackgroundTransparency=0.92,
                 BorderSizePixel=0,ZIndex=14,Parent=f})
+            -- Drop shadow
             New("ImageLabel",{Size=UDim2.new(1,16,1,16),
                 Position=UDim2.new(0,-8,0,4),
                 BackgroundTransparency=1,
@@ -1601,6 +1807,7 @@ function CrozoX:CreateWindow(cfg)
             return f
         end
 
+        -- Font system — موبايل: كل حاجة أكبر بـ ~20%
         local _mobTxt = (Device.IsMobile or Device.IsTablet)
         local FS = {
             Title   = _mobTxt and 18 or 15,
@@ -1609,6 +1816,7 @@ function CrozoX:CreateWindow(cfg)
             Section = _mobTxt and 13 or 11,
         }
 
+        -- Label helper
         local function EL(p,text,x,y,w,h,color,font,sz,zi,xa)
             local xAlign=xa
             if xAlign==nil then
@@ -1622,18 +1830,21 @@ function CrozoX:CreateWindow(cfg)
                 TextXAlignment=xAlign,ZIndex=zi or 14,Parent=p})
         end
 
+        -- Section
         function Tab:AddSection(name)
             local s=New("Frame",{Size=UDim2.new(1,0,0,30),
                 BackgroundTransparency=1,ZIndex=13,Parent=tabPage})
+            -- Section label
             New("TextLabel",{Size=UDim2.new(1,0,1,0),
                 Position=UDim2.new(0,2,0,0),
                 BackgroundTransparency=1,
                 Text=string.upper(name or ""),
                 TextColor3=T.Primary,
                 Font=Enum.Font.GothamBold,
-                TextSize=FS.Section+1,
+                TextSize=FS.Section+1,   -- 12px
                 TextXAlignment=Enum.TextXAlignment.Left,
                 ZIndex=14,Parent=s})
+            -- Gradient line
             local line=New("Frame",{Size=UDim2.new(1,0,0,1),
                 Position=UDim2.new(0,0,1,-1),
                 BackgroundColor3=T.Border,
@@ -1646,6 +1857,7 @@ function CrozoX:CreateWindow(cfg)
                 },Parent=line})
         end
 
+        -- ── Button ─────────────────────────────────────────
         function Tab:AddButton(bcfg)
             bcfg=bcfg or {}
             local name    =bcfg.Name or "Button"
@@ -1665,24 +1877,26 @@ function CrozoX:CreateWindow(cfg)
                 EL(f,desc,xOff,32,240,16,T.TextMuted,L.FontBody,12)
             end
 
+            -- ── زر تفعيل/إيقاف ────────────────────────────
             local btnActive = false
-            local txtOn  = "Run"
-            local txtOff = "Stop"
+            local txtOn  = L.IsRTL and "تفعيل" or "Run"
+            local txtOff = L.IsRTL and "إيقاف" or "Stop"
 
             local rb = New("TextButton", {
                 Size             = UDim2.new(0, 82, 0, 32),
                 Position         = UDim2.new(1, -94, 0.5, -16),
                 BackgroundColor3 = T.Primary,
                 Text             = txtOn,
-                TextColor3       = Color3.new(1, 1, 1),
+                TextColor3       = Color3.new(1, 1, 1),   -- أبيض 100%
                 Font             = Enum.Font.GothamBold,
                 TextSize         = FS.Button,
                 BorderSizePixel  = 0,
-                ZIndex           = 15,
+                ZIndex           = 15,   -- أعلى من أي ImageLabel داخله
                 Parent           = f,
             })
             Corner(rb, 8)
 
+            -- دالة تغيير الحالة
             local function SetBtnState(active)
                 btnActive = active
                 if active then
@@ -1729,6 +1943,7 @@ function CrozoX:CreateWindow(cfg)
             end)
         end
 
+        -- ── Toggle ─────────────────────────────────────────
         function Tab:AddToggle(tcfg)
             tcfg=tcfg or {}
             local name    =tcfg.Name or "Toggle"
@@ -1750,6 +1965,7 @@ function CrozoX:CreateWindow(cfg)
                 BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,
                 ZIndex=15,Parent=track})
             Corner(knob,11)
+            -- shadow on knob
             New("ImageLabel",{Size=UDim2.new(1,6,1,6),Position=UDim2.new(0,-3,0,-2),
                 BackgroundTransparency=1,Image="rbxassetid://6014261993",
                 ImageColor3=Color3.fromRGB(0,0,0),ImageTransparency=0.7,
@@ -1762,9 +1978,11 @@ function CrozoX:CreateWindow(cfg)
             local function SetVal(v,fire)
                 val=v;El.Value=v
                 Tween(track,{BackgroundColor3=v and T.Primary or T.Border},0.22)
+                -- Back easing على الـ knob يعطي bounce حيوي
                 Tween(knob,{Position=v
                     and UDim2.new(1,-25,0.5,-11)
                     or  UDim2.new(0,3,0.5,-11)},0.28,Enum.EasingStyle.Back)
+                -- Gradient عند التفعيل
                 local g=track:FindFirstChildWhichIsA("UIGradient")
                 if v and not g then
                     New("UIGradient",{Color=ColorSequence.new{
@@ -1782,6 +2000,7 @@ function CrozoX:CreateWindow(cfg)
             return El
         end
 
+        -- ── Slider ─────────────────────────────────────────
         function Tab:AddSlider(scfg)
             scfg=scfg or {}
             local name=scfg.Name or "Slider"
@@ -1805,7 +2024,8 @@ function CrozoX:CreateWindow(cfg)
             local fill=New("Frame",{Size=UDim2.new((val-min)/(max-min),0,1,0),
                 BackgroundColor3=T.Primary,BorderSizePixel=0,ZIndex=15,Parent=tbg})
             Corner(fill,3)
-            New("UIGradient",{Color=ColorSequence.new{
+            -- gradient on fill
+            local fillGrad=New("UIGradient",{Color=ColorSequence.new{
                 ColorSequenceKeypoint.new(0,T.PrimaryLight),
                 ColorSequenceKeypoint.new(1,T.Primary)},Parent=fill})
             local knob=New("Frame",{Size=UDim2.new(0,16,0,16),
@@ -1813,6 +2033,7 @@ function CrozoX:CreateWindow(cfg)
                 BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,
                 ZIndex=16,Parent=tbg})
             Corner(knob,8)
+            -- UIStroke Transparency 0.6 حول الـ knob
             New("UIStroke", {
                 Color        = T.Primary,
                 Thickness    = 2,
@@ -1859,6 +2080,7 @@ function CrozoX:CreateWindow(cfg)
             return El
         end
 
+        -- ── Dropdown ── يُزيح العناصر بدلاً من الفتح فوقها ──
         function Tab:AddDropdown(dcfg)
             dcfg=dcfg or {}
             local name=dcfg.Name or "Dropdown"
@@ -1867,19 +2089,22 @@ function CrozoX:CreateWindow(cfg)
             local cb  =dcfg.Callback or function() end
             local open=false
 
+            -- حاوية خارجية: تتمدد عند الفتح وتزيح ما تحتها
             local container=New("Frame",{
-                Size=UDim2.new(1,0,0,46),
+                Size=UDim2.new(1,0,0,46),   -- يبدأ بحجم الزر فقط
                 BackgroundTransparency=1,
                 BorderSizePixel=0,
                 ZIndex=13, Parent=tabPage,
             })
 
+            -- الزر الرئيسي (header)
             local f=New("Frame",{
                 Size=UDim2.new(1,0,0,46),
                 BackgroundColor3=T.SurfaceAlt,
                 BorderSizePixel=0, ZIndex=13, Parent=container,
             })
             Corner(f,12); Stroke(f,T.Border,1,0)
+            -- Shadow
             New("ImageLabel",{Size=UDim2.new(1,10,1,10),
                 Position=UDim2.new(0,-5,0,2),BackgroundTransparency=1,
                 Image="rbxassetid://6014261993",ImageColor3=Color3.fromRGB(0,0,0),
@@ -1889,10 +2114,11 @@ function CrozoX:CreateWindow(cfg)
             EL(f,name,12,13,185,20,T.Text,L.FontSemi,L.LabelSize)
             local sl=New("TextLabel",{Size=UDim2.new(0,110,0,20),
                 Position=UDim2.new(1,-145,0,13),BackgroundTransparency=1,
-                Text=tostring(sel or "-"),TextColor3=T.Primary,
+                Text=tostring(sel or "—"),TextColor3=T.Primary,
                 Font=L.FontBody,TextSize=L.LabelSize,
                 TextXAlignment=Enum.TextXAlignment.Right,ZIndex=14,Parent=f})
 
+            -- Arrow icon
             local arrowFrame=New("Frame",{Size=UDim2.new(0,22,0,22),
                 AnchorPoint=Vector2.new(1,0.5),
                 Position=UDim2.new(1,-8,0.5,0),
@@ -1902,9 +2128,10 @@ function CrozoX:CreateWindow(cfg)
             local aIco=Img(arrowFrame,Icons.chevrondown,12,
                 UDim2.new(0.5,-6,0.5,-6),T.TextDim,15)
 
+            -- قائمة الخيارات — داخل نفس الـ container مباشرة
             local dl=New("Frame",{
-                Size=UDim2.new(1,0,0,0),
-                Position=UDim2.new(0,0,0,50),
+                Size=UDim2.new(1,0,0,0),        -- يبدأ بصفر
+                Position=UDim2.new(0,0,0,50),   -- تحت الـ header مباشرة
                 BackgroundColor3=T.Surface,
                 BorderSizePixel=0,
                 ClipsDescendants=true,
@@ -1931,6 +2158,7 @@ function CrozoX:CreateWindow(cfg)
                         BackgroundColor3=isA and T.SurfaceHover or T.SurfaceAlt,
                         BorderSizePixel=0,ZIndex=15,Parent=dl})
                     Corner(row,7)
+                    -- Active indicator
                     if isA then
                         local ind=New("Frame",{Size=UDim2.new(0,3,0.6,0),
                             Position=UDim2.new(0,0,0.2,0),
@@ -1951,8 +2179,10 @@ function CrozoX:CreateWindow(cfg)
                     end)
                     rb.MouseButton1Click:Connect(function()
                         SetSel(o)
+                        -- إغلاق مع انيميشن
                         open=false
-                        Tween(container,{Size=UDim2.new(1,0,0,46)},
+                        local targetH=46
+                        Tween(container,{Size=UDim2.new(1,0,0,targetH)},
                             0.28,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
                         Tween(dl,{Size=UDim2.new(1,0,0,0)},
                             0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
@@ -1964,6 +2194,7 @@ function CrozoX:CreateWindow(cfg)
             end
             Refresh()
 
+            -- تحديث الـ layout عند تغيير canvas
             local dlLayout=dl:FindFirstChildWhichIsA("UIListLayout")
             if dlLayout then
                 dlLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -1980,16 +2211,23 @@ function CrozoX:CreateWindow(cfg)
                 open=not open
                 Refresh()
                 if open then
+                    -- حساب الارتفاع المناسب
                     local listH=math.min(#opts*ROW_H+8,200)
-                    local totalH=46+4+listH
+                    local totalH=46+4+listH   -- header + gap + list
+
+                    -- 1. container يتمدد → يزيح العناصر تحته تلقائياً (UIListLayout)
                     Tween(container,{Size=UDim2.new(1,0,0,totalH)},
                         0.3,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
+                    -- 2. القائمة تظهر من الأعلى للأسفل
                     Tween(dl,{Size=UDim2.new(1,0,0,listH)},
                         0.3,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
+                    -- 3. Header يضيء
                     Tween(f,{BackgroundColor3=T.SurfaceHover},0.2)
+                    -- 4. Arrow يدور
                     Tween(aIco,{Rotation=180},0.25,Enum.EasingStyle.Back)
                     Tween(arrowFrame,{BackgroundColor3=T.Border},0.2)
                 else
+                    -- إغلاق: عكس التمدد
                     Tween(container,{Size=UDim2.new(1,0,0,46)},
                         0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
                     Tween(dl,{Size=UDim2.new(1,0,0,0)},
@@ -2000,6 +2238,7 @@ function CrozoX:CreateWindow(cfg)
                 end
             end)
 
+            -- Hover على الـ header
             tog.MouseEnter:Connect(function()
                 if not open then
                     Tween(f,{BackgroundColor3=T.SurfaceHover},0.15) end
@@ -2015,6 +2254,7 @@ function CrozoX:CreateWindow(cfg)
             return El
         end
 
+        -- ── Keybind ────────────────────────────────────────
         function Tab:AddKeybind(kcfg)
             kcfg=kcfg or {}
             local name=kcfg.Name or "Keybind"
@@ -2030,7 +2270,7 @@ function CrozoX:CreateWindow(cfg)
                 BorderSizePixel=0,ZIndex=14,Parent=f})
             Corner(kb,8);Stroke(kb,T.BorderBright,1,0)
             kb.MouseButton1Click:Connect(function()
-                listen=true;kb.Text="...";kb.TextColor3=T.Warning
+                listen=true;kb.Text="···";kb.TextColor3=T.Warning
             end)
             kb.MouseEnter:Connect(function()
                 Tween(kb,{BackgroundColor3=T.SurfaceAlt},0.15) end)
@@ -2051,6 +2291,7 @@ function CrozoX:CreateWindow(cfg)
             return El
         end
 
+        -- ── Input ──────────────────────────────────────────
         function Tab:AddInput(icfg)
             icfg=icfg or {}
             local name=icfg.Name or "Input"
@@ -2079,15 +2320,17 @@ function CrozoX:CreateWindow(cfg)
             return El
         end
 
+        -- إذا كان هذا أول تاب، نختاره بعد ما يرجع الـ Tab
+        -- بكده نضمن إن العناصر اتضافت قبل الاختيار
         if isFirstTab then
             task.defer(function()
-                task.wait()
+                task.wait()   -- frame واحد يكفي
                 SelectTab()
             end)
         end
 
         return Tab
-    end
+    end -- CreateTab
 
     local WAPI={}
     setmetatable(WAPI,{
@@ -2129,7 +2372,9 @@ function CrozoX:Notify(cfg)
     local ntype=cfg.Type  or "Info"
     local T    =self._Theme
     local L    =self._Lang
-    local xAlign= Enum.TextXAlignment.Left
+    local xAlign=(L and L.IsRTL)
+        and Enum.TextXAlignment.Right
+        or  Enum.TextXAlignment.Left
     local typeMap={
         Success={color=T.Success,icon=Icons.checkcircle2,bg=T.NotifBgOk},
         Warning={color=T.Warning,icon=Icons.alerttriangle,bg=T.NotifBgWarn},
@@ -2140,14 +2385,15 @@ function CrozoX:Notify(cfg)
     local color=td.color
     self._NotifCount=self._NotifCount+1
 
+    -- ── Responsive sizes ──────────────────────────────────
     local _nCam   = workspace.CurrentCamera
     local _nVP    = _nCam and _nCam.ViewportSize or Vector2.new(800,600)
     local _nMin   = math.min(_nVP.X, _nVP.Y)
     local isMob   = (Device.IsMobile or Device.IsTablet) or (_nMin < 500)
-    local cardH   = isMob and 72  or 82
+    local cardH   = isMob and 72  or 82    -- أكبر شوية للنص
     local panelW  = isMob and 38  or 46
     local iconSz  = isMob and 18  or 22
-    local titleSz = 14
+    local titleSz = isMob and 14  or 14    -- نفس الكمبيوتر
     local bodySz  = isMob and 12  or (L and L.LabelSize or 13)
     local titleY  = isMob and 10  or 13
     local bodyY   = isMob and 30  or 36
@@ -2161,6 +2407,7 @@ function CrozoX:Notify(cfg)
     Corner(card, isMob and 9 or 13)
     Stroke(card,color,1,0.5)
 
+    -- Coloured left panel
     local panel=New("Frame",{Size=UDim2.new(0,panelW,1,0),
         BackgroundColor3=td.bg,BorderSizePixel=0,ZIndex=901,Parent=card})
     New("UICorner",{CornerRadius=UDim.new(0, isMob and 9 or 13),Parent=panel})
@@ -2171,21 +2418,22 @@ function CrozoX:Notify(cfg)
     iconImg.ImageTransparency=1
 
     local titleLbl=New("TextLabel",{
-        Size=UDim2.new(1,-(txtOffX+36),0,18),
+        Size=UDim2.new(1,-(txtOffX+36),0,18),  -- +36 بدل +20 → مساحة أكبر للـ X
         Position=UDim2.new(0,txtOffX,0,titleY),
         BackgroundTransparency=1,Text=title,TextColor3=T.Text,Font=FONTS.Bold,
         TextSize=titleSz,TextXAlignment=xAlign,TextWrapped=false,
         TextTruncate=Enum.TextTruncate.AtEnd,
         TextTransparency=1,ZIndex=902,Parent=card})
     local bodyLbl=New("TextLabel",{
-        Size=UDim2.new(1,-(txtOffX+36),0,bodyH),
+        Size=UDim2.new(1,-(txtOffX+36),0,bodyH),  -- نفس الـ gap
         Position=UDim2.new(0,txtOffX,0,bodyY),
         BackgroundTransparency=1,Text=text,TextColor3=T.TextDim,
         Font=L and L.FontBody or FONTS.Body,
         TextSize=bodySz,TextXAlignment=xAlign,TextWrapped=true,
         TextTransparency=1,ZIndex=902,Parent=card})
 
-    local xBtnSz = isMob and 20 or 24
+    -- Close X — صغير ومتناسب مع النص
+    local xBtnSz = isMob and 20 or 24   -- أصغر على موبايل
     local xBtn=New("TextButton",{Size=UDim2.new(0,xBtnSz,0,xBtnSz),
         Position=UDim2.new(1,-(xBtnSz+5),0,5),
         BackgroundColor3=Color3.fromRGB(40,40,40),
@@ -2197,6 +2445,7 @@ function CrozoX:Notify(cfg)
         UDim2.new(0.5,-xIcoSz/2,0.5,-xIcoSz/2),T.TextMuted,905)
     xIco.ImageTransparency=1
 
+    -- Progress bar
     local pbg=New("Frame",{Size=UDim2.new(1,-12,0,2),
         Position=UDim2.new(0,6,1,-5),BackgroundColor3=T.Border,
         BorderSizePixel=0,ZIndex=902,Parent=card})
@@ -2206,6 +2455,7 @@ function CrozoX:Notify(cfg)
     Corner(pfill,1)
     pfill.BackgroundTransparency=1
 
+    -- Slide من اليمين دايماً (موبايل وPC) — أنظف وأوضح
     local FI = 0.35
     card.Position = UDim2.new(1, 30, 0, 0)
     Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0,0,0,0)},FI,Enum.EasingStyle.Back)
@@ -2281,15 +2531,20 @@ local function Init()
         elseif type(cfg)=="table" then return lib:CreateWindow(cfg) end
     end})
 
+    -- SEQUENCE: Intro → LangSelect → window
     PlayIntro(sg, function()
         ShowLangSelect(sg, function(langName)
             lib:SetLanguage(langName)
             lib:Notify({
-                Title    = "Welcome to CrozoX",
-                Text     = "Library loaded successfully",
+                Title    = langName=="Arabic" and "مرحباً بك في CrozoX" or "Welcome to CrozoX",
+                Text     = langName=="Arabic"
+                    and "تم تحميل المكتبة بنجاح ✓"
+                    or  "Library loaded successfully ✓",
                 Duration = 5,
                 Type     = "Success",
             })
+            -- يشغّل الـ callback المسجّل من السكربت الخارجي
+            -- API._pendingWindow هو المكان الصح لأن Hub يكتب على API
             if API._pendingWindow then
                 local fn = API._pendingWindow
                 API._pendingWindow = nil
