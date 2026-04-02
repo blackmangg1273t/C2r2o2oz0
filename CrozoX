@@ -6,15 +6,13 @@
   ╚██████╗██║  ██║╚██████╔╝   ██║  ╚██████╔╝██╔╝ ██╗
    ╚═════╝╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═════╝ ╚═╝  ╚═╝
 
-    CrozoX v7.0.0 — Modern Professional UI Library
-    ✦ Gradient background (black→primary)
-    ✦ Neon pulsing glow border
-    ✦ User profile in sidebar
-    ✦ Search bar for tabs
-    ✦ Enhanced Run button (glow+scale)
-    ✦ Animated tab indicator (grow/shrink)
-    ✦ Element depth shadows
-    ✦ Micro-animations throughout
+    CrozoX v7.1.0 — Modern Professional UI Library
+    ✦ Full icon set (500+ icons)
+    ✦ Modern minimal intro animation
+    ✦ Fixed mobile resize hold bug
+    ✦ Fixed language select fade-out sync
+    ✦ Fixed mobile drag smoothness
+    ✦ Redesigned language select UI
     Author: Crozo | github.com/Crozo
     License: MIT
 --]]
@@ -33,29 +31,22 @@ local LocalPlayer = Players.LocalPlayer
 local Mouse       = LocalPlayer:GetMouse()
 
 -- ============================================================
---  FONT CONFIG — يمكنك تغيير الخط هنا
+--  FONT CONFIG
 -- ============================================================
 local FONTS = {
-    -- أنت تختار من هنا:
-    -- Enum.Font.GothamBlack      ← أثقل / أوضح
-    -- Enum.Font.Oswald           ← عصري للعناوين
-    -- Enum.Font.FredokaOne       ← مدوّر حيوي
-    -- Enum.Font.Bangers           ← بولد جداً
-    -- Enum.Font.Ubuntu            ← واضح للعربي والإنجليزي
-
-    Title   = Enum.Font.GothamBlack,    -- عناوين التابات والنوافذ
-    Bold    = Enum.Font.GothamBold,     -- نصوص عناصر مهمة
-    Semi    = Enum.Font.GothamSemibold, -- تسميات العناصر
-    Body    = Enum.Font.Gotham,         -- نصوص عادية
-    -- للعربي: نفس الخط — Roblox يدعم العربي بـ Gotham
+    Title   = Enum.Font.GothamBlack,
+    Bold    = Enum.Font.GothamBold,
+    Semi    = Enum.Font.GothamSemibold,
+    Body    = Enum.Font.Gotham,
     ArabicTitle = Enum.Font.GothamBlack,
-    ArabicBody  = Enum.Font.GothamBold,  -- أثقل قليلاً للوضوح
+    ArabicBody  = Enum.Font.GothamBold,
 }
 
 -- ============================================================
---  ICON ASSETS
+--  FULL ICON ASSETS (500+ icons)
 -- ============================================================
 local Icons = {
+    -- Original CrozoX icons kept for compatibility
     home          = "rbxassetid://10723407389",
     settings      = "rbxassetid://10734950309",
     settings2     = "rbxassetid://10734950020",
@@ -132,6 +123,749 @@ local Icons = {
     minimize_icon = "rbxassetid://10734895698",
     chevrondown   = "rbxassetid://10709790948",
     chevronsdown  = "rbxassetid://10709796864",
+    -- Full icon set from document 2
+    accessibility = "rbxassetid://10709751939",
+    airvent       = "rbxassetid://10709752131",
+    airplay       = "rbxassetid://10709752254",
+    alarmcheck    = "rbxassetid://10709752405",
+    alarmclock    = "rbxassetid://10709752630",
+    alarmclockoff = "rbxassetid://10709752508",
+    alarmminus    = "rbxassetid://10709752732",
+    alarmplus     = "rbxassetid://10709752825",
+    album         = "rbxassetid://10709752906",
+    alertoctagon  = "rbxassetid://10709753064",
+    aligncenter   = "rbxassetid://10709753570",
+    aligncenterhorizontal = "rbxassetid://10709753272",
+    aligncentervertical   = "rbxassetid://10709753421",
+    alignendhorizontal    = "rbxassetid://10709753692",
+    alignendvertical      = "rbxassetid://10709753808",
+    alignhorizontaldistributecenter  = "rbxassetid://10747779791",
+    alignhorizontaldistributeend     = "rbxassetid://10747784534",
+    alignhorizontaldistributestart   = "rbxassetid://10709754118",
+    alignhorizontaljustifycenter     = "rbxassetid://10709754204",
+    alignhorizontaljustifyend        = "rbxassetid://10709754317",
+    alignhorizontaljustifystart      = "rbxassetid://10709754436",
+    alignhorizontalspacearound       = "rbxassetid://10709754590",
+    alignhorizontalspacebetween      = "rbxassetid://10709754749",
+    alignjustify  = "rbxassetid://10709759610",
+    alignleft     = "rbxassetid://10709759764",
+    alignright    = "rbxassetid://10709759895",
+    alignstarthorizontal = "rbxassetid://10709760051",
+    alignstartvertical   = "rbxassetid://10709760244",
+    alignverticaldistributecenter  = "rbxassetid://10709760351",
+    alignverticaldistributeend     = "rbxassetid://10709760434",
+    alignverticaldistributestart   = "rbxassetid://10709760612",
+    alignverticaljustifycenter     = "rbxassetid://10709760814",
+    alignverticaljustifyend        = "rbxassetid://10709761003",
+    alignverticaljustifystart      = "rbxassetid://10709761176",
+    alignverticalspacearound       = "rbxassetid://10709761324",
+    alignverticalspacebetween      = "rbxassetid://10709761434",
+    anchor        = "rbxassetid://10709761530",
+    angry         = "rbxassetid://10709761629",
+    annoyed       = "rbxassetid://10709761722",
+    aperture      = "rbxassetid://10709761813",
+    apple         = "rbxassetid://10709761889",
+    archive       = "rbxassetid://10709762233",
+    archiverestore= "rbxassetid://10709762058",
+    armchair      = "rbxassetid://10709762327",
+    arrowbigdown  = "rbxassetid://10747796644",
+    arrowbigleft  = "rbxassetid://10709762574",
+    arrowbigright = "rbxassetid://10709762727",
+    arrowbigup    = "rbxassetid://10709762879",
+    arrowdown     = "rbxassetid://10709767827",
+    arrowdowncircle   = "rbxassetid://10709763034",
+    arrowdownleft     = "rbxassetid://10709767656",
+    arrowdownright    = "rbxassetid://10709767750",
+    arrowleft         = "rbxassetid://10709768114",
+    arrowleftcircle   = "rbxassetid://10709767936",
+    arrowleftright    = "rbxassetid://10709768019",
+    arrowright        = "rbxassetid://10709768347",
+    arrowrightcircle  = "rbxassetid://10709768226",
+    arrowup           = "rbxassetid://10709768939",
+    arrowupcircle     = "rbxassetid://10709768432",
+    arrowupdown       = "rbxassetid://10709768538",
+    arrowupleft       = "rbxassetid://10709768661",
+    arrowupright      = "rbxassetid://10709768787",
+    asterisk          = "rbxassetid://10709769095",
+    atsign            = "rbxassetid://10709769286",
+    award             = "rbxassetid://10709769406",
+    axe               = "rbxassetid://10709769508",
+    axis3d            = "rbxassetid://10709769598",
+    baby              = "rbxassetid://10709769732",
+    backpack          = "rbxassetid://10709769841",
+    baggageclaim      = "rbxassetid://10709769935",
+    banana            = "rbxassetid://10709770005",
+    banknote          = "rbxassetid://10709770178",
+    barchart          = "rbxassetid://10709773755",
+    barchart2         = "rbxassetid://10709770317",
+    barchart3         = "rbxassetid://10709770431",
+    barchart4         = "rbxassetid://10709770560",
+    barcharthorizontal= "rbxassetid://10709773669",
+    barcode           = "rbxassetid://10747360675",
+    baseline          = "rbxassetid://10709773863",
+    bath              = "rbxassetid://10709773963",
+    battery           = "rbxassetid://10709774640",
+    batterycharging   = "rbxassetid://10709774068",
+    batteryfull       = "rbxassetid://10709774206",
+    batterylow        = "rbxassetid://10709774370",
+    batterymedium     = "rbxassetid://10709774513",
+    beaker            = "rbxassetid://10709774756",
+    bed               = "rbxassetid://10709775036",
+    beddouble         = "rbxassetid://10709774864",
+    bedsingle         = "rbxassetid://10709774968",
+    beer              = "rbxassetid://10709775167",
+    bellminus         = "rbxassetid://10709775241",
+    belloff           = "rbxassetid://10709775320",
+    bellplus          = "rbxassetid://10709775448",
+    bike              = "rbxassetid://10709775894",
+    binary            = "rbxassetid://10709776050",
+    bitcoin           = "rbxassetid://10709776126",
+    bluetooth         = "rbxassetid://10709776655",
+    bluetoothconnected= "rbxassetid://10709776240",
+    bluetoothoff      = "rbxassetid://10709776344",
+    bluetoothsearching= "rbxassetid://10709776501",
+    bold              = "rbxassetid://10747813908",
+    bomb              = "rbxassetid://10709781460",
+    bone              = "rbxassetid://10709781605",
+    book              = "rbxassetid://10709781824",
+    bookopen          = "rbxassetid://10709781717",
+    bookmarkminus     = "rbxassetid://10709781919",
+    bookmarkplus      = "rbxassetid://10709782044",
+    bot               = "rbxassetid://10709782230",
+    boxselect         = "rbxassetid://10709782342",
+    boxes             = "rbxassetid://10709782582",
+    briefcase         = "rbxassetid://10709782662",
+    brush             = "rbxassetid://10709782758",
+    bug               = "rbxassetid://10709782845",
+    building          = "rbxassetid://10709783051",
+    building2         = "rbxassetid://10709782939",
+    bus               = "rbxassetid://10709783137",
+    cake              = "rbxassetid://10709783217",
+    calculator        = "rbxassetid://10709783311",
+    calendar          = "rbxassetid://10709789505",
+    calendarcheck     = "rbxassetid://10709783474",
+    calendarcheck2    = "rbxassetid://10709783392",
+    calendarclock     = "rbxassetid://10709783577",
+    calendardays      = "rbxassetid://10709783673",
+    calendarheart     = "rbxassetid://10709783835",
+    calendarminus     = "rbxassetid://10709783959",
+    calendaroff       = "rbxassetid://10709788784",
+    calendarplus      = "rbxassetid://10709788937",
+    calendarrange     = "rbxassetid://10709789053",
+    calendarsearch    = "rbxassetid://10709789200",
+    calendarx         = "rbxassetid://10709789407",
+    calendarx2        = "rbxassetid://10709789329",
+    camera            = "rbxassetid://10709789686",
+    cameraoff         = "rbxassetid://10747822677",
+    car               = "rbxassetid://10709789810",
+    carrot            = "rbxassetid://10709789960",
+    cast              = "rbxassetid://10709790097",
+    charge            = "rbxassetid://10709790202",
+    check             = "rbxassetid://10709790644",
+    checksquare       = "rbxassetid://10709790537",
+    chefhat           = "rbxassetid://10709790757",
+    cherry            = "rbxassetid://10709790875",
+    chevronfirst      = "rbxassetid://10709791015",
+    chevronlast       = "rbxassetid://10709791130",
+    chevronleft       = "rbxassetid://10709791281",
+    chevronright      = "rbxassetid://10709791437",
+    chevronup         = "rbxassetid://10709791523",
+    chevronsdownup    = "rbxassetid://10709791632",
+    chevronsleft      = "rbxassetid://10709797151",
+    chevronsleftright = "rbxassetid://10709797006",
+    chevronsright     = "rbxassetid://10709797382",
+    chevronsrightleft = "rbxassetid://10709797274",
+    chevronsup        = "rbxassetid://10709797622",
+    chevronsupdown    = "rbxassetid://10709797508",
+    chrome            = "rbxassetid://10709797725",
+    circle            = "rbxassetid://10709798174",
+    circledot         = "rbxassetid://10709797837",
+    circleellipsis    = "rbxassetid://10709797985",
+    circleslashed     = "rbxassetid://10709798100",
+    citrus            = "rbxassetid://10709798276",
+    clapperboard      = "rbxassetid://10709798350",
+    clipboard         = "rbxassetid://10709799288",
+    clipboardcheck    = "rbxassetid://10709798443",
+    clipboardcopy     = "rbxassetid://10709798574",
+    clipboardedit     = "rbxassetid://10709798682",
+    clipboardlist     = "rbxassetid://10709798792",
+    clipboardsignature= "rbxassetid://10709798890",
+    clipboardtype     = "rbxassetid://10709798999",
+    clipboardx        = "rbxassetid://10709799124",
+    clock             = "rbxassetid://10709805144",
+    clock1            = "rbxassetid://10709799535",
+    clock10           = "rbxassetid://10709799718",
+    clock11           = "rbxassetid://10709799818",
+    clock12           = "rbxassetid://10709799962",
+    clock2            = "rbxassetid://10709803876",
+    clock3            = "rbxassetid://10709803989",
+    clock4            = "rbxassetid://10709804164",
+    clock5            = "rbxassetid://10709804291",
+    clock6            = "rbxassetid://10709804435",
+    clock7            = "rbxassetid://10709804599",
+    clock8            = "rbxassetid://10709804784",
+    clock9            = "rbxassetid://10709804996",
+    cloud             = "rbxassetid://10709806740",
+    cloudcog          = "rbxassetid://10709805262",
+    clouddrizzle      = "rbxassetid://10709805371",
+    cloudfog          = "rbxassetid://10709805477",
+    cloudhail         = "rbxassetid://10709805596",
+    cloudlightning    = "rbxassetid://10709805727",
+    cloudmoon         = "rbxassetid://10709805942",
+    cloudmoonrain     = "rbxassetid://10709805838",
+    cloudoff          = "rbxassetid://10709806060",
+    cloudrain         = "rbxassetid://10709806277",
+    cloudrainwind     = "rbxassetid://10709806166",
+    cloudsnow         = "rbxassetid://10709806374",
+    cloudsun          = "rbxassetid://10709806631",
+    cloudsunrain      = "rbxassetid://10709806475",
+    cloudy            = "rbxassetid://10709806859",
+    clover            = "rbxassetid://10709806995",
+    codepen           = "rbxassetid://10709810534",
+    codesandbox       = "rbxassetid://10709810676",
+    coffee            = "rbxassetid://10709810814",
+    cog               = "rbxassetid://10709810948",
+    coins             = "rbxassetid://10709811110",
+    columns           = "rbxassetid://10709811261",
+    command           = "rbxassetid://10709811365",
+    component         = "rbxassetid://10709811595",
+    conciergebell     = "rbxassetid://10709811706",
+    connection        = "rbxassetid://10747361219",
+    contact           = "rbxassetid://10709811834",
+    contrast          = "rbxassetid://10709811939",
+    cookie            = "rbxassetid://10709812067",
+    copyleft          = "rbxassetid://10709812251",
+    copyright         = "rbxassetid://10709812311",
+    cornerdownleft    = "rbxassetid://10709812396",
+    cornerdownright   = "rbxassetid://10709812485",
+    cornerleftdown    = "rbxassetid://10709812632",
+    cornerleftup      = "rbxassetid://10709812784",
+    cornerrightdown   = "rbxassetid://10709812939",
+    cornerrightup     = "rbxassetid://10709813094",
+    cornerupleft      = "rbxassetid://10709813185",
+    cornerupright     = "rbxassetid://10709813281",
+    croissant         = "rbxassetid://10709818125",
+    crop              = "rbxassetid://10709818245",
+    cross             = "rbxassetid://10709818399",
+    crosshair         = "rbxassetid://10709818534",
+    cupsoda           = "rbxassetid://10709818763",
+    curlybraces       = "rbxassetid://10709818847",
+    currency          = "rbxassetid://10709818931",
+    delete            = "rbxassetid://10709819059",
+    diamond           = "rbxassetid://10709819149",
+    dice1             = "rbxassetid://10709819266",
+    dice2             = "rbxassetid://10709819361",
+    dice3             = "rbxassetid://10709819508",
+    dice4             = "rbxassetid://10709819670",
+    dice5             = "rbxassetid://10709819801",
+    dice6             = "rbxassetid://10709819896",
+    dices             = "rbxassetid://10723343321",
+    diff              = "rbxassetid://10723343416",
+    disc              = "rbxassetid://10723343537",
+    divide            = "rbxassetid://10723343805",
+    dividecircle      = "rbxassetid://10723343636",
+    dividesquare      = "rbxassetid://10723343737",
+    dollarsign        = "rbxassetid://10723343958",
+    downloadcloud     = "rbxassetid://10723344088",
+    droplet           = "rbxassetid://10723344432",
+    droplets          = "rbxassetid://10734883356",
+    drumstick         = "rbxassetid://10723344737",
+    edit2             = "rbxassetid://10723344885",
+    edit3             = "rbxassetid://10723345088",
+    egg               = "rbxassetid://10723345518",
+    eggfried          = "rbxassetid://10723345347",
+    electricity       = "rbxassetid://10723345749",
+    electricityoff    = "rbxassetid://10723345643",
+    equal             = "rbxassetid://10723345990",
+    equalnot          = "rbxassetid://10723345866",
+    eraser            = "rbxassetid://10723346158",
+    euro              = "rbxassetid://10723346372",
+    expand            = "rbxassetid://10723346553",
+    externallink      = "rbxassetid://10723346684",
+    factory           = "rbxassetid://10723347051",
+    fan               = "rbxassetid://10723354359",
+    fastforward       = "rbxassetid://10723354521",
+    feather           = "rbxassetid://10723354671",
+    figma             = "rbxassetid://10723354801",
+    file              = "rbxassetid://10723374641",
+    filearchive       = "rbxassetid://10723354921",
+    fileaudio         = "rbxassetid://10723355148",
+    fileaudio2        = "rbxassetid://10723355026",
+    fileaxis3d        = "rbxassetid://10723355272",
+    filebadge         = "rbxassetid://10723355622",
+    filebadge2        = "rbxassetid://10723355451",
+    filebarchart      = "rbxassetid://10723355887",
+    filebarchart2     = "rbxassetid://10723355746",
+    filebox           = "rbxassetid://10723355989",
+    filecheck         = "rbxassetid://10723356210",
+    filecheck2        = "rbxassetid://10723356100",
+    fileclock         = "rbxassetid://10723356329",
+    filecode          = "rbxassetid://10723356507",
+    filecog           = "rbxassetid://10723356830",
+    filecog2          = "rbxassetid://10723356676",
+    filediff          = "rbxassetid://10723357039",
+    filedigit         = "rbxassetid://10723357151",
+    filedown          = "rbxassetid://10723357322",
+    fileedit          = "rbxassetid://10723357495",
+    fileheart         = "rbxassetid://10723357637",
+    fileimage         = "rbxassetid://10723357790",
+    fileinput         = "rbxassetid://10723357933",
+    filejson          = "rbxassetid://10723364435",
+    filejson2         = "rbxassetid://10723364361",
+    filekey           = "rbxassetid://10723364605",
+    filekey2          = "rbxassetid://10723364515",
+    filelinechart     = "rbxassetid://10723364725",
+    filelock          = "rbxassetid://10723364957",
+    filelock2         = "rbxassetid://10723364861",
+    fileminus         = "rbxassetid://10723365254",
+    fileminus2        = "rbxassetid://10723365086",
+    fileoutput        = "rbxassetid://10723365457",
+    filepiechart      = "rbxassetid://10723365598",
+    fileplus          = "rbxassetid://10723365877",
+    fileplus2         = "rbxassetid://10723365766",
+    filequestion      = "rbxassetid://10723365987",
+    filescan          = "rbxassetid://10723366167",
+    filesearch        = "rbxassetid://10723366550",
+    filesearch2       = "rbxassetid://10723366340",
+    filesignature     = "rbxassetid://10723366741",
+    filespreadsheet   = "rbxassetid://10723366962",
+    filesymlink       = "rbxassetid://10723367098",
+    fileterminal      = "rbxassetid://10723367244",
+    filetext          = "rbxassetid://10723367380",
+    filetype          = "rbxassetid://10723367606",
+    filetype2         = "rbxassetid://10723367509",
+    fileup            = "rbxassetid://10723367734",
+    filevideo         = "rbxassetid://10723373884",
+    filevideo2        = "rbxassetid://10723367834",
+    filevolume        = "rbxassetid://10723374172",
+    filevolume2       = "rbxassetid://10723374030",
+    filewarning       = "rbxassetid://10723374276",
+    filex             = "rbxassetid://10723374544",
+    filex2            = "rbxassetid://10723374378",
+    files             = "rbxassetid://10723374759",
+    film              = "rbxassetid://10723374981",
+    filter            = "rbxassetid://10723375128",
+    fingerprint       = "rbxassetid://10723375250",
+    flagoff           = "rbxassetid://10723375443",
+    flagtriangleleft  = "rbxassetid://10723375608",
+    flagtriangleright = "rbxassetid://10723375727",
+    flashlight        = "rbxassetid://10723376471",
+    flashlightoff     = "rbxassetid://10723376365",
+    flaskconical      = "rbxassetid://10734883986",
+    flaskround        = "rbxassetid://10723376614",
+    fliphorizontal    = "rbxassetid://10723376884",
+    fliphorizontal2   = "rbxassetid://10723376745",
+    flipvertical      = "rbxassetid://10723377138",
+    flipvertical2     = "rbxassetid://10723377026",
+    flower            = "rbxassetid://10747830374",
+    flower2           = "rbxassetid://10723377305",
+    focus             = "rbxassetid://10723377537",
+    folder            = "rbxassetid://10723387563",
+    folderarchive     = "rbxassetid://10723384478",
+    foldercheck       = "rbxassetid://10723384605",
+    folderclock       = "rbxassetid://10723384731",
+    folderclosed      = "rbxassetid://10723384893",
+    foldercog         = "rbxassetid://10723385213",
+    foldercog2        = "rbxassetid://10723385036",
+    folderdown        = "rbxassetid://10723385338",
+    folderedit        = "rbxassetid://10723385445",
+    folderheart       = "rbxassetid://10723385545",
+    folderinput       = "rbxassetid://10723385721",
+    folderkey         = "rbxassetid://10723385848",
+    folderlock        = "rbxassetid://10723386005",
+    folderminus       = "rbxassetid://10723386127",
+    folderopen        = "rbxassetid://10723386277",
+    folderoutput      = "rbxassetid://10723386386",
+    folderplus        = "rbxassetid://10723386531",
+    foldersearch      = "rbxassetid://10723386787",
+    foldersearch2     = "rbxassetid://10723386674",
+    foldersymlink     = "rbxassetid://10723386930",
+    foldertree        = "rbxassetid://10723387085",
+    folderup          = "rbxassetid://10723387265",
+    folderx           = "rbxassetid://10723387448",
+    folders           = "rbxassetid://10723387721",
+    forminput         = "rbxassetid://10723387841",
+    forward           = "rbxassetid://10723388016",
+    frame             = "rbxassetid://10723394389",
+    framer            = "rbxassetid://10723394565",
+    frown             = "rbxassetid://10723394681",
+    fuel              = "rbxassetid://10723394846",
+    functionsquare    = "rbxassetid://10723395041",
+    gavel             = "rbxassetid://10723395896",
+    ghost             = "rbxassetid://10723396107",
+    gift              = "rbxassetid://10723396402",
+    giftcard          = "rbxassetid://10723396225",
+    gitbranch         = "rbxassetid://10723396676",
+    gitbranchplus     = "rbxassetid://10723396542",
+    gitcommit         = "rbxassetid://10723396812",
+    gitcompare        = "rbxassetid://10723396954",
+    gitfork           = "rbxassetid://10723397049",
+    gitmerge          = "rbxassetid://10723397165",
+    gitpullrequest    = "rbxassetid://10723397431",
+    gitpullrequestclosed = "rbxassetid://10723397268",
+    gitpullrequestdraft  = "rbxassetid://10734884302",
+    glass             = "rbxassetid://10723397788",
+    glass2            = "rbxassetid://10723397529",
+    glasswater        = "rbxassetid://10723397678",
+    glasses           = "rbxassetid://10723397895",
+    grab              = "rbxassetid://10723404472",
+    graduationcap     = "rbxassetid://10723404691",
+    grape             = "rbxassetid://10723404822",
+    griphorizontal    = "rbxassetid://10723405089",
+    gripvertical      = "rbxassetid://10723405236",
+    hammer            = "rbxassetid://10723405360",
+    hand              = "rbxassetid://10723405649",
+    handmetal         = "rbxassetid://10723405508",
+    harddrive         = "rbxassetid://10723405749",
+    hardhat           = "rbxassetid://10723405859",
+    hash              = "rbxassetid://10723405975",
+    haze              = "rbxassetid://10723406078",
+    headphones        = "rbxassetid://10723406165",
+    heartcrack        = "rbxassetid://10723406299",
+    hearthandshake    = "rbxassetid://10723406480",
+    heartoff          = "rbxassetid://10723406662",
+    heartpulse        = "rbxassetid://10723406795",
+    helpcircle        = "rbxassetid://10723406988",
+    hexagon           = "rbxassetid://10723407092",
+    highlighter       = "rbxassetid://10723407192",
+    history           = "rbxassetid://10723407335",
+    hourglass         = "rbxassetid://10723407498",
+    icecream          = "rbxassetid://10723414308",
+    image             = "rbxassetid://10723415040",
+    imageminus        = "rbxassetid://10723414487",
+    imageoff          = "rbxassetid://10723414677",
+    imageplus         = "rbxassetid://10723414827",
+    import_icon       = "rbxassetid://10723415205",
+    inbox             = "rbxassetid://10723415335",
+    indent            = "rbxassetid://10723415494",
+    indianrupee       = "rbxassetid://10723415642",
+    infinity          = "rbxassetid://10723415766",
+    inspect           = "rbxassetid://10723416057",
+    italic            = "rbxassetid://10723416195",
+    japaneseyen       = "rbxassetid://10723416363",
+    joystick          = "rbxassetid://10723416527",
+    keyboard          = "rbxassetid://10723416765",
+    lamp              = "rbxassetid://10723417513",
+    lampceiling       = "rbxassetid://10723416922",
+    lampdesk          = "rbxassetid://10723417016",
+    lampfloor         = "rbxassetid://10723417131",
+    lampwalldown      = "rbxassetid://10723417240",
+    lampwallup        = "rbxassetid://10723417356",
+    landmark          = "rbxassetid://10723417608",
+    languages         = "rbxassetid://10723417703",
+    laptop            = "rbxassetid://10723423881",
+    laptop2           = "rbxassetid://10723417797",
+    lasso             = "rbxassetid://10723424235",
+    lassoselect       = "rbxassetid://10723424058",
+    laugh             = "rbxassetid://10723424372",
+    leaf              = "rbxassetid://10723425539",
+    library           = "rbxassetid://10723425615",
+    lifebuoy          = "rbxassetid://10723425685",
+    lightbulb         = "rbxassetid://10723425852",
+    lightbulboff      = "rbxassetid://10723425762",
+    linechart         = "rbxassetid://10723426393",
+    link              = "rbxassetid://10723426722",
+    link2             = "rbxassetid://10723426595",
+    link2off          = "rbxassetid://10723426513",
+    list              = "rbxassetid://10723433811",
+    listchecks        = "rbxassetid://10734884548",
+    listend           = "rbxassetid://10723426886",
+    listminus         = "rbxassetid://10723426986",
+    listmusic         = "rbxassetid://10723427081",
+    listordered       = "rbxassetid://10723427199",
+    listplus          = "rbxassetid://10723427334",
+    liststart         = "rbxassetid://10723427494",
+    listvideo         = "rbxassetid://10723427619",
+    listx             = "rbxassetid://10723433655",
+    loader            = "rbxassetid://10723434070",
+    loader2           = "rbxassetid://10723433935",
+    locate            = "rbxassetid://10723434557",
+    locatefixed       = "rbxassetid://10723434236",
+    locateoff         = "rbxassetid://10723434379",
+    login             = "rbxassetid://10723434830",
+    logout            = "rbxassetid://10723434906",
+    luggage           = "rbxassetid://10723434993",
+    magnet            = "rbxassetid://10723435069",
+    mail              = "rbxassetid://10734885430",
+    mailcheck         = "rbxassetid://10723435182",
+    mailminus         = "rbxassetid://10723435261",
+    mailopen          = "rbxassetid://10723435342",
+    mailplus          = "rbxassetid://10723435443",
+    mailquestion      = "rbxassetid://10723435515",
+    mailsearch        = "rbxassetid://10734884739",
+    mailwarning       = "rbxassetid://10734885015",
+    mailx             = "rbxassetid://10734885247",
+    mails             = "rbxassetid://10734885614",
+    mappinoff         = "rbxassetid://10734885803",
+    maximize2         = "rbxassetid://10734886496",
+    medal             = "rbxassetid://10734887072",
+    megaphone         = "rbxassetid://10734887454",
+    megaphoneoff      = "rbxassetid://10734887311",
+    meh               = "rbxassetid://10734887603",
+    menu              = "rbxassetid://10734887784",
+    messagecircle     = "rbxassetid://10734888000",
+    messagesquare     = "rbxassetid://10734888228",
+    mic               = "rbxassetid://10734888864",
+    mic2              = "rbxassetid://10734888430",
+    micoff            = "rbxassetid://10734888646",
+    microscope        = "rbxassetid://10734889106",
+    microwave         = "rbxassetid://10734895076",
+    milestone         = "rbxassetid://10734895310",
+    minimize          = "rbxassetid://10734895698",
+    minimize2         = "rbxassetid://10734895530",
+    minuscircle       = "rbxassetid://10734895856",
+    minussquare       = "rbxassetid://10734896029",
+    monitor           = "rbxassetid://10734896881",
+    monitoroff        = "rbxassetid://10734896360",
+    monitorspeaker    = "rbxassetid://10734896512",
+    morehorizontal    = "rbxassetid://10734897250",
+    morevertical      = "rbxassetid://10734897387",
+    mountain          = "rbxassetid://10734897956",
+    mountainsnow      = "rbxassetid://10734897665",
+    mouse             = "rbxassetid://10734898592",
+    mousepointer      = "rbxassetid://10734898476",
+    mousepointer2     = "rbxassetid://10734898194",
+    mousepointerclick = "rbxassetid://10734898355",
+    move3d            = "rbxassetid://10734898756",
+    movediagonal      = "rbxassetid://10734899164",
+    movediagonal2     = "rbxassetid://10734898934",
+    movehorizontal    = "rbxassetid://10734899414",
+    movevertical      = "rbxassetid://10734899821",
+    music             = "rbxassetid://10734905958",
+    music2            = "rbxassetid://10734900215",
+    music3            = "rbxassetid://10734905665",
+    music4            = "rbxassetid://10734905823",
+    navigation        = "rbxassetid://10734906744",
+    navigation2       = "rbxassetid://10734906332",
+    navigation2off    = "rbxassetid://10734906144",
+    navigationoff     = "rbxassetid://10734906580",
+    network           = "rbxassetid://10734906975",
+    newspaper         = "rbxassetid://10734907168",
+    octagon           = "rbxassetid://10734907361",
+    option            = "rbxassetid://10734907649",
+    outdent           = "rbxassetid://10734907933",
+    package2          = "rbxassetid://10734908151",
+    packagecheck      = "rbxassetid://10734908384",
+    packageminus      = "rbxassetid://10734908626",
+    packageopen       = "rbxassetid://10734908793",
+    packageplus       = "rbxassetid://10734909016",
+    packagesearch     = "rbxassetid://10734909196",
+    packagex          = "rbxassetid://10734909375",
+    paintbucket       = "rbxassetid://10734909847",
+    paintbrush        = "rbxassetid://10734910187",
+    paintbrush2       = "rbxassetid://10734910030",
+    palette           = "rbxassetid://10734910430",
+    palmtree          = "rbxassetid://10734910680",
+    paperclip         = "rbxassetid://10734910927",
+    partypopper       = "rbxassetid://10734918735",
+    pause             = "rbxassetid://10734919336",
+    pausecircle       = "rbxassetid://10735024209",
+    pauseoctagon      = "rbxassetid://10734919143",
+    pentool           = "rbxassetid://10734919503",
+    pencil            = "rbxassetid://10734919691",
+    percent           = "rbxassetid://10734919919",
+    personstanding    = "rbxassetid://10734920149",
+    phone             = "rbxassetid://10734921524",
+    phonecall         = "rbxassetid://10734920305",
+    phoneforwarded    = "rbxassetid://10734920508",
+    phoneincoming     = "rbxassetid://10734920694",
+    phonemissed       = "rbxassetid://10734920845",
+    phoneoff          = "rbxassetid://10734921077",
+    phoneoutgoing     = "rbxassetid://10734921288",
+    piechart          = "rbxassetid://10734921727",
+    piggybank         = "rbxassetid://10734921935",
+    pin               = "rbxassetid://10734922324",
+    pinoff            = "rbxassetid://10734922180",
+    pipette           = "rbxassetid://10734922497",
+    pizza             = "rbxassetid://10734922774",
+    plane             = "rbxassetid://10734922971",
+    play              = "rbxassetid://10734923549",
+    playcircle        = "rbxassetid://10734923214",
+    pluscircle        = "rbxassetid://10734923868",
+    plussquare        = "rbxassetid://10734924219",
+    podcast           = "rbxassetid://10734929553",
+    pointer           = "rbxassetid://10734929723",
+    poundsterling     = "rbxassetid://10734929981",
+    poweroff          = "rbxassetid://10734930257",
+    printer           = "rbxassetid://10734930632",
+    puzzle            = "rbxassetid://10734930886",
+    quote             = "rbxassetid://10734931234",
+    radio             = "rbxassetid://10734931596",
+    radioreceiver     = "rbxassetid://10734931402",
+    rectanglehorizontal = "rbxassetid://10734931777",
+    rectanglevertical   = "rbxassetid://10734932081",
+    recycle           = "rbxassetid://10734932295",
+    redo              = "rbxassetid://10734932822",
+    redo2             = "rbxassetid://10734932586",
+    refreshccw        = "rbxassetid://10734933056",
+    refreshcw         = "rbxassetid://10734933222",
+    refrigerator      = "rbxassetid://10734933465",
+    regex             = "rbxassetid://10734933655",
+    repeat_icon       = "rbxassetid://10734933966",
+    repeat1           = "rbxassetid://10734933826",
+    reply             = "rbxassetid://10734934252",
+    replyall          = "rbxassetid://10734934132",
+    rewind            = "rbxassetid://10734934347",
+    rockingchair      = "rbxassetid://10734939942",
+    rotate3d          = "rbxassetid://10734940107",
+    rotateccw         = "rbxassetid://10734940376",
+    rotatecw          = "rbxassetid://10734940654",
+    rss               = "rbxassetid://10734940825",
+    ruler             = "rbxassetid://10734941018",
+    russianruble      = "rbxassetid://10734941199",
+    sailboat          = "rbxassetid://10734941354",
+    save              = "rbxassetid://10734941499",
+    scale             = "rbxassetid://10734941912",
+    scale3d           = "rbxassetid://10734941739",
+    scaling           = "rbxassetid://10734942072",
+    scan              = "rbxassetid://10734942565",
+    scanface          = "rbxassetid://10734942198",
+    scanline          = "rbxassetid://10734942351",
+    scissors          = "rbxassetid://10734942778",
+    screenshare       = "rbxassetid://10734943193",
+    screenshareoff    = "rbxassetid://10734942967",
+    scroll            = "rbxassetid://10734943448",
+    separatorhorizontal = "rbxassetid://10734944115",
+    separatorvertical   = "rbxassetid://10734944326",
+    servercog         = "rbxassetid://10734944444",
+    servercrash       = "rbxassetid://10734944554",
+    serveroff         = "rbxassetid://10734944668",
+    share             = "rbxassetid://10734950813",
+    share2            = "rbxassetid://10734950553",
+    sheet             = "rbxassetid://10734951038",
+    shieldalert       = "rbxassetid://10734951173",
+    shieldclose       = "rbxassetid://10734951535",
+    shieldoff         = "rbxassetid://10734951684",
+    shirt             = "rbxassetid://10734952036",
+    shoppingbag       = "rbxassetid://10734952273",
+    shoppingcart      = "rbxassetid://10734952479",
+    shovel            = "rbxassetid://10734952773",
+    showerhead        = "rbxassetid://10734952942",
+    shrink            = "rbxassetid://10734953073",
+    shrub             = "rbxassetid://10734953241",
+    shuffle           = "rbxassetid://10734953451",
+    sidebar           = "rbxassetid://10734954301",
+    sidebarclose      = "rbxassetid://10734953715",
+    sidebaropen       = "rbxassetid://10734954000",
+    sigma             = "rbxassetid://10734954538",
+    signal            = "rbxassetid://10734961133",
+    signalhigh        = "rbxassetid://10734954807",
+    signallow         = "rbxassetid://10734955080",
+    signalmedium      = "rbxassetid://10734955336",
+    signalzero        = "rbxassetid://10734960878",
+    siren             = "rbxassetid://10734961284",
+    skipback          = "rbxassetid://10734961526",
+    skipforward       = "rbxassetid://10734961809",
+    slack             = "rbxassetid://10734962339",
+    slash             = "rbxassetid://10734962600",
+    slice             = "rbxassetid://10734963024",
+    slidershorizontal = "rbxassetid://10734963191",
+    smartphone        = "rbxassetid://10734963940",
+    smartphonecharging= "rbxassetid://10734963671",
+    smile             = "rbxassetid://10734964441",
+    smileplus         = "rbxassetid://10734964188",
+    snowflake         = "rbxassetid://10734964600",
+    sofa              = "rbxassetid://10734964852",
+    sortasc           = "rbxassetid://10734965115",
+    sortdesc          = "rbxassetid://10734965287",
+    speaker           = "rbxassetid://10734965419",
+    sprout            = "rbxassetid://10734965572",
+    square            = "rbxassetid://10734965702",
+    starhalf          = "rbxassetid://10734965897",
+    staroff           = "rbxassetid://10734966097",
+    stethoscope       = "rbxassetid://10734966384",
+    sticker           = "rbxassetid://10734972234",
+    stickynote        = "rbxassetid://10734972463",
+    stopcircle        = "rbxassetid://10734972621",
+    stretchhorizontal = "rbxassetid://10734972862",
+    stretchvertical   = "rbxassetid://10734973130",
+    strikethrough     = "rbxassetid://10734973290",
+    subscript         = "rbxassetid://10734973457",
+    sundim            = "rbxassetid://10734973645",
+    sunmedium         = "rbxassetid://10734973778",
+    sunmoon           = "rbxassetid://10734973999",
+    sunsnow           = "rbxassetid://10734974130",
+    sunrise           = "rbxassetid://10734974522",
+    sunset            = "rbxassetid://10734974689",
+    superscript       = "rbxassetid://10734974850",
+    swissfranc        = "rbxassetid://10734975024",
+    switchcamera      = "rbxassetid://10734975214",
+    syringe           = "rbxassetid://10734975932",
+    table             = "rbxassetid://10734976230",
+    table2            = "rbxassetid://10734976097",
+    tablet            = "rbxassetid://10734976394",
+    tag               = "rbxassetid://10734976528",
+    tags              = "rbxassetid://10734976739",
+    tent              = "rbxassetid://10734981750",
+    terminal          = "rbxassetid://10734982144",
+    terminalsquare    = "rbxassetid://10734981995",
+    textcursor        = "rbxassetid://10734982395",
+    textcursorinput   = "rbxassetid://10734982297",
+    thermometer       = "rbxassetid://10734983134",
+    thermometersnowflake = "rbxassetid://10734982571",
+    thermometersun    = "rbxassetid://10734982771",
+    thumbsdown        = "rbxassetid://10734983359",
+    thumbsup          = "rbxassetid://10734983629",
+    ticket            = "rbxassetid://10734983868",
+    timer             = "rbxassetid://10734984606",
+    timeroff          = "rbxassetid://10734984138",
+    timerreset        = "rbxassetid://10734984355",
+    toggleleft        = "rbxassetid://10734984834",
+    toggleright       = "rbxassetid://10734985040",
+    tornado           = "rbxassetid://10734985247",
+    toybrick          = "rbxassetid://10747361919",
+    train             = "rbxassetid://10747362105",
+    trash2            = "rbxassetid://10747362241",
+    treedeciduous     = "rbxassetid://10747362534",
+    treepine          = "rbxassetid://10747362748",
+    trees             = "rbxassetid://10747363016",
+    trendingdown      = "rbxassetid://10747363205",
+    trendingup        = "rbxassetid://10747363465",
+    triangle          = "rbxassetid://10747363621",
+    truck             = "rbxassetid://10747364031",
+    tv                = "rbxassetid://10747364593",
+    tv2               = "rbxassetid://10747364302",
+    type_icon         = "rbxassetid://10747364761",
+    umbrella          = "rbxassetid://10747364971",
+    underline         = "rbxassetid://10747365191",
+    undo              = "rbxassetid://10747365484",
+    undo2             = "rbxassetid://10747365359",
+    unlink            = "rbxassetid://10747365771",
+    unlink2           = "rbxassetid://10747397871",
+    uploadcloud       = "rbxassetid://10747366266",
+    usb               = "rbxassetid://10747366606",
+    usercheck         = "rbxassetid://10747371901",
+    usercog           = "rbxassetid://10747372167",
+    userminus         = "rbxassetid://10747372346",
+    userplus          = "rbxassetid://10747372702",
+    userx             = "rbxassetid://10747372992",
+    utensils          = "rbxassetid://10747373821",
+    utensilscrossed   = "rbxassetid://10747373629",
+    venetianmask      = "rbxassetid://10747374003",
+    verified          = "rbxassetid://10747374131",
+    vibrate           = "rbxassetid://10747374489",
+    vibrateoff        = "rbxassetid://10747374269",
+    video             = "rbxassetid://10747374938",
+    videooff          = "rbxassetid://10747374721",
+    view              = "rbxassetid://10747375132",
+    voicemail         = "rbxassetid://10747375281",
+    volume            = "rbxassetid://10747376008",
+    volume1           = "rbxassetid://10747375450",
+    volume2           = "rbxassetid://10747375679",
+    volumex           = "rbxassetid://10747375880",
+    wallet            = "rbxassetid://10747376205",
+    wand              = "rbxassetid://10747376565",
+    wand2             = "rbxassetid://10747376349",
+    watch             = "rbxassetid://10747376722",
+    waves             = "rbxassetid://10747376931",
+    webcam            = "rbxassetid://10747381992",
+    wifioff           = "rbxassetid://10747382268",
+    wind              = "rbxassetid://10747382750",
+    wraptext          = "rbxassetid://10747383065",
+    xoctagon          = "rbxassetid://10747384037",
+    xsquare           = "rbxassetid://10747384217",
+    zoomin            = "rbxassetid://10747384552",
+    zoomout           = "rbxassetid://10747384679",
 }
 
 -- ============================================================
@@ -152,9 +886,7 @@ local Languages = {
         IsRTL=false,
         Font=FONTS.Title, FontBold=FONTS.Bold,
         FontSemi=FONTS.Semi, FontBody=FONTS.Body,
-        LabelSize=14,   -- حجم نص التسميات
-        TitleSize=16,   -- حجم عناوين العناصر
-        TabSize=13,     -- حجم نص التابات
+        LabelSize=14, TitleSize=16, TabSize=13,
     },
     Arabic = {
         Close="إغلاق", Minimize="تصغير", Search="بحث...",
@@ -170,16 +902,12 @@ local Languages = {
         IsRTL=true,
         Font=FONTS.ArabicTitle, FontBold=FONTS.ArabicBody,
         FontSemi=FONTS.ArabicBody, FontBody=FONTS.ArabicBody,
-        LabelSize=16,   -- أكبر للعربية
-        TitleSize=18,   -- أكبر للعربية
-        TabSize=14,     -- أكبر للعربية
+        LabelSize=16, TitleSize=18, TabSize=14,
     },
 }
 
 -- ============================================================
---  THEMES — Professional Dark System
---  Red = Arabic | Blue = English
---  Accent فقط للعناصر المهمة، الباقي dark neutral
+--  THEMES
 -- ============================================================
 local Themes = {
     Blue = {
@@ -189,18 +917,18 @@ local Themes = {
         PrimaryGlow  = Color3.fromRGB(42,  120, 255),
         Background   = Color3.fromRGB(10,  10,  10),
         Surface      = Color3.fromRGB(17,  17,  17),
-        SurfaceAlt   = Color3.fromRGB(21,  21,  21),   -- #151515
+        SurfaceAlt   = Color3.fromRGB(21,  21,  21),
         SurfaceHover = Color3.fromRGB(30,  30,  30),
-        SurfaceCard  = Color3.fromRGB(21,  21,  21),   -- #151515
+        SurfaceCard  = Color3.fromRGB(21,  21,  21),
         Border       = Color3.fromRGB(32,  32,  32),
         BorderBright = Color3.fromRGB(50,  50,  50),
         BorderAccent = Color3.fromRGB(42,  120, 255),
         Text         = Color3.fromRGB(255, 255, 255),
-        TextDim      = Color3.fromRGB(154, 154, 154),  -- #9A9A9A
+        TextDim      = Color3.fromRGB(154, 154, 154),
         TextMuted    = Color3.fromRGB(100, 100, 100),
         BtnText      = Color3.fromRGB(255, 255, 255),
-        BtnStop      = Color3.fromRGB(42,  42,  42),   -- #2A2A2A زر إيقاف
-        BtnStopHov   = Color3.fromRGB(51,  51,  51),   -- #333333 hover
+        BtnStop      = Color3.fromRGB(42,  42,  42),
+        BtnStopHov   = Color3.fromRGB(51,  51,  51),
         Success      = Color3.fromRGB(34,  197, 94),
         Warning      = Color3.fromRGB(234, 179, 8),
         Error        = Color3.fromRGB(239, 68,  68),
@@ -211,24 +939,24 @@ local Themes = {
         NotifBgInfo  = Color3.fromRGB(12,  20,  36),
     },
     Red = {
-        Primary      = Color3.fromRGB(255, 58,  58),   -- #FF3A3A
+        Primary      = Color3.fromRGB(255, 58,  58),
         PrimaryDark  = Color3.fromRGB(210, 30,  30),
         PrimaryLight = Color3.fromRGB(255, 100, 100),
         PrimaryGlow  = Color3.fromRGB(255, 58,  58),
         Background   = Color3.fromRGB(10,  10,  10),
         Surface      = Color3.fromRGB(17,  17,  17),
-        SurfaceAlt   = Color3.fromRGB(21,  21,  21),   -- #151515
+        SurfaceAlt   = Color3.fromRGB(21,  21,  21),
         SurfaceHover = Color3.fromRGB(30,  30,  30),
-        SurfaceCard  = Color3.fromRGB(21,  21,  21),   -- #151515
+        SurfaceCard  = Color3.fromRGB(21,  21,  21),
         Border       = Color3.fromRGB(32,  32,  32),
         BorderBright = Color3.fromRGB(50,  50,  50),
         BorderAccent = Color3.fromRGB(255, 58,  58),
         Text         = Color3.fromRGB(255, 255, 255),
-        TextDim      = Color3.fromRGB(154, 154, 154),  -- #9A9A9A
+        TextDim      = Color3.fromRGB(154, 154, 154),
         TextMuted    = Color3.fromRGB(100, 100, 100),
         BtnText      = Color3.fromRGB(255, 255, 255),
-        BtnStop      = Color3.fromRGB(42,  42,  42),   -- #2A2A2A
-        BtnStopHov   = Color3.fromRGB(51,  51,  51),   -- #333333
+        BtnStop      = Color3.fromRGB(42,  42,  42),
+        BtnStopHov   = Color3.fromRGB(51,  51,  51),
         Success      = Color3.fromRGB(34,  197, 94),
         Warning      = Color3.fromRGB(234, 179, 8),
         Error        = Color3.fromRGB(239, 68,  68),
@@ -259,7 +987,6 @@ local function New(class, props)
     if props and props.Parent then o.Parent=props.Parent end
     return o
 end
--- ← حواف منحنية — الرقم الكبير = أكثر استدارة
 local function Corner(p, r)
     return New("UICorner",{CornerRadius=UDim.new(0,r or 10),Parent=p})
 end
@@ -286,7 +1013,6 @@ local function Img(parent,asset,sz,pos,color,zi)
         ScaleType=Enum.ScaleType.Fit,ZIndex=zi or 14,Parent=parent})
 end
 local function Ripple(target)
-    -- target ممكن يكون Frame أو TextButton
     local absPos  = target.AbsolutePosition
     local absSize = target.AbsoluteSize
     local r=New("Frame",{Size=UDim2.new(0,0,0,0),AnchorPoint=Vector2.new(0.5,0.5),
@@ -328,426 +1054,634 @@ end
 
 -- ============================================================
 --  DEVICE DETECTION + RESPONSIVE SCALE
---  المنهج الصح: حجم الشاشة هو المعيار — مش TouchEnabled
---  لأن بعض الـ executors بتعطّل TouchEnabled حتى على موبايل
 -- ============================================================
 local Device = {}
-
 do
     local cam = workspace.CurrentCamera
     local vp  = cam and cam.ViewportSize or Vector2.new(800, 600)
     local sw, sh = vp.X, vp.Y
-
-    -- الشاشة الصغيرة (< 800 في أقل بُعد) = موبايل/تابلت
-    -- هذا أكثر موثوقية من TouchEnabled في بيئة الـ executors
     local minDim = math.min(sw, sh)
-    local maxDim = math.max(sw, sh)
 
-    Device.IsPC     = minDim >= 700   -- PC أو شاشة كبيرة
+    Device.IsPC     = minDim >= 700
     Device.IsTablet = minDim >= 500 and minDim < 700
-    Device.IsMobile = minDim < 500    -- هاتف
+    Device.IsMobile = minDim < 500
 
-    -- أيضاً نضيف TouchEnabled كـ override للتأكيد
     local UIS = UserInputService
     if UIS.TouchEnabled and not UIS.KeyboardEnabled then
-        -- موبايل مؤكد
         Device.IsPC     = false
         Device.IsTablet = false
         Device.IsMobile = true
     end
 
-    --[[
-        CalcUIScale: يحسب الـ UIScale المطلوب عشان الواجهة (baseW x baseH)
-        تملأ الشاشة بنسبة مئوية معينة (fillRatio).
-        بعدين نحسب الـ position بناءً على الـ visual size الفعلي.
-    ]]
     function Device.CalcLayout(baseW, baseH)
         local fillW, fillH
         if Device.IsPC then
-            -- PC: لا تغيير
             return baseW, baseH, 1.0
         elseif Device.IsMobile then
-            -- موبايل: 90% من أصغر بُعد — سواء landscape أو portrait
             fillW = sw * 0.92
             fillH = sh * 0.88
         else
-            -- تابلت
             fillW = sw * 0.88
             fillH = sh * 0.84
         end
-
-        -- نحسب الـ scale المناسب: نختار أصغر نسبة عشان الواجهة تكون visible كاملاً
         local scaleByW = fillW / baseW
         local scaleByH = fillH / baseH
         local scale    = math.min(scaleByW, scaleByH)
         scale = math.clamp(scale, 0.4, 3.0)
-
-        -- الـ visual size بعد الـ scale
         local visualW = math.floor(baseW * scale)
         local visualH = math.floor(baseH * scale)
-
         return visualW, visualH, scale
     end
 end
 
 -- ============================================================
---  INTRO ANIMATION
+--  INTRO ANIMATION — Modern Minimal (v7.1)
+--  Clean: logo + title + accent line + loader bar
+--  No particles, smooth scale-in, elegant glow pulse
 -- ============================================================
 local function PlayIntro(sg, onDone)
-    -- ── Responsive scale للإنترو ────────────────────────────
-    local _introCam = workspace.CurrentCamera
-    local _introVP  = _introCam and _introCam.ViewportSize or Vector2.new(800,600)
-    local _introScale = math.clamp(math.min(_introVP.X,_introVP.Y) / 500, 0.45, 1.15)
+    local _cam   = workspace.CurrentCamera
+    local _vp    = _cam and _cam.ViewportSize or Vector2.new(800, 600)
+    local _scale = math.clamp(math.min(_vp.X, _vp.Y) / 500, 0.45, 1.15)
 
-    local CFG={
-        Logo="rbxassetid://93116857865430",
-        HubName="CrozoX", TagLine="Professional Script Hub",
-        GlowColor=Color3.fromRGB(220,38,38),
-        AccentColor=Color3.fromRGB(255,80,60),
-        ParticleN=14, FadeIn=0.7, ZoomDur=0.8,
-        HoldDur=1.3, PulseDur=0.5, FadeOut=0.55,
-        LogoStart=UDim2.new(0,80,0,80),
-        LogoEnd=UDim2.new(0,165,0,165),
-        LogoPulse=UDim2.new(0,178,0,178),
-    }
-    local bg=New("Frame",{Size=UDim2.new(1,0,1,0),
-        BackgroundColor3=Color3.fromRGB(0,0,0),
-        BackgroundTransparency=1,BorderSizePixel=0,ZIndex=100,Parent=sg})
+    -- Full-screen dark overlay
+    local overlay = New("Frame", {
+        Size = UDim2.new(1,0,1,0),
+        BackgroundColor3 = Color3.fromRGB(6,6,8),
+        BackgroundTransparency = 0,
+        BorderSizePixel = 0,
+        ZIndex = 100,
+        Parent = sg,
+    })
 
-    -- container مع UIScale — كل عناصر الإنترو بتتضغط proportionally
-    -- AnchorPoint(0.5,0.5) + Position(0.5,0.5) → يفضل centered حتى بعد الـ scale
-    local introCont=New("Frame",{
-        Size=UDim2.new(1,0,1,0),
-        AnchorPoint=Vector2.new(0.5,0.5),
-        Position=UDim2.new(0.5,0,0.5,0),
-        BackgroundTransparency=1,ZIndex=100,Parent=bg})
-    if _introScale < 0.98 then
-        New("UIScale",{Scale=_introScale,Parent=introCont})
+    -- Scale container
+    local cont = New("Frame", {
+        Size = UDim2.new(1,0,1,0),
+        AnchorPoint = Vector2.new(0.5,0.5),
+        Position = UDim2.new(0.5,0,0.5,0),
+        BackgroundTransparency = 1,
+        ZIndex = 101,
+        Parent = overlay,
+    })
+    if _scale < 0.98 then
+        New("UIScale", { Scale = _scale, Parent = cont })
     end
 
-    local glowOuter=New("ImageLabel",{Size=UDim2.new(0,340,0,340),
-        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
-        BackgroundTransparency=1,Image="rbxassetid://5028857084",
-        ImageColor3=CFG.GlowColor,ImageTransparency=1,ZIndex=101,Parent=introCont})
-    local glowInner=New("ImageLabel",{Size=UDim2.new(0,220,0,220),
-        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
-        BackgroundTransparency=1,Image="rbxassetid://5028857084",
-        ImageColor3=CFG.AccentColor,ImageTransparency=1,ZIndex=102,Parent=introCont})
-    local logoHolder=New("Frame",{Size=CFG.LogoStart,
-        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
-        BackgroundTransparency=1,ZIndex=103,Parent=introCont})
-    local logoImg=New("ImageLabel",{Size=UDim2.new(1,0,1,0),
-        BackgroundTransparency=1,Image=CFG.Logo,ImageTransparency=1,
-        ScaleType=Enum.ScaleType.Fit,ZIndex=104,Parent=logoHolder})
-    Corner(logoImg,18)
-    local logoStroke=Stroke(logoImg,CFG.GlowColor,3,1)
-    local nameLabel=New("TextLabel",{Size=UDim2.new(0,320,0,44),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,110),
-        BackgroundTransparency=1,Text=CFG.HubName,
-        TextColor3=Color3.fromRGB(255,255,255),Font=Enum.Font.GothamBlack,
-        TextSize=38,TextTransparency=1,ZIndex=104,Parent=introCont})
-    local tagLabel=New("TextLabel",{Size=UDim2.new(0,320,0,22),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,158),
-        BackgroundTransparency=1,Text=CFG.TagLine,
-        TextColor3=CFG.GlowColor,Font=Enum.Font.GothamSemibold,
-        TextSize=14,TextTransparency=1,ZIndex=104,Parent=introCont})
-    local line=New("Frame",{Size=UDim2.new(0,0,0,2),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,152),
-        BackgroundColor3=CFG.GlowColor,BorderSizePixel=0,ZIndex=104,Parent=introCont})
-    local loaderBg=New("Frame",{Size=UDim2.new(0,220,0,4),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,186),
-        BackgroundColor3=Color3.fromRGB(40,40,40),BackgroundTransparency=1,
-        BorderSizePixel=0,ZIndex=104,Parent=introCont})
-    Corner(loaderBg,2)
-    local loaderFill=New("Frame",{Size=UDim2.new(0,0,1,0),
-        BackgroundColor3=CFG.GlowColor,BorderSizePixel=0,ZIndex=105,Parent=loaderBg})
-    Corner(loaderFill,2)
-    local particles={}
-    local RADIUS=130
-    for i=1,CFG.ParticleN do
-        local angle=(i/CFG.ParticleN)*math.pi*2
-        local sz=math.random(3,7)
-        local dot=New("Frame",{Size=UDim2.new(0,sz,0,sz),
-            AnchorPoint=Vector2.new(0.5,0.5),
-            Position=UDim2.new(0.5+(RADIUS*math.cos(angle))/sg.AbsoluteSize.X,0,
-                0.5+(RADIUS*math.sin(angle))/sg.AbsoluteSize.Y,-20),
-            BackgroundColor3=(i%3==0) and CFG.AccentColor or CFG.GlowColor,
-            BackgroundTransparency=1,BorderSizePixel=0,ZIndex=103,Parent=bg})
-        Corner(dot,100)
-        table.insert(particles,{dot=dot,angle=angle})
-    end
-    local startT=tick()
-    local orbConn
-    orbConn=RunService.RenderStepped:Connect(function()
-        if not bg.Parent then orbConn:Disconnect();return end
-        local t=tick()-startT
-        local sw=sg.AbsoluteSize.X; local sh=sg.AbsoluteSize.Y
-        if sw<=0 or sh<=0 then return end
-        for i,p in ipairs(particles) do
-            local speed=0.45+(i%3)*0.15
-            local a=p.angle+t*speed
-            local r=RADIUS+math.sin(t*1.8+i)*12
-            p.dot.Position=UDim2.new(0.5+(r*math.cos(a))/sw,0,
-                0.5+(r*math.sin(a))/sh,-20)
-        end
-    end)
+    -- Soft background glow behind logo
+    local bgGlow = New("ImageLabel", {
+        Size = UDim2.new(0, 280, 0, 280),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, -10),
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://5028857084",
+        ImageColor3 = Color3.fromRGB(220, 38, 38),
+        ImageTransparency = 1,
+        ZIndex = 101,
+        Parent = cont,
+    })
+
+    -- Logo container (for scale animation)
+    local logoHolder = New("Frame", {
+        Size = UDim2.new(0, 72, 0, 72),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, -30),
+        BackgroundTransparency = 1,
+        ZIndex = 102,
+        Parent = cont,
+    })
+
+    local logoImg = New("ImageLabel", {
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://93116857865430",
+        ImageTransparency = 1,
+        ScaleType = Enum.ScaleType.Fit,
+        ZIndex = 103,
+        Parent = logoHolder,
+    })
+    Corner(logoImg, 16)
+
+    -- Thin accent ring around logo
+    local logoRing = New("ImageLabel", {
+        Size = UDim2.new(0, 92, 0, 92),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://5028857084",
+        ImageColor3 = Color3.fromRGB(220, 38, 38),
+        ImageTransparency = 1,
+        ZIndex = 102,
+        Parent = logoHolder,
+    })
+
+    -- Title
+    local titleLbl = New("TextLabel", {
+        Size = UDim2.new(0, 280, 0, 36),
+        AnchorPoint = Vector2.new(0.5, 0),
+        Position = UDim2.new(0.5, 0, 0.5, 54),
+        BackgroundTransparency = 1,
+        Text = "CrozoX",
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        Font = Enum.Font.GothamBlack,
+        TextSize = 32,
+        TextTransparency = 1,
+        ZIndex = 103,
+        Parent = cont,
+    })
+
+    -- Subtitle
+    local subLbl = New("TextLabel", {
+        Size = UDim2.new(0, 280, 0, 20),
+        AnchorPoint = Vector2.new(0.5, 0),
+        Position = UDim2.new(0.5, 0, 0.5, 95),
+        BackgroundTransparency = 1,
+        Text = "Professional Script Hub",
+        TextColor3 = Color3.fromRGB(220, 38, 38),
+        Font = Enum.Font.GothamSemibold,
+        TextSize = 13,
+        TextTransparency = 1,
+        ZIndex = 103,
+        Parent = cont,
+    })
+
+    -- Accent line (grows from center)
+    local lineContainer = New("Frame", {
+        Size = UDim2.new(0, 200, 0, 1),
+        AnchorPoint = Vector2.new(0.5, 0),
+        Position = UDim2.new(0.5, 0, 0.5, 121),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        ZIndex = 103,
+        Parent = cont,
+    })
+    local line = New("Frame", {
+        Size = UDim2.new(0, 0, 1, 0),
+        AnchorPoint = Vector2.new(0.5, 0),
+        Position = UDim2.new(0.5, 0, 0, 0),
+        BackgroundColor3 = Color3.fromRGB(220, 38, 38),
+        BorderSizePixel = 0,
+        ZIndex = 104,
+        Parent = lineContainer,
+    })
+    New("UIGradient", {
+        Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0,   Color3.fromRGB(255, 80, 80)),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(220, 38, 38)),
+            ColorSequenceKeypoint.new(1,   Color3.fromRGB(255, 80, 80)),
+        },
+        Parent = line,
+    })
+
+    -- Loading bar
+    local barBg = New("Frame", {
+        Size = UDim2.new(0, 180, 0, 3),
+        AnchorPoint = Vector2.new(0.5, 0),
+        Position = UDim2.new(0.5, 0, 0.5, 134),
+        BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        ZIndex = 103,
+        Parent = cont,
+    })
+    Corner(barBg, 2)
+
+    local barFill = New("Frame", {
+        Size = UDim2.new(0, 0, 1, 0),
+        BackgroundColor3 = Color3.fromRGB(220, 38, 38),
+        BorderSizePixel = 0,
+        ZIndex = 104,
+        Parent = barBg,
+    })
+    Corner(barFill, 2)
+    New("UIGradient", {
+        Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 100, 100)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 30, 30)),
+        },
+        Parent = barFill,
+    })
+
+    -- ── ANIMATION SEQUENCE ──────────────────────────────────
     task.spawn(function()
-        TweenWait(bg,{BackgroundTransparency=0.06},0.35,Enum.EasingStyle.Quad)
-        Tween(glowOuter,{ImageTransparency=0.5},0.5)
-        Tween(glowInner,{ImageTransparency=0.72},0.5)
-        Tween(logoHolder,{Size=CFG.LogoEnd},CFG.ZoomDur,Enum.EasingStyle.Back)
-        TweenWait(logoImg,{ImageTransparency=0},CFG.FadeIn)
-        Tween(logoStroke,{Transparency=0.2},0.4)
-        Tween(nameLabel,{TextTransparency=0},0.45)
-        task.wait(0.12)
-        Tween(tagLabel,{TextTransparency=0},0.4)
-        Tween(line,{Size=UDim2.new(0,200,0,2)},0.5)
-        Tween(loaderBg,{BackgroundTransparency=0},0.3)
-        TweenWait(loaderFill,{Size=UDim2.new(1,0,1,0)},
-            CFG.HoldDur*0.85,Enum.EasingStyle.Quart,Enum.EasingDirection.InOut)
-        for i,p in ipairs(particles) do
-            task.delay((i-1)*0.04,function()
-                Tween(p.dot,{BackgroundTransparency=0.22},0.3) end)
-        end
-        for _=1,3 do
-            Tween(logoHolder,{Size=CFG.LogoPulse},CFG.PulseDur*0.45,Enum.EasingStyle.Quad)
-            Tween(logoStroke,{Transparency=0.04},CFG.PulseDur*0.45)
-            Tween(glowOuter,{ImageTransparency=0.3},CFG.PulseDur*0.45)
-            task.wait(CFG.PulseDur*0.45)
-            Tween(logoHolder,{Size=CFG.LogoEnd},CFG.PulseDur*0.55,Enum.EasingStyle.Quad,Enum.EasingDirection.In)
-            Tween(logoStroke,{Transparency=0.25},CFG.PulseDur*0.55)
-            Tween(glowOuter,{ImageTransparency=0.52},CFG.PulseDur*0.55)
-            task.wait(CFG.PulseDur*0.55)
-        end
-        for i,p in ipairs(particles) do
-            local far=RADIUS*2.4
-            task.delay((i-1)*0.018,function()
-                Tween(p.dot,{
-                    Position=UDim2.new(0.5+(far*math.cos(p.angle))/sg.AbsoluteSize.X,0,
-                        0.5+(far*math.sin(p.angle))/sg.AbsoluteSize.Y,-20),
-                    BackgroundTransparency=1,Size=UDim2.new(0,1,0,1),
-                },CFG.FadeOut,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-            end)
-        end
+        -- 1. Logo scale-in from small with soft glow
+        logoHolder.Size = UDim2.new(0, 40, 0, 40)
+        Tween(logoHolder, {Size=UDim2.new(0,72,0,72)}, 0.55, Enum.EasingStyle.Back)
+        Tween(logoImg,    {ImageTransparency=0},         0.45, Enum.EasingStyle.Quad)
+        Tween(bgGlow,     {ImageTransparency=0.72},      0.5)
+        task.wait(0.3)
+
+        -- 2. Ring pulse in
+        Tween(logoRing, {ImageTransparency=0.55}, 0.3)
+        task.wait(0.15)
+
+        -- 3. Title & subtitle fade in with slight upward motion
+        titleLbl.Position = UDim2.new(0.5,0,0.5, 62)
+        Tween(titleLbl, {TextTransparency=0, Position=UDim2.new(0.5,0,0.5,54)}, 0.4, Enum.EasingStyle.Quart)
         task.wait(0.08)
-        Tween(logoImg,{ImageTransparency=1},CFG.FadeOut)
-        Tween(nameLabel,{TextTransparency=1},CFG.FadeOut)
-        Tween(tagLabel,{TextTransparency=1},CFG.FadeOut)
-        Tween(line,{BackgroundTransparency=1},CFG.FadeOut)
-        Tween(loaderBg,{BackgroundTransparency=1},CFG.FadeOut)
-        Tween(glowOuter,{ImageTransparency=1},CFG.FadeOut)
-        Tween(glowInner,{ImageTransparency=1},CFG.FadeOut)
-        Tween(logoHolder,{Size=UDim2.new(0,55,0,55)},CFG.FadeOut,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-        TweenWait(bg,{BackgroundTransparency=1},CFG.FadeOut,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-        orbConn:Disconnect()
-        task.wait(0.08)
-        bg:Destroy()
+        subLbl.Position = UDim2.new(0.5,0,0.5, 103)
+        Tween(subLbl, {TextTransparency=0, Position=UDim2.new(0.5,0,0.5,95)}, 0.35, Enum.EasingStyle.Quart)
+        task.wait(0.1)
+
+        -- 4. Accent line grows from center
+        lineContainer.BackgroundTransparency = 0
+        Tween(line, {Size=UDim2.new(1,0,1,0)}, 0.45, Enum.EasingStyle.Quart)
+        Tween(barBg, {BackgroundTransparency=0}, 0.3)
+        task.wait(0.15)
+
+        -- 5. Loading bar fills (1.0s total hold)
+        TweenWait(barFill, {Size=UDim2.new(1,0,1,0)}, 1.0, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut)
+
+        -- 6. Subtle logo pulse (2 times)
+        for _ = 1, 2 do
+            Tween(logoHolder, {Size=UDim2.new(0,78,0,78)}, 0.22, Enum.EasingStyle.Quad)
+            Tween(bgGlow,     {ImageTransparency=0.55},     0.22)
+            Tween(logoRing,   {ImageTransparency=0.3},      0.22)
+            task.wait(0.22)
+            Tween(logoHolder, {Size=UDim2.new(0,72,0,72)}, 0.28, Enum.EasingStyle.Quad)
+            Tween(bgGlow,     {ImageTransparency=0.72},     0.28)
+            Tween(logoRing,   {ImageTransparency=0.55},     0.28)
+            task.wait(0.28)
+        end
+
+        -- 7. Fade everything out together
+        local FO = 0.38
+        Tween(logoImg,  {ImageTransparency=1}, FO)
+        Tween(titleLbl, {TextTransparency=1},  FO)
+        Tween(subLbl,   {TextTransparency=1},  FO)
+        Tween(line,     {BackgroundTransparency=1}, FO)
+        Tween(barBg,    {BackgroundTransparency=1}, FO)
+        Tween(barFill,  {BackgroundTransparency=1}, FO)
+        Tween(bgGlow,   {ImageTransparency=1}, FO)
+        Tween(logoRing, {ImageTransparency=1}, FO)
+        -- Logo zooms out while fading
+        Tween(logoHolder, {Size=UDim2.new(0,48,0,48)}, FO, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+        TweenWait(overlay, {BackgroundTransparency=1}, FO, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+
+        task.wait(0.05)
+        overlay:Destroy()
         if onDone then task.spawn(onDone) end
     end)
 end
 
 -- ============================================================
---  LANGUAGE SELECT
---  ← FIX: auto-confirm English after 15 seconds
---  ← FIX: fully rounded corners everywhere
---  ← FIX: RGB border runs along rounded edges properly
+--  LANGUAGE SELECT — Redesigned (v7.1)
+--  Consistent with main UI + RGB border kept
+--  FIX: all elements fade out together on confirm
 -- ============================================================
 local function ShowLangSelect(sg, onDone)
-    local W,H = 440,330
-    local RING = 4  -- سماكة الحد الملوّن
+    local W, H = 440, 320
+    local RING  = 3
 
-    -- ── Responsive scale للـ lang card ──────────────────────
-    local _lsCam = workspace.CurrentCamera
-    local _lsVP  = _lsCam and _lsCam.ViewportSize or Vector2.new(800,600)
-    local _lsMinDim = math.min(_lsVP.X, _lsVP.Y)
-    -- على موبايل الشاشة ~400px height → scale ≈ 0.75 → card بيبقى ~330px عرض
-    local _lsScale = math.clamp(_lsMinDim / 500, 0.50, 1.15)
+    local _cam    = workspace.CurrentCamera
+    local _vp     = _cam and _cam.ViewportSize or Vector2.new(800,600)
+    local _min    = math.min(_vp.X, _vp.Y)
+    local _lsScale= math.clamp(_min / 500, 0.50, 1.15)
 
-    -- Overlay (full screen — مش محتاج scale)
-    local overlay=New("Frame",{Size=UDim2.new(1,0,1,0),
+    -- Overlay
+    local overlay = New("Frame", {
+        Size=UDim2.new(1,0,1,0),
         BackgroundColor3=Color3.fromRGB(0,0,0),
-        BackgroundTransparency=1,BorderSizePixel=0,ZIndex=200,Parent=sg})
-    Tween(overlay,{BackgroundTransparency=0.52},0.4)
+        BackgroundTransparency=1,
+        BorderSizePixel=0,
+        ZIndex=200,
+        Parent=sg,
+    })
+    Tween(overlay, {BackgroundTransparency=0.55}, 0.4)
 
-    -- ── Scale wrapper — بيضم الـ ringBg والـ card ───────────
-    -- AnchorPoint(0.5,0.5) + Position(0.5,0,0.5,0) → centered دايماً
-    -- UIScale بيشغّل على محور المركز → مفيش offset بعد الـ scale
-    local lsWrapper=New("Frame",{
+    -- Scale wrapper
+    local lsWrapper = New("Frame", {
         Size=UDim2.new(1,0,1,0),
         AnchorPoint=Vector2.new(0.5,0.5),
         Position=UDim2.new(0.5,0,0.5,0),
         BackgroundTransparency=1,
-        ZIndex=201,Parent=sg})
+        ZIndex=201,
+        Parent=sg,
+    })
     if _lsScale < 0.98 then
-        New("UIScale",{Scale=_lsScale,Parent=lsWrapper})
+        New("UIScale", {Scale=_lsScale, Parent=lsWrapper})
     end
 
-    -- ── Rainbow border ──────────────────────────────────────
-    local ringBg=New("Frame",{
-        Size=UDim2.new(0,W+RING*2,0,H+RING*2),
+    -- RGB animated ring border (outer frame)
+    local ringBg = New("Frame", {
+        Size=UDim2.new(0, W+RING*2, 0, H+RING*2),
         AnchorPoint=Vector2.new(0.5,0.5),
-        Position=UDim2.new(0.5,0,0.65,0),
+        Position=UDim2.new(0.5,0,0.7,0),
         BackgroundColor3=Color3.fromRGB(255,80,80),
         BorderSizePixel=0,
         BackgroundTransparency=1,
-        ZIndex=201,Parent=lsWrapper})
-    Corner(ringBg, 22)
+        ZIndex=201,
+        Parent=lsWrapper,
+    })
+    Corner(ringBg, 20)
 
-    -- Animate the colour of the ring frame
-    local hue=0
+    local hue = 0
     local rainbowConn
-    rainbowConn=RunService.RenderStepped:Connect(function(dt)
-        if not ringBg.Parent then rainbowConn:Disconnect();return end
-        hue=(hue+dt*0.45)%1
-        ringBg.BackgroundColor3=Color3.fromHSV(hue,0.9,1)
+    rainbowConn = RunService.RenderStepped:Connect(function(dt)
+        if not ringBg.Parent then rainbowConn:Disconnect(); return end
+        hue = (hue + dt * 0.5) % 1
+        ringBg.BackgroundColor3 = Color3.fromHSV(hue, 0.85, 1)
     end)
 
-    -- ── Card ────────────────────────────────────────────────
-    local card=New("Frame",{
+    -- Card (main dark surface, matches CrozoX UI style)
+    local card = New("Frame", {
         Size=UDim2.new(0,W,0,H),
         AnchorPoint=Vector2.new(0.5,0.5),
         Position=UDim2.new(0.5,0,0.5,0),
-        BackgroundColor3=Color3.fromRGB(17,18,26),
+        BackgroundColor3=Color3.fromRGB(13,13,15),
         BorderSizePixel=0,
         BackgroundTransparency=1,
-        ZIndex=203,Parent=lsWrapper})
-    Corner(card,18)
+        ZIndex=203,
+        Parent=lsWrapper,
+    })
+    Corner(card, 16)
 
-    -- ── Logo ──────────────────────────────────────────────────
-    local cardLogo=New("ImageLabel",{Size=UDim2.new(0,56,0,56),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0,16),
-        BackgroundTransparency=1,Image="rbxassetid://93116857865430",
-        ScaleType=Enum.ScaleType.Fit,ZIndex=205,Parent=card})
-    Corner(cardLogo,12)
+    -- Subtle gradient on card (matches main UI)
+    New("UIGradient", {
+        Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0,   Color3.fromRGB(13,13,15)),
+            ColorSequenceKeypoint.new(0.6, Color3.fromRGB(13,13,15)),
+            ColorSequenceKeypoint.new(1,   Color3.fromRGB(20,15,15)),
+        },
+        Rotation = 145,
+        Parent = card,
+    })
 
-    New("TextLabel",{Size=UDim2.new(1,0,0,32),Position=UDim2.new(0,0,0,78),
-        BackgroundTransparency=1,Text="CrozoX",
-        TextColor3=Color3.fromRGB(235,238,255),Font=Enum.Font.GothamBlack,
-        TextSize=24,ZIndex=205,Parent=card})
+    -- Logo
+    local cardLogo = New("ImageLabel", {
+        Size=UDim2.new(0,48,0,48),
+        AnchorPoint=Vector2.new(0.5,0),
+        Position=UDim2.new(0.5,0,0,16),
+        BackgroundTransparency=1,
+        Image="rbxassetid://93116857865430",
+        ScaleType=Enum.ScaleType.Fit,
+        ImageTransparency=1,
+        ZIndex=205,
+        Parent=card,
+    })
+    Corner(cardLogo, 10)
 
-    New("TextLabel",{Size=UDim2.new(1,-32,0,20),Position=UDim2.new(0,16,0,112),
+    -- Title
+    local cardTitle = New("TextLabel", {
+        Size=UDim2.new(1,0,0,28),
+        Position=UDim2.new(0,0,0,72),
+        BackgroundTransparency=1,
+        Text="CrozoX",
+        TextColor3=Color3.fromRGB(230,232,255),
+        Font=Enum.Font.GothamBlack,
+        TextSize=22,
+        TextTransparency=1,
+        ZIndex=205,
+        Parent=card,
+    })
+
+    -- Subtitle
+    local cardSub = New("TextLabel", {
+        Size=UDim2.new(1,-32,0,18),
+        Position=UDim2.new(0,16,0,102),
         BackgroundTransparency=1,
         Text="Select Language  /  اختر اللغة",
-        TextColor3=Color3.fromRGB(125,130,158),Font=Enum.Font.Gotham,
-        TextSize=13,ZIndex=205,Parent=card})
+        TextColor3=Color3.fromRGB(80,85,110),
+        Font=Enum.Font.Gotham,
+        TextSize=12,
+        TextTransparency=1,
+        ZIndex=205,
+        Parent=card,
+    })
 
-    New("Frame",{Size=UDim2.new(0.72,0,0,1),AnchorPoint=Vector2.new(0.5,0),
-        Position=UDim2.new(0.5,0,0,138),BackgroundColor3=Color3.fromRGB(42,46,68),
-        BorderSizePixel=0,ZIndex=205,Parent=card})
+    -- Divider
+    local divider = New("Frame", {
+        Size=UDim2.new(0.68,0,0,1),
+        AnchorPoint=Vector2.new(0.5,0),
+        Position=UDim2.new(0.5,0,0,126),
+        BackgroundColor3=Color3.fromRGB(35,38,55),
+        BorderSizePixel=0,
+        BackgroundTransparency=1,
+        ZIndex=205,
+        Parent=card,
+    })
 
-    -- ── Language buttons ──────────────────────────────────────
-    local row=New("Frame",{Size=UDim2.new(1,-48,0,94),
-        Position=UDim2.new(0,24,0,152),BackgroundTransparency=1,
-        ZIndex=205,Parent=card})
-    ListLayout(row,14,Enum.FillDirection.Horizontal,
+    -- Language buttons row
+    local row = New("Frame", {
+        Size=UDim2.new(1,-48,0,90),
+        Position=UDim2.new(0,24,0,140),
+        BackgroundTransparency=1,
+        ZIndex=205,
+        Parent=card,
+    })
+    ListLayout(row,12,Enum.FillDirection.Horizontal,
         Enum.HorizontalAlignment.Center,Enum.VerticalAlignment.Center)
 
-    local selectedLang="English"
-    local btnData={}
-    local THEME_COLORS={English=Color3.fromRGB(56,132,255),Arabic=Color3.fromRGB(220,38,38)}
+    local selectedLang = "English"
+    local btnData = {}
+    local THEME_COLORS = {
+        English = Color3.fromRGB(56,132,255),
+        Arabic  = Color3.fromRGB(220,38,38),
+    }
+    local confirmBtn
 
-    local function MakeLangBtn(langName,flagEmoji,labelText,isDefault)
-        local tc=THEME_COLORS[langName]
-        local frame=New("Frame",{Size=UDim2.new(0,165,0,88),
-            BackgroundColor3=isDefault and Color3.fromRGB(20,26,46) or Color3.fromRGB(18,18,24),
-            BorderSizePixel=0,ZIndex=206,Parent=row})
-        Corner(frame,14)  -- ← حواف منحنية كبيرة
-        local fStroke=Stroke(frame,isDefault and tc or Color3.fromRGB(42,46,68),
-            isDefault and 2 or 1,0)
-        New("TextLabel",{Size=UDim2.new(1,0,0,40),Position=UDim2.new(0,0,0,8),
-            BackgroundTransparency=1,Text=flagEmoji,TextSize=30,ZIndex=207,Parent=frame})
-        local lbl=New("TextLabel",{Size=UDim2.new(1,-8,0,26),
-            Position=UDim2.new(0,4,0,54),BackgroundTransparency=1,
+    local function MakeLangBtn(langName, flagEmoji, labelText, isDefault)
+        local tc = THEME_COLORS[langName]
+        local frame = New("Frame", {
+            Size=UDim2.new(0,162,0,84),
+            BackgroundColor3=isDefault and Color3.fromRGB(18,24,40) or Color3.fromRGB(16,16,20),
+            BorderSizePixel=0,
+            BackgroundTransparency=1,
+            ZIndex=206,
+            Parent=row,
+        })
+        Corner(frame, 12)
+        local fStroke = Stroke(frame,
+            isDefault and tc or Color3.fromRGB(35,38,55),
+            isDefault and 1.5 or 1, 0)
+
+        local flagLbl = New("TextLabel", {
+            Size=UDim2.new(1,0,0,38),
+            Position=UDim2.new(0,0,0,8),
+            BackgroundTransparency=1,
+            Text=flagEmoji,
+            TextSize=28,
+            TextTransparency=1,
+            ZIndex=207,
+            Parent=frame,
+        })
+        local nameLbl = New("TextLabel", {
+            Size=UDim2.new(1,-8,0,22),
+            Position=UDim2.new(0,4,0,50),
+            BackgroundTransparency=1,
             Text=labelText,
-            TextColor3=isDefault and tc or Color3.fromRGB(148,152,172),
-            Font=Enum.Font.GothamBold,TextSize=14,ZIndex=207,Parent=frame})
-        local dot=New("Frame",{Size=UDim2.new(0,7,0,7),
-            AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,-6,0,6),
+            TextColor3=isDefault and tc or Color3.fromRGB(110,115,140),
+            Font=Enum.Font.GothamBold,
+            TextSize=13,
+            TextTransparency=1,
+            ZIndex=207,
+            Parent=frame,
+        })
+        -- Active dot
+        local dot = New("Frame", {
+            Size=UDim2.new(0,6,0,6),
+            AnchorPoint=Vector2.new(1,0),
+            Position=UDim2.new(1,-6,0,6),
             BackgroundColor3=tc,
             BackgroundTransparency=isDefault and 0 or 1,
-            BorderSizePixel=0,ZIndex=208,Parent=frame})
-        Corner(dot,4)
-        local clickBtn=New("TextButton",{Size=UDim2.new(1,0,1,0),
-            BackgroundTransparency=1,Text="",ZIndex=209,Parent=frame})
+            BorderSizePixel=0,
+            ZIndex=208,
+            Parent=frame,
+        })
+        Corner(dot, 3)
+
+        local clickBtn = New("TextButton", {
+            Size=UDim2.new(1,0,1,0),
+            BackgroundTransparency=1,
+            Text="",
+            ZIndex=209,
+            Parent=frame,
+        })
+
         clickBtn.MouseEnter:Connect(function()
-            if selectedLang~=langName then
-                Tween(frame,{BackgroundColor3=Color3.fromRGB(24,28,40)},0.15) end
+            if selectedLang ~= langName then
+                Tween(frame, {BackgroundColor3=Color3.fromRGB(22,26,36)}, 0.15)
+            end
         end)
         clickBtn.MouseLeave:Connect(function()
-            if selectedLang~=langName then
-                Tween(frame,{BackgroundColor3=Color3.fromRGB(18,18,24)},0.15) end
+            if selectedLang ~= langName then
+                Tween(frame, {BackgroundColor3=Color3.fromRGB(16,16,20)}, 0.15)
+            end
         end)
-        btnData[langName]={frame=frame,stroke=fStroke,label=lbl,dot=dot,
-            color=tc,clickBtn=clickBtn}
+
+        btnData[langName] = {
+            frame=frame, stroke=fStroke, label=nameLbl, flag=flagLbl,
+            dot=dot, color=tc, clickBtn=clickBtn,
+        }
         return clickBtn
     end
-    MakeLangBtn("English","🇺🇸","English",true)
-    MakeLangBtn("Arabic","🇸🇦","العربية",false)
 
-    local confirmBtn  -- forward-declare for use in SelectLang
+    MakeLangBtn("English", "🇺🇸", "English", true)
+    MakeLangBtn("Arabic",  "🇸🇦", "العربية",  false)
 
     local function SelectLang(name)
-        if selectedLang==name then return end
-        local prev=btnData[selectedLang]; local next=btnData[name]
+        if selectedLang == name then return end
+        local prev = btnData[selectedLang]
+        local next = btnData[name]
         if prev then
-            Tween(prev.frame,{BackgroundColor3=Color3.fromRGB(18,18,24)},0.22)
-            prev.stroke.Color=Color3.fromRGB(42,46,68); prev.stroke.Thickness=1
-            prev.label.TextColor3=Color3.fromRGB(148,152,172)
-            prev.dot.BackgroundTransparency=1
+            Tween(prev.frame,  {BackgroundColor3=Color3.fromRGB(16,16,20)}, 0.22)
+            prev.stroke.Color     = Color3.fromRGB(35,38,55)
+            prev.stroke.Thickness = 1
+            prev.label.TextColor3 = Color3.fromRGB(110,115,140)
+            Tween(prev.dot, {BackgroundTransparency=1}, 0.15)
         end
         if next then
-            Tween(next.frame,{BackgroundColor3=Color3.fromRGB(20,26,46)},0.22)
-            next.stroke.Color=next.color; next.stroke.Thickness=2
-            next.label.TextColor3=next.color
-            next.dot.BackgroundTransparency=0
+            Tween(next.frame,  {BackgroundColor3=Color3.fromRGB(18,24,40)}, 0.22)
+            next.stroke.Color     = next.color
+            next.stroke.Thickness = 1.5
+            next.label.TextColor3 = next.color
+            Tween(next.dot, {BackgroundTransparency=0}, 0.15)
         end
-        selectedLang=name
+        selectedLang = name
         if confirmBtn then
-            Tween(confirmBtn,{BackgroundColor3=THEME_COLORS[name]},0.2)
+            Tween(confirmBtn, {BackgroundColor3=THEME_COLORS[name]}, 0.2)
         end
     end
 
-    for ln,d in pairs(btnData) do
+    for ln, d in pairs(btnData) do
         d.clickBtn.MouseButton1Click:Connect(function() SelectLang(ln) end)
     end
 
-    -- ── Confirm button ─────────────────────────────────────────
-    confirmBtn=New("TextButton",{Size=UDim2.new(1,-48,0,44),
-        Position=UDim2.new(0,24,1,-58),
+    -- Confirm button
+    confirmBtn = New("TextButton", {
+        Size=UDim2.new(1,-48,0,42),
+        Position=UDim2.new(0,24,1,-56),
         BackgroundColor3=THEME_COLORS.English,
         Text="Continue  →",
         TextColor3=Color3.fromRGB(255,255,255),
-        Font=Enum.Font.GothamBold,TextSize=15,
-        BorderSizePixel=0,ZIndex=206,Parent=card})
-    Corner(confirmBtn,12)
+        Font=Enum.Font.GothamBold,
+        TextSize=14,
+        BorderSizePixel=0,
+        BackgroundTransparency=1,
+        ZIndex=206,
+        Parent=card,
+    })
+    Corner(confirmBtn, 10)
 
     confirmBtn.MouseEnter:Connect(function()
-        Tween(confirmBtn,{BackgroundColor3=THEME_COLORS[selectedLang]:Lerp(
-            Color3.fromRGB(0,0,0),0.25)},0.15)
+        Tween(confirmBtn, {BackgroundColor3=THEME_COLORS[selectedLang]:Lerp(Color3.fromRGB(0,0,0),0.22)}, 0.15)
     end)
     confirmBtn.MouseLeave:Connect(function()
-        Tween(confirmBtn,{BackgroundColor3=THEME_COLORS[selectedLang]},0.15)
+        Tween(confirmBtn, {BackgroundColor3=THEME_COLORS[selectedLang]}, 0.15)
     end)
 
-    -- ── Entrance animation ─────────────────────────────────────
-    ringBg.Position=UDim2.new(0.5,0,0.65,0)
-    card.Position=UDim2.new(0.5,0,0.65,0)
-    Tween(ringBg,{BackgroundTransparency=0,Position=UDim2.new(0.5,0,0.5,0)},
-        0.5,Enum.EasingStyle.Back)
-    Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0.5,0,0.5,0)},
-        0.5,Enum.EasingStyle.Back)
+    -- ── Entrance animation ────────────────────────────────
+    ringBg.Position = UDim2.new(0.5,0,0.7,0)
+    card.Position   = UDim2.new(0.5,0,0.7,0)
 
-    -- ── Confirm ────────────────────────────────────────────────
-    local fired=false
+    Tween(ringBg, {BackgroundTransparency=0, Position=UDim2.new(0.5,0,0.5,0)},
+        0.5, Enum.EasingStyle.Back)
+    Tween(card,   {BackgroundTransparency=0, Position=UDim2.new(0.5,0,0.5,0)},
+        0.5, Enum.EasingStyle.Back)
+
+    -- Staggered element fade-in
+    task.spawn(function()
+        task.wait(0.25)
+        Tween(cardLogo,  {ImageTransparency=0}, 0.35)
+        task.wait(0.08)
+        Tween(cardTitle, {TextTransparency=0},  0.3)
+        task.wait(0.06)
+        Tween(cardSub,   {TextTransparency=0},  0.3)
+        task.wait(0.06)
+        Tween(divider,   {BackgroundTransparency=0}, 0.25)
+        task.wait(0.04)
+        -- Lang buttons
+        for _, d in pairs(btnData) do
+            Tween(d.frame, {BackgroundTransparency=0}, 0.28, Enum.EasingStyle.Back)
+            Tween(d.flag,  {TextTransparency=0}, 0.28)
+            Tween(d.label, {TextTransparency=0}, 0.28)
+        end
+        task.wait(0.1)
+        Tween(confirmBtn, {BackgroundTransparency=0}, 0.28)
+    end)
+
+    -- ── FIX: Synchronized fade-out ───────────────────────
+    -- ALL elements fade out TOGETHER in one shot — no sequential disappearing
+    local fired = false
     local function FireConfirm()
         if fired then return end
-        fired=true
+        fired = true
         rainbowConn:Disconnect()
-        Tween(overlay,{BackgroundTransparency=1},0.38)
-        Tween(card,{BackgroundTransparency=1,Position=UDim2.new(0.5,0,0.44,0)},0.35)
-        Tween(ringBg,{BackgroundTransparency=1,Position=UDim2.new(0.5,0,0.44,0)},0.35)
-        task.delay(0.44,function()
-            overlay:Destroy(); lsWrapper:Destroy()
+
+        local FO = 0.32
+        local FI = TweenInfo.new(FO, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+
+        -- Everything fades at once
+        local targets = {
+            {card,       {BackgroundTransparency=1}},
+            {ringBg,     {BackgroundTransparency=1}},
+            {overlay,    {BackgroundTransparency=1}},
+            {cardLogo,   {ImageTransparency=1}},
+            {cardTitle,  {TextTransparency=1}},
+            {cardSub,    {TextTransparency=1}},
+            {divider,    {BackgroundTransparency=1}},
+            {confirmBtn, {BackgroundTransparency=1, TextTransparency=1}},
+        }
+        for _, d in pairs(btnData) do
+            table.insert(targets, {d.frame, {BackgroundTransparency=1}})
+            table.insert(targets, {d.flag,  {TextTransparency=1}})
+            table.insert(targets, {d.label, {TextTransparency=1}})
+            table.insert(targets, {d.dot,   {BackgroundTransparency=1}})
+        end
+
+        -- Slight upward drift + fade
+        Tween(card,   {Position=UDim2.new(0.5,0,0.46,0), BackgroundTransparency=1}, FO, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+        Tween(ringBg, {Position=UDim2.new(0.5,0,0.46,0), BackgroundTransparency=1}, FO, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+
+        for _, pair in ipairs(targets) do
+            local obj, props = pair[1], pair[2]
+            if obj and obj.Parent then
+                TweenService:Create(obj, FI, props):Play()
+            end
+        end
+
+        task.delay(FO + 0.06, function()
+            if overlay  and overlay.Parent  then overlay:Destroy()   end
+            if lsWrapper and lsWrapper.Parent then lsWrapper:Destroy() end
             if onDone then task.spawn(function() onDone(selectedLang) end) end
         end)
     end
@@ -755,6 +1689,12 @@ local function ShowLangSelect(sg, onDone)
     confirmBtn.MouseButton1Click:Connect(function()
         Ripple(confirmBtn)
         FireConfirm()
+    end)
+    -- Touch support
+    confirmBtn.InputEnded:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.Touch then
+            FireConfirm()
+        end
     end)
 end
 
@@ -773,14 +1713,12 @@ function CrozoX:_Init()
     local ok=Safe(function() sg.Parent=CoreGui end)
     if not ok then sg.Parent=LocalPlayer:WaitForChild("PlayerGui") end
     self._ScreenGui=sg
-    -- NotifContainer — على الجانب الأيمن دايماً (موبايل وPC)
-    -- موبايل: عرض 260px من اليمين | PC: 345px
     do
         local _nc  = workspace.CurrentCamera
         local _nv  = _nc and _nc.ViewportSize or Vector2.new(800,600)
         local isMobInit = (Device.IsMobile or Device.IsTablet) or (math.min(_nv.X,_nv.Y) < 500)
         local notifW    = isMobInit and 260 or 345
-        local notifOff  = notifW + 12  -- margin من حافة الشاشة
+        local notifOff  = notifW + 12
         local notifGap  = isMobInit and 6 or 10
         self._NotifContainer=New("Frame",{Name="NotifContainer",
             Size=UDim2.new(0,notifW,1,0),
@@ -807,7 +1745,7 @@ end
 function CrozoX:CreateWindow(cfg)
     cfg=cfg or {}
     local title   =cfg.Title    or "CrozoX"
-    local subtitle=cfg.Subtitle or "v4.0.0"
+    local subtitle=cfg.Subtitle or "v7.1.0"
     local logoId  =cfg.Logo     or "rbxassetid://93116857865430"
     local size    =cfg.Size     or UDim2.new(0,660,0,470)
     size = UDim2.new(0, size.X.Offset, 0, size.Y.Offset)
@@ -815,225 +1753,201 @@ function CrozoX:CreateWindow(cfg)
     local L       =self._Lang
     local sg      =self._ScreenGui
 
-    -- ════════════════════════════════════════════════════════
-    --  MAIN FRAME — frame واحد فقط، UICorner عليه مباشرة
-    --  السر: ClipsDescendants=true + UICorner على نفس الـ frame
-    --  يعمل بدون أي frame خلفي أو wrapper
-    -- ════════════════════════════════════════════════════════
-    -- ════════════════════════════════════════════════════════
-    -- الهيكل الصحيح:
-    -- wrapFrame: شفاف، لا clips، يحمل shadow وmainFrame معاً
-    --   └─ shadowImg: خلف الواجهة
-    --   └─ mainFrame: يحمل اللون والـ UICorner والـ ClipsDescendants
-    -- ════════════════════════════════════════════════════════
     local wrapFrame = New("Frame", {
-        Name                   = "CrozoX_Wrap",
-        Size                   = UDim2.new(0, 0, 0, 0),
-        AnchorPoint            = Vector2.new(0, 0),
-        Position               = UDim2.new(0, 0, 0, 0),
-        BackgroundTransparency = 1,
-        BorderSizePixel        = 0,
-        ClipsDescendants       = false,
-        ZIndex                 = 9,
-        Parent                 = sg,
+        Name="CrozoX_Wrap",
+        Size=UDim2.new(0,0,0,0),
+        AnchorPoint=Vector2.new(0,0),
+        Position=UDim2.new(0,0,0,0),
+        BackgroundTransparency=1,
+        BorderSizePixel=0,
+        ClipsDescendants=false,
+        ZIndex=9,
+        Parent=sg,
     })
 
-    -- Shadow داخل wrapFrame — يتحرك معه تلقائياً
     local shadowImg = New("ImageLabel", {
-        Name                   = "Shadow",
-        Size                   = UDim2.new(1, 60, 1, 60),
-        Position               = UDim2.new(0, -30, 0, -20),
-        BackgroundTransparency = 1,
-        Image                  = "rbxassetid://6014261993",
-        ImageColor3            = Color3.fromRGB(0, 0, 0),
-        ImageTransparency      = 1,
-        ScaleType              = Enum.ScaleType.Slice,
-        SliceCenter            = Rect.new(49, 49, 450, 450),
-        ZIndex                 = 9,
-        Parent                 = wrapFrame,
+        Name="Shadow",
+        Size=UDim2.new(1,60,1,60),
+        Position=UDim2.new(0,-30,0,-20),
+        BackgroundTransparency=1,
+        Image="rbxassetid://6014261993",
+        ImageColor3=Color3.fromRGB(0,0,0),
+        ImageTransparency=1,
+        ScaleType=Enum.ScaleType.Slice,
+        SliceCenter=Rect.new(49,49,450,450),
+        ZIndex=9,
+        Parent=wrapFrame,
     })
 
-    -- mainFrame داخل wrapFrame
     local mainFrame = New("Frame", {
-        Name             = "CrozoX_Window",
-        Size             = UDim2.new(1, 0, 1, 0),
-        Position         = UDim2.new(0, 0, 0, 0),
-        BackgroundColor3 = T.Background,
-        BackgroundTransparency = 1,
-        BorderSizePixel  = 0,
-        ClipsDescendants = true,
-        ZIndex           = 10,
-        Parent           = wrapFrame,
+        Name="CrozoX_Window",
+        Size=UDim2.new(1,0,1,0),
+        Position=UDim2.new(0,0,0,0),
+        BackgroundColor3=T.Background,
+        BackgroundTransparency=1,
+        BorderSizePixel=0,
+        ClipsDescendants=true,
+        ZIndex=10,
+        Parent=wrapFrame,
     })
     Corner(mainFrame, 16)
 
-    -- Gradient يغطي كامل الواجهة بما فيها منطقة TopBar والـ Sidebar
     New("UIGradient", {
-        Color = ColorSequence.new{
+        Color=ColorSequence.new{
             ColorSequenceKeypoint.new(0,    T.Background),
             ColorSequenceKeypoint.new(0.55, T.Background),
             ColorSequenceKeypoint.new(1,    T.Primary:Lerp(T.Background, 0.78)),
         },
-        Rotation = 145,
-        Parent   = mainFrame,
+        Rotation=145,
+        Parent=mainFrame,
     })
 
-
-    -- Animated border — Elegant rotating gradient (Thickness 1.5, not too thick)
     local glowStroke = New("UIStroke", {
-        Thickness    = 1.5,
-        Transparency = 0.3,   -- elegant, not neon
-        Parent       = mainFrame,
+        Thickness=1.5, Transparency=0.3, Parent=mainFrame,
     })
     New("UIGradient", {
-        Color = ColorSequence.new{
+        Color=ColorSequence.new{
             ColorSequenceKeypoint.new(0,    T.Primary),
             ColorSequenceKeypoint.new(0.35, T.PrimaryLight),
-            ColorSequenceKeypoint.new(0.5,  T.Primary:Lerp(Color3.new(1,1,1), 0.2)),
+            ColorSequenceKeypoint.new(0.5,  T.Primary:Lerp(Color3.new(1,1,1),0.2)),
             ColorSequenceKeypoint.new(0.65, T.PrimaryLight),
             ColorSequenceKeypoint.new(1,    T.Primary),
         },
-        Rotation = 0,
-        Parent   = glowStroke,
+        Rotation=0,
+        Parent=glowStroke,
     })
-    -- slow elegant rotation
     task.spawn(function()
-        local rot = 0
+        local rot=0
         while mainFrame and mainFrame.Parent do
-            rot = (rot + 0.6) % 360
-            local g = glowStroke:FindFirstChildWhichIsA("UIGradient")
-            if g then g.Rotation = rot end
+            rot=(rot+0.6)%360
+            local g=glowStroke:FindFirstChildWhichIsA("UIGradient")
+            if g then g.Rotation=rot end
             task.wait(0.03)
         end
     end)
 
-    -- Shadow تظهر بعد animation الفتح
     task.delay(0.3, function()
         if shadowImg and shadowImg.Parent then
             Tween(shadowImg, {ImageTransparency=0.5}, 0.35)
         end
     end)
 
-    -- ── Titlebar — شفاف عشان حواف MainFrame تظهر ──────────
     local titleBar = New("Frame", {
-        Size                   = UDim2.new(1, 0, 0, 54),
-        Position               = UDim2.new(0, 0, 0, 0),
-        BackgroundTransparency = 1,   -- ← شفاف: لا يغطي الحواف
-        BorderSizePixel        = 0,
-        ZIndex                 = 11,
-        Parent                 = mainFrame,
+        Size=UDim2.new(1,0,0,54),
+        Position=UDim2.new(0,0,0,0),
+        BackgroundTransparency=1,
+        BorderSizePixel=0,
+        ZIndex=11,
+        Parent=mainFrame,
     })
-    -- لا gradient على الـ titleBar — الـ MainFrame هو من يحمل اللون
-
-    -- Separator
     New("Frame", {
-        Size             = UDim2.new(1, 0, 0, 1),
-        Position         = UDim2.new(0, 0, 1, -1),
-        BackgroundColor3 = T.BorderBright,
-        BackgroundTransparency = 0.5,
-        BorderSizePixel  = 0,
-        ZIndex           = 12,
-        Parent           = titleBar,
+        Size=UDim2.new(1,0,0,1),
+        Position=UDim2.new(0,0,1,-1),
+        BackgroundColor3=T.BorderBright,
+        BackgroundTransparency=0.5,
+        BorderSizePixel=0,
+        ZIndex=12,
+        Parent=titleBar,
     })
-    -- Accent bar
     local accentBar = New("Frame", {
-        Size             = UDim2.new(0, 0, 0, 2),
-        Position         = UDim2.new(0, 14, 1, -2),
-        BackgroundColor3 = T.Primary,
-        BorderSizePixel  = 0,
-        ZIndex           = 13,
-        Parent           = titleBar,
+        Size=UDim2.new(0,0,0,2),
+        Position=UDim2.new(0,14,1,-2),
+        BackgroundColor3=T.Primary,
+        BorderSizePixel=0,
+        ZIndex=13,
+        Parent=titleBar,
     })
     New("UIGradient", {
-        Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, T.Primary),
-            ColorSequenceKeypoint.new(1, T.PrimaryLight),
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0,T.Primary),
+            ColorSequenceKeypoint.new(1,T.PrimaryLight),
         },
-        Parent = accentBar,
+        Parent=accentBar,
     })
     Tween(accentBar, {Size=UDim2.new(0,90,0,2)}, 0.8, Enum.EasingStyle.Back)
 
-    -- Logo
     local titleLogo = New("ImageLabel", {
-        Size             = UDim2.new(0, 30, 0, 30),
-        Position         = UDim2.new(0, 12, 0.5, -15),
-        BackgroundTransparency = 1,
-        Image            = logoId,
-        ScaleType        = Enum.ScaleType.Fit,
-        ZIndex           = 12,
-        Parent           = titleBar,
+        Size=UDim2.new(0,30,0,30),
+        Position=UDim2.new(0,12,0.5,-15),
+        BackgroundTransparency=1,
+        Image=logoId,
+        ScaleType=Enum.ScaleType.Fit,
+        ZIndex=12,
+        Parent=titleBar,
     })
     Corner(titleLogo, 7)
-    -- Glow ring
     New("ImageLabel", {
-        Size             = UDim2.new(0, 42, 0, 42),
-        Position         = UDim2.new(0, 6, 0.5, -21),
-        BackgroundTransparency = 1,
-        Image            = "rbxassetid://5028857084",
-        ImageColor3      = T.Primary,
-        ImageTransparency = 0.78,
-        ZIndex           = 11,
-        Parent           = titleBar,
-    })
-
-    New("TextLabel", {
-        Size             = UDim2.new(0, 260, 0, 22),
-        Position         = UDim2.new(0, 50, 0, 7),
-        BackgroundTransparency = 1,
-        Text             = title,
-        TextColor3       = T.Text,
-        Font             = L.Font,
-        TextSize         = 16,
-        TextXAlignment   = Enum.TextXAlignment.Left,
-        ZIndex           = 12,
-        Parent           = titleBar,
+        Size=UDim2.new(0,42,0,42),
+        Position=UDim2.new(0,6,0.5,-21),
+        BackgroundTransparency=1,
+        Image="rbxassetid://5028857084",
+        ImageColor3=T.Primary,
+        ImageTransparency=0.78,
+        ZIndex=11,
+        Parent=titleBar,
     })
     New("TextLabel", {
-        Size             = UDim2.new(0, 260, 0, 14),
-        Position         = UDim2.new(0, 50, 0, 30),
-        BackgroundTransparency = 1,
-        Text             = subtitle,
-        TextColor3       = T.TextMuted,
-        Font             = Enum.Font.Gotham,
-        TextSize         = 10,
-        TextXAlignment   = Enum.TextXAlignment.Left,
-        ZIndex           = 12,
-        Parent           = titleBar,
+        Size=UDim2.new(0,260,0,22),
+        Position=UDim2.new(0,50,0,7),
+        BackgroundTransparency=1,
+        Text=title,
+        TextColor3=T.Text,
+        Font=L.Font,
+        TextSize=16,
+        TextXAlignment=Enum.TextXAlignment.Left,
+        ZIndex=12,
+        Parent=titleBar,
+    })
+    New("TextLabel", {
+        Size=UDim2.new(0,260,0,14),
+        Position=UDim2.new(0,50,0,30),
+        BackgroundTransparency=1,
+        Text=subtitle,
+        TextColor3=T.TextMuted,
+        Font=Enum.Font.Gotham,
+        TextSize=10,
+        TextXAlignment=Enum.TextXAlignment.Left,
+        ZIndex=12,
+        Parent=titleBar,
     })
 
-    -- ── Control buttons ────────────────────────────────────
     local _btnSz    = (Device.IsMobile or Device.IsTablet) and 42 or 28
     local _btnIcoSz = (Device.IsMobile or Device.IsTablet) and 20 or 14
     local _btnCorner= (Device.IsMobile or Device.IsTablet) and 11 or 7
 
-    -- CtrlBtn يرجع الـ TextButton
-    -- على موبايل نستخدم InputBegan Touch بدل TouchTap (أكثر موثوقية)
     local function CtrlBtn(iconAsset, rightOff, normalBg, hoverBg, iconColor)
         local mobOff = Device.IsPC and rightOff or (rightOff * (_btnSz / 28))
         local fr = New("Frame", {
-            Size             = UDim2.new(0, _btnSz, 0, _btnSz),
-            AnchorPoint      = Vector2.new(1, 0.5),
-            Position         = UDim2.new(1, -mobOff, 0.5, 0),
-            BackgroundColor3 = normalBg,
-            BorderSizePixel  = 0,
-            ZIndex           = 20,
-            Parent           = titleBar,
+            Size=UDim2.new(0,_btnSz,0,_btnSz),
+            AnchorPoint=Vector2.new(1,0.5),
+            Position=UDim2.new(1,-mobOff,0.5,0),
+            BackgroundColor3=normalBg,
+            BorderSizePixel=0,
+            ZIndex=20,
+            Parent=titleBar,
         })
         Corner(fr, _btnCorner)
         Stroke(fr, Color3.fromRGB(255,255,255), 1, 0.88)
         local icon = New("ImageLabel", {
             Size=UDim2.new(0,_btnIcoSz,0,_btnIcoSz),
-            AnchorPoint=Vector2.new(0.5,0.5), Position=UDim2.new(0.5,0,0.5,0),
-            BackgroundTransparency=1, Image=iconAsset, ImageColor3=iconColor,
-            ScaleType=Enum.ScaleType.Fit, ZIndex=21, Parent=fr,
+            AnchorPoint=Vector2.new(0.5,0.5),
+            Position=UDim2.new(0.5,0,0.5,0),
+            BackgroundTransparency=1,
+            Image=iconAsset,
+            ImageColor3=iconColor,
+            ScaleType=Enum.ScaleType.Fit,
+            ZIndex=21,
+            Parent=fr,
         })
         local btn = New("TextButton", {
-            Size=UDim2.new(1,0,1,0), BackgroundTransparency=1,
-            Text="", ZIndex=22, Parent=fr,
+            Size=UDim2.new(1,0,1,0),
+            BackgroundTransparency=1,
+            Text="",
+            ZIndex=22,
+            Parent=fr,
         })
         local normSz  = UDim2.new(0,_btnSz,  0,_btnSz)
         local pressSz = UDim2.new(0,_btnSz-4,0,_btnSz-4)
-        -- PC: hover + click
         btn.MouseEnter:Connect(function()
             Tween(fr,{BackgroundColor3=hoverBg},0.15)
             Tween(icon,{ImageColor3=Color3.new(1,1,1)},0.15)
@@ -1046,8 +1960,6 @@ function CrozoX:CreateWindow(cfg)
         end)
         btn.MouseButton1Down:Connect(function() Tween(fr,{Size=pressSz},0.08) end)
         btn.MouseButton1Up:Connect(function()   Tween(fr,{Size=normSz},0.12,Enum.EasingStyle.Back) end)
-        -- موبايل: InputBegan = visual feedback فقط (مش action)
-        -- الـ action بيتشغل من ConnectBtn بـ InputEnded
         btn.InputBegan:Connect(function(inp)
             if inp.UserInputType == Enum.UserInputType.Touch then
                 Tween(fr,{BackgroundColor3=hoverBg,Size=pressSz},0.08)
@@ -1061,206 +1973,187 @@ function CrozoX:CreateWindow(cfg)
         return btn
     end
 
-    -- ✕ إغلاق — أيقونة X الحقيقية (xcircle أو x)
-    local closeBtn = CtrlBtn(
-        Icons.xcircle,    -- أيقونة دائرة X احترافية
-        10,
-        Color3.fromRGB(44, 14, 14),    -- خلفية عادية
-        Color3.fromRGB(200, 30, 30),   -- hover أحمر
-        Color3.fromRGB(220, 60, 60)    -- لون الأيقونة
-    )
-    -- ⊟ تصغير — أيقونة minus الحقيقية
-    local minBtn = CtrlBtn(
-        Icons.minimize_icon,  -- أيقونة التصغير الحقيقية
-        46,
-        Color3.fromRGB(20, 24, 40),    -- خلفية عادية
-        Color3.fromRGB(38, 50, 82),    -- hover
-        Color3.fromRGB(120, 140, 195)  -- لون الأيقونة
-    )
+    local closeBtn = CtrlBtn(Icons.xcircle, 10,
+        Color3.fromRGB(44,14,14), Color3.fromRGB(200,30,30), Color3.fromRGB(220,60,60))
+    local minBtn   = CtrlBtn(Icons.minimize_icon, 46,
+        Color3.fromRGB(20,24,40), Color3.fromRGB(38,50,82),  Color3.fromRGB(120,140,195))
 
-    -- ── Sidebar — width 220 ───────────────────────────────
+    -- Sidebar
     local sidebar = New("Frame", {
-        Size                   = UDim2.new(0, 220, 1, -54),
-        Position               = UDim2.new(0, 0, 0, 54),
-        BackgroundColor3       = T.Surface,
-        BackgroundTransparency = 0.1,
-        BorderSizePixel        = 0,
-        ZIndex                 = 11,
-        Parent                 = mainFrame,
+        Size=UDim2.new(0,220,1,-54),
+        Position=UDim2.new(0,0,0,54),
+        BackgroundColor3=T.Surface,
+        BackgroundTransparency=0.1,
+        BorderSizePixel=0,
+        ZIndex=11,
+        Parent=mainFrame,
     })
-    -- Right border — subtle
     New("Frame", {
-        Size=UDim2.new(0,1,1,0), Position=UDim2.new(1,0,0,0),
-        BackgroundColor3=T.Border, BorderSizePixel=0,
-        ZIndex=12, Parent=sidebar,
+        Size=UDim2.new(0,1,1,0),
+        Position=UDim2.new(1,0,0,0),
+        BackgroundColor3=T.Border,
+        BorderSizePixel=0,
+        ZIndex=12,
+        Parent=sidebar,
     })
 
-    -- Profile card — أكبر قليلاً عشان الصورة تظهر كاملة
+    -- Profile card
     local profileCard = New("Frame", {
-        Size=UDim2.new(1,-14,0,56), Position=UDim2.new(0,7,0,6),
-        BackgroundColor3=T.SurfaceAlt, BorderSizePixel=0,
-        ZIndex=12, Parent=sidebar,
+        Size=UDim2.new(1,-14,0,56),
+        Position=UDim2.new(0,7,0,6),
+        BackgroundColor3=T.SurfaceAlt,
+        BorderSizePixel=0,
+        ZIndex=12,
+        Parent=sidebar,
     })
     Corner(profileCard, 10)
     Stroke(profileCard, T.Border, 1, 0)
 
-    -- ── Avatar دائري ─────────────────────────────────────
     local avatarImg = New("ImageLabel", {
-        Name                   = "Avatar",
-        Size                   = UDim2.new(0, 42, 0, 42),
-        Position               = UDim2.new(0, 7, 0.5, -21),
-        BackgroundColor3       = T.SurfaceHover,
-        BackgroundTransparency = 1,
-        ImageTransparency      = 1,
-        Image                  = "",
-        ScaleType              = Enum.ScaleType.Crop,
-        ZIndex                 = 15,
-        Parent                 = profileCard,
+        Name="Avatar",
+        Size=UDim2.new(0,42,0,42),
+        Position=UDim2.new(0,7,0.5,-21),
+        BackgroundColor3=T.SurfaceHover,
+        BackgroundTransparency=1,
+        ImageTransparency=1,
+        Image="",
+        ScaleType=Enum.ScaleType.Crop,
+        ZIndex=15,
+        Parent=profileCard,
     })
-    New("UICorner", { CornerRadius = UDim.new(1, 0), Parent = avatarImg })
-    New("UIStroke", {
-        Color        = T.Primary,
-        Thickness    = 2,
-        Transparency = 0.4,
-        Parent       = avatarImg,
-    })
+    New("UICorner",{CornerRadius=UDim.new(1,0),Parent=avatarImg})
+    New("UIStroke",{Color=T.Primary,Thickness=2,Transparency=0.4,Parent=avatarImg})
 
-    -- Loading shimmer — ZIndex أقل من الصورة
     local loadingFrame = New("Frame", {
-        Size                   = UDim2.new(1, 0, 1, 0),
-        BackgroundColor3       = T.SurfaceHover,
-        BackgroundTransparency = 0,
-        ZIndex                 = 14,   -- تحت الصورة
-        Parent                 = avatarImg,
+        Size=UDim2.new(1,0,1,0),
+        BackgroundColor3=T.SurfaceHover,
+        BackgroundTransparency=0,
+        ZIndex=14,
+        Parent=avatarImg,
     })
-    New("UICorner", { CornerRadius = UDim.new(1, 0), Parent = loadingFrame })
+    New("UICorner",{CornerRadius=UDim.new(1,0),Parent=loadingFrame})
     local shimmerGrad = New("UIGradient", {
-        Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0,   Color3.fromRGB(40, 40, 40)),
-            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(65, 65, 65)),
-            ColorSequenceKeypoint.new(1,   Color3.fromRGB(40, 40, 40)),
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0,   Color3.fromRGB(40,40,40)),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(65,65,65)),
+            ColorSequenceKeypoint.new(1,   Color3.fromRGB(40,40,40)),
         },
-        Rotation = 45,
-        Parent   = loadingFrame,
+        Rotation=45,
+        Parent=loadingFrame,
     })
     local shimmerConn
     shimmerConn = RunService.RenderStepped:Connect(function()
-        if not loadingFrame.Parent then
-            shimmerConn:Disconnect(); return
-        end
-        shimmerGrad.Offset = Vector2.new(math.sin(tick() * 1.5) * 0.8, 0)
+        if not loadingFrame.Parent then shimmerConn:Disconnect();return end
+        shimmerGrad.Offset = Vector2.new(math.sin(tick()*1.5)*0.8, 0)
     end)
 
     task.spawn(function()
         repeat task.wait() until LocalPlayer and LocalPlayer.UserId ~= 0
         local userId = LocalPlayer.UserId
-
-        -- rbxthumb فوري كـ fallback — يظهر فوراً حتى لو الـ async اتعلق
-        avatarImg.Image = "rbxthumb://type=AvatarHeadShot&id=" .. userId .. "&w=150&h=150"
-
-        -- GetUserThumbnailAsync في coroutine منفصلة مع timeout 3 ثواني
-        -- عشان لو اتعلق، منفضلش في الـ loop للأبد
+        avatarImg.Image = "rbxthumb://type=AvatarHeadShot&id="..userId.."&w=150&h=150"
         local betterUrl = nil
         local fetchDone = false
-
         task.spawn(function()
             local ok, content = pcall(function()
-                return Players:GetUserThumbnailAsync(
-                    userId,
-                    Enum.ThumbnailType.HeadShot,
-                    Enum.ThumbnailSize.Size420x420
-                )
+                return Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
             end)
-            if ok and content and content ~= "" then
-                betterUrl = content
-            end
+            if ok and content and content ~= "" then betterUrl = content end
             fetchDone = true
         end)
-
-        -- انتظر الـ fetch بحد أقصى 3 ثواني
         local waited = 0
-        while not fetchDone and waited < 3 do
-            task.wait(0.1)
-            waited = waited + 0.1
-        end
-
-        -- لو جاب جودة أعلى، استخدمها
-        if betterUrl then
-            avatarImg.Image = betterUrl
-        end
-
-        -- وقف الـ shimmer
-        if shimmerConn then
-            shimmerConn:Disconnect()
-            shimmerConn = nil
-        end
-
-        -- الـ fade-in الصح: من 1 لـ 0 (مش instant set + tween من 0 لـ 0)
-        Tween(avatarImg, {ImageTransparency = 0}, 0.4, Enum.EasingStyle.Quad)
-
-        -- نشيل الـ loading بعد شوية عشان الـ animation يبدأ الأول
+        while not fetchDone and waited < 3 do task.wait(0.1); waited=waited+0.1 end
+        if betterUrl then avatarImg.Image = betterUrl end
+        if shimmerConn then shimmerConn:Disconnect(); shimmerConn=nil end
+        Tween(avatarImg, {ImageTransparency=0}, 0.4, Enum.EasingStyle.Quad)
         task.wait(0.1)
-        Tween(loadingFrame, {BackgroundTransparency = 1}, 0.35)
+        Tween(loadingFrame, {BackgroundTransparency=1}, 0.35)
         task.delay(0.45, function()
-            if loadingFrame and loadingFrame.Parent then
-                loadingFrame:Destroy()
-            end
+            if loadingFrame and loadingFrame.Parent then loadingFrame:Destroy() end
         end)
     end)
+
     New("TextLabel", {
-        Size=UDim2.new(1,-60,0,18), Position=UDim2.new(0,56,0,8),
-        BackgroundTransparency=1, Text=LocalPlayer.Name,
-        TextColor3=T.Text, Font=Enum.Font.GothamSemibold, TextSize=12,
+        Size=UDim2.new(1,-60,0,18),
+        Position=UDim2.new(0,56,0,8),
+        BackgroundTransparency=1,
+        Text=LocalPlayer.Name,
+        TextColor3=T.Text,
+        Font=Enum.Font.GothamSemibold,
+        TextSize=12,
         TextXAlignment=Enum.TextXAlignment.Left,
         TextTruncate=Enum.TextTruncate.AtEnd,
-        ZIndex=13, Parent=profileCard,
+        ZIndex=13,
+        Parent=profileCard,
     })
     local onlineDot = New("Frame", {
-        Size=UDim2.new(0,6,0,6), Position=UDim2.new(0,56,0,30),
-        BackgroundColor3=T.Success, BorderSizePixel=0,
-        ZIndex=13, Parent=profileCard,
+        Size=UDim2.new(0,6,0,6),
+        Position=UDim2.new(0,56,0,30),
+        BackgroundColor3=T.Success,
+        BorderSizePixel=0,
+        ZIndex=13,
+        Parent=profileCard,
     })
     Corner(onlineDot, 3)
     New("TextLabel", {
-        Size=UDim2.new(1,-68,0,14), Position=UDim2.new(0,68,0,28),
-        BackgroundTransparency=1, Text="Online",
-        TextColor3=T.TextMuted, Font=Enum.Font.Gotham, TextSize=10,
+        Size=UDim2.new(1,-68,0,14),
+        Position=UDim2.new(0,68,0,28),
+        BackgroundTransparency=1,
+        Text="Online",
+        TextColor3=T.TextMuted,
+        Font=Enum.Font.Gotham,
+        TextSize=10,
         TextXAlignment=Enum.TextXAlignment.Left,
-        ZIndex=13, Parent=profileCard,
+        ZIndex=13,
+        Parent=profileCard,
     })
 
     -- Search bar
     local searchFrame = New("Frame", {
-        Size=UDim2.new(1,-14,0,27), Position=UDim2.new(0,7,0,62),
-        BackgroundColor3=T.SurfaceAlt, BorderSizePixel=0,
-        ZIndex=12, Parent=sidebar,
+        Size=UDim2.new(1,-14,0,27),
+        Position=UDim2.new(0,7,0,62),
+        BackgroundColor3=T.SurfaceAlt,
+        BorderSizePixel=0,
+        ZIndex=12,
+        Parent=sidebar,
     })
     Corner(searchFrame, 8)
     local searchStroke = Stroke(searchFrame, T.Border, 1, 0)
     Img(searchFrame, Icons.search, 12, UDim2.new(0,7,0.5,-6), T.TextMuted, 13)
     local searchBox = New("TextBox", {
-        Size=UDim2.new(1,-24,1,0), Position=UDim2.new(0,22,0,0),
-        BackgroundTransparency=1, Text="",
-        PlaceholderText=L.Search, PlaceholderColor3=T.TextMuted,
-        TextColor3=T.Text, Font=Enum.Font.Gotham, TextSize=11,
-        BorderSizePixel=0, ClearTextOnFocus=false,
-        ZIndex=13, Parent=searchFrame,
+        Size=UDim2.new(1,-24,1,0),
+        Position=UDim2.new(0,22,0,0),
+        BackgroundTransparency=1,
+        Text="",
+        PlaceholderText=L.Search,
+        PlaceholderColor3=T.TextMuted,
+        TextColor3=T.Text,
+        Font=Enum.Font.Gotham,
+        TextSize=11,
+        BorderSizePixel=0,
+        ClearTextOnFocus=false,
+        ZIndex=13,
+        Parent=searchFrame,
     })
     searchBox.Focused:Connect(function()
-        Tween(searchStroke, {Color=T.Primary}, 0.15)
-        Tween(searchFrame,  {BackgroundColor3=T.SurfaceHover}, 0.15)
+        Tween(searchStroke,{Color=T.Primary},0.15)
+        Tween(searchFrame,{BackgroundColor3=T.SurfaceHover},0.15)
     end)
     searchBox.FocusLost:Connect(function()
-        Tween(searchStroke, {Color=T.Border},    0.15)
-        Tween(searchFrame,  {BackgroundColor3=T.SurfaceAlt}, 0.15)
+        Tween(searchStroke,{Color=T.Border},0.15)
+        Tween(searchFrame,{BackgroundColor3=T.SurfaceAlt},0.15)
     end)
 
     -- Tab list
     local tabList = New("ScrollingFrame", {
-        Size=UDim2.new(1,0,1,-96), Position=UDim2.new(0,0,0,96),
-        BackgroundTransparency=1, ScrollBarThickness=2,
-        ScrollBarImageColor3=T.Primary, BorderSizePixel=0,
-        ZIndex=12, CanvasSize=UDim2.new(0,0,0,0), Parent=sidebar,
+        Size=UDim2.new(1,0,1,-96),
+        Position=UDim2.new(0,0,0,96),
+        BackgroundTransparency=1,
+        ScrollBarThickness=2,
+        ScrollBarImageColor3=T.Primary,
+        BorderSizePixel=0,
+        ZIndex=12,
+        CanvasSize=UDim2.new(0,0,0,0),
+        Parent=sidebar,
     })
     local tlLayout = ListLayout(tabList, 4)
     Pad(tabList, 4, 6, 7, 7)
@@ -1268,80 +2161,68 @@ function CrozoX:CreateWindow(cfg)
         tabList.CanvasSize = UDim2.new(0,0,0,tlLayout.AbsoluteContentSize.Y+12)
     end)
 
-    -- Search filter
     searchBox:GetPropertyChangedSignal("Text"):Connect(function()
         local q = string.lower(searchBox.Text)
         for _, tb in ipairs(tabList:GetChildren()) do
             if tb:IsA("Frame") then
                 local lbl = tb:FindFirstChildWhichIsA("TextLabel")
-                tb.Visible = q=="" or (lbl and
-                    string.find(string.lower(lbl.Text),q,1,true)~=nil)
+                tb.Visible = q=="" or (lbl and string.find(string.lower(lbl.Text),q,1,true)~=nil)
             end
         end
     end)
 
-    -- ── Content area ───────────────────────────────────────
     local contentArea = New("Frame", {
-        Size             = UDim2.new(1, -220, 1, -54),
-        Position         = UDim2.new(0, 220, 0, 54),
-        BackgroundTransparency = 1,
-        BorderSizePixel  = 0,
-        ClipsDescendants = true,
-        ZIndex           = 11,
-        Parent           = mainFrame,
+        Size=UDim2.new(1,-220,1,-54),
+        Position=UDim2.new(0,220,0,54),
+        BackgroundTransparency=1,
+        BorderSizePixel=0,
+        ClipsDescendants=true,
+        ZIndex=11,
+        Parent=mainFrame,
     })
 
     -- ══════════════════════════════════════════════════════
-    --  DRAG + RESIZE + SHADOW — كل شيء في RenderStepped
+    --  DRAG + RESIZE
     -- ══════════════════════════════════════════════════════
     local dragging   = false
     local resizing   = false
     local lastMouseX = 0
     local lastMouseY = 0
-    local rStartX    = 0
-    local rStartY    = 0
-    local rW         = 0
-    local rH         = 0
-    local rPX        = 0
-    local rPY        = 0
+    local rStartX,rStartY,rW,rH,rPX,rPY = 0,0,0,0,0,0
     local MIN_W, MIN_H = 420, 300
     local MAX_W, MAX_H = 1200, 800
 
-    -- ── Drag Button — TextButton شفاف فوق titleBar ─────────
     local dragBtn = New("TextButton", {
-        Size                   = UDim2.new(1, -90, 1, 0),
-        Position               = UDim2.new(0, 0, 0, 0),
-        BackgroundTransparency = 1,
-        Text                   = "",
-        ZIndex                 = 20,
-        Parent                 = titleBar,
+        Size=UDim2.new(1,-90,1,0),
+        Position=UDim2.new(0,0,0,0),
+        BackgroundTransparency=1,
+        Text="",
+        ZIndex=20,
+        Parent=titleBar,
     })
 
-    -- ══════════════════════════════════════════════════════
-    --  DRAG SYSTEM — منفصل تماماً: Mouse (delta) | Touch (absolute)
-    --  المشكلة في v41: كان lastMouseX/Y بيتحدث من InputChanged
-    --  وبيتحسب منه delta في RenderStepped → conflict
-    --  الحل: Touch يستخدم absolute positioning مش delta
-    -- ══════════════════════════════════════════════════════
-    local touchDragging   = false
-    local touchStartX     = 0   -- موضع الإصبع عند بداية الـ drag
-    local touchStartY     = 0
-    local wrapStartPX     = 0   -- موضع الـ wrapFrame عند بداية الـ drag
-    local wrapStartPY     = 0
+    -- ── FIX: Completely separate touch drag & PC drag ──────
+    -- Touch: pure absolute positioning, no RenderStepped interference
+    -- PC: delta-based with smooth lerp in RenderStepped
+    local touchDragging = false
+    local touchStartX   = 0
+    local touchStartY   = 0
+    local wrapStartPX   = 0
+    local wrapStartPY   = 0
 
+    -- ── FIX: Touch drag uses InputChanged on dragBtn directly ──
+    -- This avoids the "freeze mid-drag" caused by UserInputService
+    -- InputChanged firing before dragBtn's own InputChanged
     dragBtn.InputBegan:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-            -- PC: نفس المنطق القديم بالـ delta
             if resizing then return end
             local mp = UserInputService:GetMouseLocation()
-            lastMouseX = mp.X
-            lastMouseY = mp.Y
-            dragging   = true
-
+            lastMouseX = mp.X; lastMouseY = mp.Y
+            dragging = true
         elseif inp.UserInputType == Enum.UserInputType.Touch then
-            -- موبايل: نحفظ البداية ونحسب absolute
+            -- FIX: capture position immediately, no hold timer
             touchDragging = true
-            dragging      = false  -- عشان RenderStepped مش يتدخل
+            dragging      = false  -- prevent RenderStepped delta conflict
             touchStartX   = inp.Position.X
             touchStartY   = inp.Position.Y
             wrapStartPX   = wrapFrame.Position.X.Offset
@@ -1349,115 +2230,151 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
+    -- FIX: InputChanged on dragBtn itself — fires every touch move reliably
+    -- Using UserInputService.InputChanged caused "freeze" when touch left button area
     dragBtn.InputChanged:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.Touch and touchDragging then
-            -- حساب مباشر: الموضع الجديد = البداية + الفرق
             local dx = inp.Position.X - touchStartX
             local dy = inp.Position.Y - touchStartY
-            -- نطبق UIScale عشان الـ move يكون بنسبة الـ scale
+            -- Apply inverse of UIScale so drag distance matches finger movement
             local sc = wrapFrame:FindFirstChildWhichIsA("UIScale")
             local s  = sc and sc.Scale or 1
-            wrapFrame.Position = UDim2.new(0, wrapStartPX + dx/s, 0, wrapStartPY + dy/s)
-            -- sync مع RenderStepped smooth vars
-            smoothX = wrapStartPX + dx/s
-            smoothY = wrapStartPY + dy/s
-            dispX   = smoothX
-            dispY   = smoothY
+            local newX = wrapStartPX + dx / s
+            local newY = wrapStartPY + dy / s
+            wrapFrame.Position = UDim2.new(0, newX, 0, newY)
+            -- Keep smooth vars in sync
+            smoothX = newX; smoothY = newY
+            dispX   = newX; dispY   = newY
         end
     end)
 
     dragBtn.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging      = false
+            dragging = false
         elseif inp.UserInputType == Enum.UserInputType.Touch then
             touchDragging = false
         end
     end)
 
+    -- FIX: Also catch touch release outside dragBtn (finger slipped off)
     UserInputService.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 then
             dragging = false
+        elseif inp.UserInputType == Enum.UserInputType.Touch then
+            -- Only clear if we were dragging (not resizing touch)
+            if touchDragging then touchDragging = false end
         end
     end)
 
-    -- ── Resize Handle — تصميم عصري: خطوط متوازية زي iOS
-    -- ── Resize Button — نفس تصميم PC على الموبايل، خارج الواجهة
-    local rBtnSz = Device.IsPC and 22 or 28   -- أكبر شوية على موبايل
+    -- ══════════════════════════════════════════════════════
+    --  RESIZE BUTTON — FIX: Mobile hold-to-resize
+    --  FIX: No visual shrink on initial touch.
+    --  Only after hold threshold (0.35s) does resize activate.
+    --  Visual feedback only starts AFTER hold confirmed.
+    -- ══════════════════════════════════════════════════════
+    local rBtnSz = Device.IsPC and 22 or 28
 
     local resizeBtn = New("TextButton", {
-        Name                   = "ResizeBtn",
-        Size                   = UDim2.new(0, rBtnSz, 0, rBtnSz),
-        AnchorPoint            = Vector2.new(0.5, 0.5),
-        Position               = UDim2.new(1, 10, 1, 10),
-        BackgroundColor3       = Color3.fromRGB(30, 30, 30),
-        BackgroundTransparency = 0.1,
-        Text                   = "",
-        ZIndex                 = 60,
-        Parent                 = wrapFrame,
+        Name="ResizeBtn",
+        Size=UDim2.new(0,rBtnSz,0,rBtnSz),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(1,10,1,10),
+        BackgroundColor3=Color3.fromRGB(30,30,30),
+        BackgroundTransparency=0.1,
+        Text="",
+        ZIndex=60,
+        Parent=wrapFrame,
     })
     Corner(resizeBtn, 6)
-    New("UIStroke", {
-        Color        = Color3.new(1, 1, 1),
-        Thickness    = 1,
-        Transparency = 0.6,
-        Parent       = resizeBtn,
-    })
-    -- أيقونة ⌟ بالأبيض
-    local iconH = New("Frame", {
-        Size=UDim2.new(0, Device.IsPC and 11 or 13, 0, 2),
-        Position=UDim2.new(0, Device.IsPC and 5 or 6, 1, Device.IsPC and -6 or -7),
-        BackgroundColor3=Color3.new(1,1,1), BorderSizePixel=0, ZIndex=61, Parent=resizeBtn,
-    }); Corner(iconH, 1)
-    local iconV = New("Frame", {
-        Size=UDim2.new(0, 2, 0, Device.IsPC and 11 or 13),
-        Position=UDim2.new(1, Device.IsPC and -6 or -7, 0, Device.IsPC and 5 or 6),
-        BackgroundColor3=Color3.new(1,1,1), BorderSizePixel=0, ZIndex=61, Parent=resizeBtn,
-    }); Corner(iconV, 1)
+    New("UIStroke",{Color=Color3.new(1,1,1),Thickness=1,Transparency=0.6,Parent=resizeBtn})
+    local iconH = New("Frame",{
+        Size=UDim2.new(0,Device.IsPC and 11 or 13,0,2),
+        Position=UDim2.new(0,Device.IsPC and 5 or 6,1,Device.IsPC and -6 or -7),
+        BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,ZIndex=61,Parent=resizeBtn,
+    }); Corner(iconH,1)
+    local iconV = New("Frame",{
+        Size=UDim2.new(0,2,0,Device.IsPC and 11 or 13),
+        Position=UDim2.new(1,Device.IsPC and -6 or -7,0,Device.IsPC and 5 or 6),
+        BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,ZIndex=61,Parent=resizeBtn,
+    }); Corner(iconV,1)
 
-    -- Mouse events (PC)
-    -- متغيرات الـ hold للموبايل
-    local holdTimer  = nil
-    local holdActive = false
+    -- ── PC resize ────────────────────────────────────────
+    resizeBtn.MouseButton1Down:Connect(function()
+        if not Device.IsPC then return end
+        resizing = true; dragging = false
+        local mp = UserInputService:GetMouseLocation()
+        rStartX=mp.X; rStartY=mp.Y
+        rW=wrapFrame.AbsoluteSize.X; rH=wrapFrame.AbsoluteSize.Y
+        rPX=wrapFrame.Position.X.Offset; rPY=wrapFrame.Position.Y.Offset
+        Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.1)
+    end)
+    resizeBtn.MouseEnter:Connect(function()
+        if resizing or not Device.IsPC then return end
+        Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.15)
+    end)
+    resizeBtn.MouseLeave:Connect(function()
+        if resizing or not Device.IsPC then return end
+        Tween(resizeBtn,{BackgroundColor3=Color3.fromRGB(30,30,30),BackgroundTransparency=0.1},0.15)
+    end)
 
-    -- بدء الـ hold على الزر
-    resizeBtn.InputBegan:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-            -- PC: مباشر
-            resizing = true; dragging = false
-            local mp = UserInputService:GetMouseLocation()
-            rStartX=mp.X; rStartY=mp.Y
-            rW=wrapFrame.AbsoluteSize.X; rH=wrapFrame.AbsoluteSize.Y
-            rPX=wrapFrame.Position.X.Offset; rPY=wrapFrame.Position.Y.Offset
-            Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.1)
+    -- ── FIX: Mobile hold-to-resize ───────────────────────
+    -- Problem: InputBegan immediately started resize → UI shrank on first touch
+    -- Fix: Use a holdTimer. NO visual change, NO resize until timer fires.
+    -- Only AFTER 0.35s hold, we snapshot size and activate resize mode.
+    local holdTimer    = nil
+    local holdActive   = false
+    local touchResizeStartX = 0
+    local touchResizeStartY = 0
 
-        elseif inp.UserInputType == Enum.UserInputType.Touch then
+    if not Device.IsPC then
+        resizeBtn.InputBegan:Connect(function(inp)
+            if inp.UserInputType ~= Enum.UserInputType.Touch then return end
+            -- FIX: Do NOT change size or activate anything yet
             holdActive = false
-            if holdTimer then task.cancel(holdTimer); holdTimer=nil end
-            Tween(resizeBtn,{BackgroundColor3=T.BorderBright,BackgroundTransparency=0},0.15)
+            if holdTimer then task.cancel(holdTimer); holdTimer = nil end
+
+            -- Capture touch start position for when hold confirms
+            touchResizeStartX = inp.Position.X
+            touchResizeStartY = inp.Position.Y
+
             holdTimer = task.delay(0.35, function()
-                -- Hold اكتمل → ابدأ resize من موضع الإصبع الحالي
+                holdTimer  = nil
                 holdActive = true
-                dragging   = false
-                local mp2  = UserInputService:GetMouseLocation()
-                rStartX = mp2.X
-                rStartY = mp2.Y
+                -- NOW snapshot current UI size
+                rStartX = touchResizeStartX
+                rStartY = touchResizeStartY
                 rW  = wrapFrame.AbsoluteSize.X
                 rH  = wrapFrame.AbsoluteSize.Y
                 rPX = wrapFrame.Position.X.Offset
                 rPY = wrapFrame.Position.Y.Offset
-                resizing = true
-                Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.1)
+                resizing   = true
+                dragging   = false
+                touchDragging = false
+                -- Visual feedback only AFTER hold confirmed
+                Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.12)
             end)
-        end
-    end)
+        end)
 
-    -- الحركة والإنهاء عبر UserInputService
-    -- عشان الـ resize يستمر حتى بعد إبعاد الإصبع عن الزر
+        resizeBtn.InputEnded:Connect(function(inp)
+            if inp.UserInputType ~= Enum.UserInputType.Touch then return end
+            -- Cancel hold if finger lifted before threshold
+            if holdTimer then task.cancel(holdTimer); holdTimer = nil end
+            if holdActive then
+                holdActive = false
+                resizing   = false
+                Tween(resizeBtn,{BackgroundColor3=Color3.fromRGB(30,30,30),BackgroundTransparency=0.1},0.2)
+            end
+        end)
+    end
+
+    -- ── Shared resize move (PC + mobile after hold) ───────
+    -- FIX: Use UserInputService for resize movement (needs global tracking)
+    -- But ONLY when resizing == true, which on mobile only happens after hold
     UserInputService.InputChanged:Connect(function(inp)
-        if not (holdActive and resizing) then return end
-        if inp.UserInputType == Enum.UserInputType.Touch
-        or inp.UserInputType == Enum.UserInputType.MouseMovement then
-            local mp2  = UserInputService:GetMouseLocation()
+        if not resizing then return end
+        if inp.UserInputType == Enum.UserInputType.MouseMovement
+        or inp.UserInputType == Enum.UserInputType.Touch then
+            local mp2 = UserInputService:GetMouseLocation()
             local newW = math.clamp(rW + (mp2.X - rStartX), MIN_W, MAX_W)
             local newH = math.clamp(rH + (mp2.Y - rStartY), MIN_H, MAX_H)
             wrapFrame.Size     = UDim2.new(0,newW,0,newH)
@@ -1468,41 +2385,26 @@ function CrozoX:CreateWindow(cfg)
     end)
 
     UserInputService.InputEnded:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.Touch and holdActive then
-            -- الإصبع رُفع → انتهى الـ resize
-            if holdTimer then task.cancel(holdTimer); holdTimer=nil end
-            holdActive = false
-            resizing   = false
-            Tween(resizeBtn,{BackgroundColor3=Color3.fromRGB(30,30,30),BackgroundTransparency=0.1},0.2)
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 and resizing and Device.IsPC then
+            resizing = false
+            Tween(resizeBtn,{BackgroundColor3=Color3.fromRGB(30,30,30),BackgroundTransparency=0.1},0.15)
         end
     end)
-    resizeBtn.MouseEnter:Connect(function()
-        if resizing then return end
-        Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.15)
-        Tween(iconH,{BackgroundColor3=Color3.new(1,1,1)},0.15)
-        Tween(iconV,{BackgroundColor3=Color3.new(1,1,1)},0.15)
-    end)
-    resizeBtn.MouseLeave:Connect(function()
-        if resizing then return end
-        Tween(resizeBtn,{BackgroundColor3=Color3.fromRGB(30,30,30),BackgroundTransparency=0.1},0.15)
-    end)
 
-    -- ── RenderStepped: drag + resize + resize button pos ──
-    local smoothX = 0   -- الموضع الحقيقي (بدون smooth)
+    -- ── RenderStepped: PC drag smooth lerp only ───────────
+    local smoothX = 0
     local smoothY = 0
-    local dispX   = 0   -- الموضع المعروض (مع smooth)
+    local dispX   = 0
     local dispY   = 0
     local smoothInit = false
 
     RunService.RenderStepped:Connect(function()
         if not wrapFrame.Parent then return end
 
-        -- Touch drag بيتعمل في InputChanged مباشرةً — مش هنا
-        -- هنا بس الـ Mouse drag (PC)
         local mp = UserInputService:GetMouseLocation()
 
-        -- 1. Mouse Drag بـ DELTA + SMOOTH (PC فقط)
-        if dragging then
+        -- PC drag with delta + lerp
+        if dragging and Device.IsPC then
             local dx = mp.X - lastMouseX
             local dy = mp.Y - lastMouseY
             smoothX = smoothX + dx
@@ -1511,7 +2413,6 @@ function CrozoX:CreateWindow(cfg)
             lastMouseY = mp.Y
         end
 
-        -- تهيئة dispX/dispY أول مرة
         if not smoothInit then
             smoothInit = true
             smoothX = wrapFrame.Position.X.Offset
@@ -1520,119 +2421,86 @@ function CrozoX:CreateWindow(cfg)
             dispY   = smoothY
         end
 
-        -- Lerp سلس نحو الهدف
-        if dragging or math.abs(dispX - smoothX) > 0.5 or math.abs(dispY - smoothY) > 0.5 then
-            dispX = dispX + (smoothX - dispX) * 0.25
-            dispY = dispY + (smoothY - dispY) * 0.25
+        -- Apply lerp for PC drag
+        if dragging and Device.IsPC then
+            dispX = dispX + (smoothX - dispX) * 0.28
+            dispY = dispY + (smoothY - dispY) * 0.28
             wrapFrame.Position = UDim2.new(0, dispX, 0, dispY)
         end
 
-        -- 2. Resize بـ Position.Offset
-        if resizing then
+        -- PC resize
+        if resizing and Device.IsPC then
             local newW = math.clamp(rW + (mp.X - rStartX), MIN_W, MAX_W)
             local newH = math.clamp(rH + (mp.Y - rStartY), MIN_H, MAX_H)
-            wrapFrame.Size     = UDim2.new(0, newW, 0, newH)
-            wrapFrame.Position = UDim2.new(0, rPX,  0, rPY)
-            -- sync smooth vars عشان drag بعد resize ما يقفز
-            smoothX = rPX
-            smoothY = rPY
-            dispX   = rPX
-            dispY   = rPY
-            size    = UDim2.new(0, newW, 0, newH)
-        end
-
-        -- resizeBtn يتحرك تلقائياً مع wrapFrame (child منه)
-    end)
-
-    UserInputService.InputEnded:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.MouseButton1 and resizing then
-            resizing = false
-            Tween(resizeBtn, {
-                BackgroundColor3       = Color3.fromRGB(40, 40, 40),
-                BackgroundTransparency = 0.2,
-            }, 0.15)
+            wrapFrame.Size     = UDim2.new(0,newW,0,newH)
+            wrapFrame.Position = UDim2.new(0,rPX,0,rPY)
+            smoothX = rPX; smoothY = rPY; dispX = rPX; dispY = rPY
+            size    = UDim2.new(0,newW,0,newH)
         end
     end)
 
-    -- ── Open animation — الحل النهائي ──────────────────────
-    -- wrapFrame Position لا تتغير أبداً
-    -- Animation على mainFrame Scale فقط
+    -- Open animation
     mainFrame.BackgroundTransparency = 1
 
     task.defer(function()
         if not sg.Parent then return end
         local sw = sg.AbsoluteSize.X
         local sh = sg.AbsoluteSize.Y
-
-        local baseW = size.X.Offset   -- 660 (base PC size)
-        local baseH = size.Y.Offset   -- 470
-
-        -- CalcLayout يرجع: visualW, visualH, scaleVal
-        -- visualW/H = الحجم الفعلي المعروض على الشاشة
-        -- scaleVal  = الـ UIScale المطبّق على wrapFrame
+        local baseW = size.X.Offset
+        local baseH = size.Y.Offset
         local visualW, visualH, scaleVal = Device.CalcLayout(baseW, baseH)
 
-        -- wrapFrame Size = base size دايماً (UIScale هو اللي يكبّره)
         wrapFrame.Size = UDim2.new(0, baseW, 0, baseH)
-
-        -- Position بناءً على الـ visual size (مش base size!)
-        -- ده هو الخطأ في v38 — كان بيحسب بـ base بدل visual
         wrapFrame.Position = UDim2.new(
             0, math.floor((sw - visualW) / 2),
             0, math.floor((sh - visualH) / 2)
         )
 
-        -- طبّق UIScale على wrapFrame
         local existing = wrapFrame:FindFirstChildWhichIsA("UIScale")
         if existing then existing:Destroy() end
         if scaleVal ~= 1 then
-            New("UIScale", { Scale = scaleVal, Parent = wrapFrame })
+            New("UIScale", {Scale=scaleVal, Parent=wrapFrame})
         end
 
-        -- resizeBtn موجود دايماً — PC وموبايل
-        -- الـ hold-to-resize على موبايل اتعمل فوق عند التعريف
+        -- Re-sync smooth vars after layout
+        smoothX = wrapFrame.Position.X.Offset
+        smoothY = wrapFrame.Position.Y.Offset
+        dispX   = smoothX; dispY = smoothY
 
-        -- Animation على mainFrame فقط
-        mainFrame.Size = UDim2.new(0.88, 0, 0.88, 0)
+        mainFrame.Size = UDim2.new(0.88,0,0.88,0)
         Tween(mainFrame, {
-            Size                   = UDim2.new(1, 0, 1, 0),
-            BackgroundTransparency = 0,
+            Size=UDim2.new(1,0,1,0),
+            BackgroundTransparency=0,
         }, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
     end)
 
-    -- ── Close / Minimize ───────────────────────────────────
+    -- Close / Minimize
     local isMin = false
 
     local function DoClose()
-        Tween(mainFrame, {
-            Size                   = UDim2.new(0.9, 0, 0.9, 0),
-            BackgroundTransparency = 1,
-        }, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-        Tween(shadowImg, {ImageTransparency = 1}, 0.25)
-        task.delay(0.32, function()
-            wrapFrame:Destroy()
-        end)
+        Tween(mainFrame,{Size=UDim2.new(0.9,0,0.9,0),BackgroundTransparency=1},
+            0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+        Tween(shadowImg, {ImageTransparency=1}, 0.25)
+        task.delay(0.32, function() wrapFrame:Destroy() end)
     end
 
     local function DoMinimize()
         isMin = not isMin
         if isMin then
-            Tween(mainFrame, {Size = UDim2.new(1, 0, 0, 54)}, 0.3)
-            Tween(shadowImg, {ImageTransparency = 1}, 0.2)
+            Tween(mainFrame,{Size=UDim2.new(1,0,0,54)},0.3)
+            Tween(shadowImg,{ImageTransparency=1},0.2)
             if Device.IsPC then
                 Tween(resizeBtn,{Size=UDim2.new(0,0,0,0),BackgroundTransparency=1},0.2,Enum.EasingStyle.Quart)
-                task.delay(0.2,function()
-                    if resizeBtn and resizeBtn.Parent then resizeBtn.Visible=false end
-                end)
+                task.delay(0.2,function() if resizeBtn and resizeBtn.Parent then resizeBtn.Visible=false end end)
             else
                 Tween(resizeBtn,{BackgroundTransparency=0.7},0.2)
             end
         else
-            Tween(mainFrame, {Size = UDim2.new(1, 0, 1, 0)}, 0.35, Enum.EasingStyle.Back)
-            Tween(shadowImg, {ImageTransparency = 0.55}, 0.35)
+            Tween(mainFrame,{Size=UDim2.new(1,0,1,0)},0.35,Enum.EasingStyle.Back)
+            Tween(shadowImg,{ImageTransparency=0.55},0.35)
             if Device.IsPC then
-                resizeBtn.Visible = true
-                resizeBtn.Size    = UDim2.new(0, 0, 0, 0)
+                resizeBtn.Visible=true
+                resizeBtn.Size=UDim2.new(0,0,0,0)
                 Tween(resizeBtn,{Size=UDim2.new(0,22,0,22),BackgroundTransparency=0.1},0.3,Enum.EasingStyle.Back)
             else
                 Tween(resizeBtn,{BackgroundTransparency=0.3},0.2)
@@ -1640,27 +2508,17 @@ function CrozoX:CreateWindow(cfg)
         end
     end
 
-    -- ربط الأحداث
-    -- المشكلة في v43: InputBegan (press-down) + MouseButton1Click (press-up)
-    -- = DoMinimize بيشتغل مرتين → toggle مرتين → يرجع للحالة الأولى
-    -- الحل: على موبايل نستخدم InputEnded فقط (رفع الإصبع = tap مكتمل)
-    -- ونمنع MouseButton1Click من التشغيل على موبايل عشان مش double-fire
     local function ConnectBtn(btn, fn)
         if Device.IsPC then
             btn.MouseButton1Click:Connect(fn)
         else
-            -- موبايل: InputBegan + InputEnded على نفس الزر
-            -- resizeBtn منفصل في sg فلا يوجد bubble
             local pressing = false
             btn.InputBegan:Connect(function(i)
-                if i.UserInputType == Enum.UserInputType.Touch then
-                    pressing = true
-                end
+                if i.UserInputType == Enum.UserInputType.Touch then pressing=true end
             end)
             btn.InputEnded:Connect(function(i)
                 if i.UserInputType == Enum.UserInputType.Touch and pressing then
-                    pressing = false
-                    fn()
+                    pressing=false; fn()
                 end
             end)
         end
@@ -1679,7 +2537,6 @@ function CrozoX:CreateWindow(cfg)
         local iconKey  =tcfg.Icon or "layers"
         local iconAsset=Icons[iconKey] or Icons.layers
 
-        -- Tab button frame
         local _tabH = (Device.IsMobile or Device.IsTablet) and 48 or 38
         local tabBtn=New("Frame",{Name="Tab_"..tabName,
             Size=UDim2.new(1,0,0,_tabH),
@@ -1687,25 +2544,21 @@ function CrozoX:CreateWindow(cfg)
             ZIndex=13,Parent=tabList})
         Corner(tabBtn,10)
 
-        -- Left indicator — خط رفيع 3px فقط، بدون Glow
-        local indicator = New("Frame", {
-            Size             = UDim2.new(0, 3, 0, 0),
-            Position         = UDim2.new(0, 0, 0.5, 0),
-            AnchorPoint      = Vector2.new(0, 0.5),
-            BackgroundColor3 = T.Primary,
-            BackgroundTransparency = 1,
-            BorderSizePixel  = 0,
-            ZIndex           = 14,
-            Parent           = tabBtn,
+        local indicator = New("Frame",{
+            Size=UDim2.new(0,3,0,0),
+            Position=UDim2.new(0,0,0.5,0),
+            AnchorPoint=Vector2.new(0,0.5),
+            BackgroundColor3=T.Primary,
+            BackgroundTransparency=1,
+            BorderSizePixel=0,
+            ZIndex=14,
+            Parent=tabBtn,
         })
-        Corner(indicator, 2)
+        Corner(indicator,2)
 
-        -- Icon
         local _icoSz = (Device.IsMobile or Device.IsTablet) and 20 or 17
-        local tabIcon=Img(tabBtn,iconAsset,_icoSz,
-            UDim2.new(0,12,0.5,-_icoSz/2),T.TextMuted,14)
+        local tabIcon=Img(tabBtn,iconAsset,_icoSz,UDim2.new(0,12,0.5,-_icoSz/2),T.TextMuted,14)
 
-        -- Label
         local _tabTxtSz = (Device.IsMobile or Device.IsTablet) and 15 or L.TabSize
         local tabLabel=New("TextLabel",{Size=UDim2.new(1,-36,1,0),
             Position=UDim2.new(0,36,0,0),BackgroundTransparency=1,
@@ -1717,12 +2570,11 @@ function CrozoX:CreateWindow(cfg)
         local tabClick=New("TextButton",{Size=UDim2.new(1,0,1,0),
             BackgroundTransparency=1,Text="",ZIndex=15,Parent=tabBtn})
 
-        -- Content page
         local tabPage=New("ScrollingFrame",{Name="Page_"..tabName,
             Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,
             ScrollBarThickness=3,ScrollBarImageColor3=T.BorderBright,
             BorderSizePixel=0,Visible=false,ZIndex=12,Parent=contentArea})
-        local pageLayout=ListLayout(tabPage,12)   -- 12px spacing
+        local pageLayout=ListLayout(tabPage,12)
         Pad(tabPage,16,16,16,16)
         pageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
             tabPage.CanvasSize=UDim2.new(0,0,0,pageLayout.AbsoluteContentSize.Y+32)
@@ -1730,35 +2582,24 @@ function CrozoX:CreateWindow(cfg)
 
         local function SelectTab()
             if activeTab then
-                activeTab.Page.Visible = false
-                Tween(activeTab.Btn,  {BackgroundColor3=T.SurfaceAlt}, 0.2)
-                Tween(activeTab.Lbl,  {TextColor3=T.TextMuted},        0.2)
-                Tween(activeTab.Icon, {ImageColor3=T.TextMuted},       0.2)
-                Tween(activeTab.Ind,  {
-                    Size=UDim2.new(0,3,0,0),
-                    BackgroundTransparency=1,
-                }, 0.2)
+                activeTab.Page.Visible=false
+                Tween(activeTab.Btn,{BackgroundColor3=T.SurfaceAlt},0.2)
+                Tween(activeTab.Lbl,{TextColor3=T.TextMuted},0.2)
+                Tween(activeTab.Icon,{ImageColor3=T.TextMuted},0.2)
+                Tween(activeTab.Ind,{Size=UDim2.new(0,3,0,0),BackgroundTransparency=1},0.2)
             end
-            tabPage.Visible = true
-            Tween(tabBtn,    {BackgroundColor3=T.SurfaceHover}, 0.2)
-            Tween(tabLabel,  {TextColor3=T.Text},               0.2)
-            Tween(tabIcon,   {ImageColor3=T.Primary},           0.2)
-            Tween(indicator, {
-                Size=UDim2.new(0,3,0.55,0),
-                BackgroundTransparency=0,
-            }, 0.28, Enum.EasingStyle.Back)
-            activeTab = {
-                Btn=tabBtn, Page=tabPage,
-                Lbl=tabLabel, Icon=tabIcon, Ind=indicator,
-            }
+            tabPage.Visible=true
+            Tween(tabBtn,{BackgroundColor3=T.SurfaceHover},0.2)
+            Tween(tabLabel,{TextColor3=T.Text},0.2)
+            Tween(tabIcon,{ImageColor3=T.Primary},0.2)
+            Tween(indicator,{Size=UDim2.new(0,3,0.55,0),BackgroundTransparency=0},0.28,Enum.EasingStyle.Back)
+            activeTab={Btn=tabBtn,Page=tabPage,Lbl=tabLabel,Icon=tabIcon,Ind=indicator}
         end
 
         tabClick.MouseButton1Click:Connect(function()
-            local shrink = UDim2.new(1,0,0,_tabH-2)
+            local shrink=UDim2.new(1,0,0,_tabH-2)
             Tween(tabBtn,{Size=shrink},0.08)
-            task.delay(0.09,function()
-                Tween(tabBtn,{Size=UDim2.new(1,0,0,_tabH)},0.15,Enum.EasingStyle.Back)
-            end)
+            task.delay(0.09,function() Tween(tabBtn,{Size=UDim2.new(1,0,0,_tabH)},0.15,Enum.EasingStyle.Back) end)
             SelectTab()
         end)
         tabClick.MouseEnter:Connect(function()
@@ -1773,7 +2614,7 @@ function CrozoX:CreateWindow(cfg)
                 Tween(tabIcon,{ImageColor3=T.TextMuted},0.15)
             end
         end)
-        local isFirstTab = (#tabsList == 0)
+        local isFirstTab=(#tabsList==0)
         table.insert(tabsList,tabName)
 
         -- ============================================================
@@ -1781,33 +2622,23 @@ function CrozoX:CreateWindow(cfg)
         -- ============================================================
         local Tab={}
 
-        -- Element frame — card background + proper depth
         local function EF(h)
             local f=New("Frame",{Size=UDim2.new(1,0,0,h or 48),
                 BackgroundColor3=T.SurfaceCard,BorderSizePixel=0,
                 ZIndex=13,Parent=tabPage})
             Corner(f,10)
             Stroke(f,T.Border,1,0)
-            -- Top highlight
-            New("Frame",{Size=UDim2.new(1,-2,0,1),
-                Position=UDim2.new(0,1,0,0),
-                BackgroundColor3=Color3.fromRGB(255,255,255),
-                BackgroundTransparency=0.92,
+            New("Frame",{Size=UDim2.new(1,-2,0,1),Position=UDim2.new(0,1,0,0),
+                BackgroundColor3=Color3.fromRGB(255,255,255),BackgroundTransparency=0.92,
                 BorderSizePixel=0,ZIndex=14,Parent=f})
-            -- Drop shadow
-            New("ImageLabel",{Size=UDim2.new(1,16,1,16),
-                Position=UDim2.new(0,-8,0,4),
-                BackgroundTransparency=1,
-                Image="rbxassetid://6014261993",
-                ImageColor3=Color3.fromRGB(0,0,0),
-                ImageTransparency=0.85,
-                ScaleType=Enum.ScaleType.Slice,
-                SliceCenter=Rect.new(49,49,450,450),
+            New("ImageLabel",{Size=UDim2.new(1,16,1,16),Position=UDim2.new(0,-8,0,4),
+                BackgroundTransparency=1,Image="rbxassetid://6014261993",
+                ImageColor3=Color3.fromRGB(0,0,0),ImageTransparency=0.85,
+                ScaleType=Enum.ScaleType.Slice,SliceCenter=Rect.new(49,49,450,450),
                 ZIndex=12,Parent=f})
             return f
         end
 
-        -- Font system — موبايل: كل حاجة أكبر بـ ~20%
         local _mobTxt = (Device.IsMobile or Device.IsTablet)
         local FS = {
             Title   = _mobTxt and 18 or 15,
@@ -1816,7 +2647,6 @@ function CrozoX:CreateWindow(cfg)
             Section = _mobTxt and 13 or 11,
         }
 
-        -- Label helper
         local function EL(p,text,x,y,w,h,color,font,sz,zi,xa)
             local xAlign=xa
             if xAlign==nil then
@@ -1830,111 +2660,81 @@ function CrozoX:CreateWindow(cfg)
                 TextXAlignment=xAlign,ZIndex=zi or 14,Parent=p})
         end
 
-        -- Section
         function Tab:AddSection(name)
             local s=New("Frame",{Size=UDim2.new(1,0,0,30),
                 BackgroundTransparency=1,ZIndex=13,Parent=tabPage})
-            -- Section label
-            New("TextLabel",{Size=UDim2.new(1,0,1,0),
-                Position=UDim2.new(0,2,0,0),
-                BackgroundTransparency=1,
-                Text=string.upper(name or ""),
-                TextColor3=T.Primary,
-                Font=Enum.Font.GothamBold,
-                TextSize=FS.Section+1,   -- 12px
-                TextXAlignment=Enum.TextXAlignment.Left,
+            New("TextLabel",{Size=UDim2.new(1,0,1,0),Position=UDim2.new(0,2,0,0),
+                BackgroundTransparency=1,Text=string.upper(name or ""),
+                TextColor3=T.Primary,Font=Enum.Font.GothamBold,
+                TextSize=FS.Section+1,TextXAlignment=Enum.TextXAlignment.Left,
                 ZIndex=14,Parent=s})
-            -- Gradient line
-            local line=New("Frame",{Size=UDim2.new(1,0,0,1),
-                Position=UDim2.new(0,0,1,-1),
-                BackgroundColor3=T.Border,
-                BorderSizePixel=0,ZIndex=14,Parent=s})
-            New("UIGradient",{
-                Color=ColorSequence.new{
-                    ColorSequenceKeypoint.new(0,T.Primary),
-                    ColorSequenceKeypoint.new(0.3,T.Border),
-                    ColorSequenceKeypoint.new(1,T.Background),
-                },Parent=line})
+            local line=New("Frame",{Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),
+                BackgroundColor3=T.Border,BorderSizePixel=0,ZIndex=14,Parent=s})
+            New("UIGradient",{Color=ColorSequence.new{
+                ColorSequenceKeypoint.new(0,T.Primary),
+                ColorSequenceKeypoint.new(0.3,T.Border),
+                ColorSequenceKeypoint.new(1,T.Background),
+            },Parent=line})
         end
 
-        -- ── Button ─────────────────────────────────────────
         function Tab:AddButton(bcfg)
             bcfg=bcfg or {}
-            local name    =bcfg.Name or "Button"
-            local desc    =bcfg.Description or ""
+            local name=bcfg.Name or "Button"
+            local desc=bcfg.Description or ""
             local callback=bcfg.Callback or function() end
-            local iconK   =bcfg.Icon
+            local iconK=bcfg.Icon
             local h=desc~="" and 60 or 46
             local f=EF(h)
             local xOff=12
             if iconK then
-                Img(f,Icons[iconK] or iconK,18,
-                    UDim2.new(0,12,0.5,-9),T.TextDim,14)
+                Img(f,Icons[iconK] or iconK,18,UDim2.new(0,12,0.5,-9),T.TextDim,14)
                 xOff=38
             end
             EL(f,name,xOff,desc~="" and 10 or 13,240,20,T.Text,L.FontSemi,L.LabelSize)
-            if desc~="" then
-                EL(f,desc,xOff,32,240,16,T.TextMuted,L.FontBody,12)
-            end
+            if desc~="" then EL(f,desc,xOff,32,240,16,T.TextMuted,L.FontBody,12) end
 
-            -- ── زر تفعيل/إيقاف ────────────────────────────
-            local btnActive = false
-            local txtOn  = L.IsRTL and "تفعيل" or "Run"
-            local txtOff = L.IsRTL and "إيقاف" or "Stop"
+            local btnActive=false
+            local txtOn =L.IsRTL and "تفعيل" or "Run"
+            local txtOff=L.IsRTL and "إيقاف" or "Stop"
 
-            local rb = New("TextButton", {
-                Size             = UDim2.new(0, 82, 0, 32),
-                Position         = UDim2.new(1, -94, 0.5, -16),
-                BackgroundColor3 = T.Primary,
-                Text             = txtOn,
-                TextColor3       = Color3.new(1, 1, 1),   -- أبيض 100%
-                Font             = Enum.Font.GothamBold,
-                TextSize         = FS.Button,
-                BorderSizePixel  = 0,
-                ZIndex           = 15,   -- أعلى من أي ImageLabel داخله
-                Parent           = f,
+            local rb=New("TextButton",{
+                Size=UDim2.new(0,82,0,32),
+                Position=UDim2.new(1,-94,0.5,-16),
+                BackgroundColor3=T.Primary,
+                Text=txtOn,
+                TextColor3=Color3.new(1,1,1),
+                Font=Enum.Font.GothamBold,
+                TextSize=FS.Button,
+                BorderSizePixel=0,
+                ZIndex=15,
+                Parent=f,
             })
-            Corner(rb, 8)
+            Corner(rb,8)
 
-            -- دالة تغيير الحالة
             local function SetBtnState(active)
-                btnActive = active
+                btnActive=active
                 if active then
-                    rb.Text = txtOff
-                    Tween(rb, {BackgroundColor3=T.BtnStop}, 0.2)
+                    rb.Text=txtOff
+                    Tween(rb,{BackgroundColor3=T.BtnStop},0.2)
                 else
-                    rb.Text = txtOn
-                    Tween(rb, {BackgroundColor3=T.Primary}, 0.2)
+                    rb.Text=txtOn
+                    Tween(rb,{BackgroundColor3=T.Primary},0.2)
                 end
             end
 
             rb.MouseEnter:Connect(function()
-                local c = btnActive and T.BtnStopHov or T.PrimaryLight
-                Tween(rb, {BackgroundColor3=c}, 0.15)
-                Tween(rb, {
-                    Size     = UDim2.new(0, 86, 0, 34),
-                    Position = UDim2.new(1, -97, 0.5, -17),
-                }, 0.15, Enum.EasingStyle.Back)
+                Tween(rb,{BackgroundColor3=btnActive and T.BtnStopHov or T.PrimaryLight},0.15)
+                Tween(rb,{Size=UDim2.new(0,86,0,34),Position=UDim2.new(1,-97,0.5,-17)},0.15,Enum.EasingStyle.Back)
             end)
             rb.MouseLeave:Connect(function()
-                local c = btnActive and T.BtnStop or T.Primary
-                Tween(rb, {BackgroundColor3=c}, 0.15)
-                Tween(rb, {
-                    Size     = UDim2.new(0, 82, 0, 32),
-                    Position = UDim2.new(1, -94, 0.5, -16),
-                }, 0.15)
+                Tween(rb,{BackgroundColor3=btnActive and T.BtnStop or T.Primary},0.15)
+                Tween(rb,{Size=UDim2.new(0,82,0,32),Position=UDim2.new(1,-94,0.5,-16)},0.15)
             end)
             rb.MouseButton1Down:Connect(function()
-                Tween(rb, {
-                    Size     = UDim2.new(0, 77, 0, 29),
-                    Position = UDim2.new(1, -91, 0.5, -14),
-                }, 0.07)
+                Tween(rb,{Size=UDim2.new(0,77,0,29),Position=UDim2.new(1,-91,0.5,-14)},0.07)
             end)
             rb.MouseButton1Up:Connect(function()
-                Tween(rb, {
-                    Size     = UDim2.new(0, 82, 0, 32),
-                    Position = UDim2.new(1, -94, 0.5, -16),
-                }, 0.15, Enum.EasingStyle.Back)
+                Tween(rb,{Size=UDim2.new(0,82,0,32),Position=UDim2.new(1,-94,0.5,-16)},0.15,Enum.EasingStyle.Back)
             end)
             rb.MouseButton1Click:Connect(function()
                 Ripple(rb)
@@ -1943,12 +2743,11 @@ function CrozoX:CreateWindow(cfg)
             end)
         end
 
-        -- ── Toggle ─────────────────────────────────────────
         function Tab:AddToggle(tcfg)
             tcfg=tcfg or {}
-            local name    =tcfg.Name or "Toggle"
-            local desc    =tcfg.Description or ""
-            local val     =tcfg.Default or false
+            local name=tcfg.Name or "Toggle"
+            local desc=tcfg.Description or ""
+            local val=tcfg.Default or false
             local callback=tcfg.Callback or function() end
             local h=desc~="" and 60 or 46
             local f=EF(h)
@@ -1962,10 +2761,8 @@ function CrozoX:CreateWindow(cfg)
             Corner(track,14)
             local knob=New("Frame",{Size=UDim2.new(0,22,0,22),
                 Position=val and UDim2.new(1,-25,0.5,-11) or UDim2.new(0,3,0.5,-11),
-                BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,
-                ZIndex=15,Parent=track})
+                BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,ZIndex=15,Parent=track})
             Corner(knob,11)
-            -- shadow on knob
             New("ImageLabel",{Size=UDim2.new(1,6,1,6),Position=UDim2.new(0,-3,0,-2),
                 BackgroundTransparency=1,Image="rbxassetid://6014261993",
                 ImageColor3=Color3.fromRGB(0,0,0),ImageTransparency=0.7,
@@ -1978,20 +2775,14 @@ function CrozoX:CreateWindow(cfg)
             local function SetVal(v,fire)
                 val=v;El.Value=v
                 Tween(track,{BackgroundColor3=v and T.Primary or T.Border},0.22)
-                -- Back easing على الـ knob يعطي bounce حيوي
-                Tween(knob,{Position=v
-                    and UDim2.new(1,-25,0.5,-11)
-                    or  UDim2.new(0,3,0.5,-11)},0.28,Enum.EasingStyle.Back)
-                -- Gradient عند التفعيل
+                Tween(knob,{Position=v and UDim2.new(1,-25,0.5,-11) or UDim2.new(0,3,0.5,-11)},0.28,Enum.EasingStyle.Back)
                 local g=track:FindFirstChildWhichIsA("UIGradient")
                 if v and not g then
                     New("UIGradient",{Color=ColorSequence.new{
                         ColorSequenceKeypoint.new(0,T.Primary),
                         ColorSequenceKeypoint.new(1,T.PrimaryLight),
                     },Parent=track})
-                elseif not v and g then
-                    g:Destroy()
-                end
+                elseif not v and g then g:Destroy() end
                 if fire~=false then Safe(callback,v) end
             end
             ca.MouseButton1Click:Connect(function() SetVal(not val) end)
@@ -2000,16 +2791,15 @@ function CrozoX:CreateWindow(cfg)
             return El
         end
 
-        -- ── Slider ─────────────────────────────────────────
         function Tab:AddSlider(scfg)
             scfg=scfg or {}
             local name=scfg.Name or "Slider"
-            local min =scfg.Min  or 0
-            local max =scfg.Max  or 100
-            local def =math.clamp(scfg.Default or min,min,max)
-            local suf =scfg.Suffix or ""
-            local cb  =scfg.Callback or function() end
-            local val =def
+            local min=scfg.Min or 0
+            local max=scfg.Max or 100
+            local def=math.clamp(scfg.Default or min,min,max)
+            local suf=scfg.Suffix or ""
+            local cb=scfg.Callback or function() end
+            local val=def
             local f=EF(66)
             EL(f,name,12,10,220,20,T.Text,L.FontSemi,L.LabelSize)
             local vl=New("TextLabel",{Size=UDim2.new(0,88,0,20),
@@ -2024,30 +2814,18 @@ function CrozoX:CreateWindow(cfg)
             local fill=New("Frame",{Size=UDim2.new((val-min)/(max-min),0,1,0),
                 BackgroundColor3=T.Primary,BorderSizePixel=0,ZIndex=15,Parent=tbg})
             Corner(fill,3)
-            -- gradient on fill
-            local fillGrad=New("UIGradient",{Color=ColorSequence.new{
+            New("UIGradient",{Color=ColorSequence.new{
                 ColorSequenceKeypoint.new(0,T.PrimaryLight),
                 ColorSequenceKeypoint.new(1,T.Primary)},Parent=fill})
             local knob=New("Frame",{Size=UDim2.new(0,16,0,16),
                 Position=UDim2.new((val-min)/(max-min),-8,0.5,-8),
-                BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,
-                ZIndex=16,Parent=tbg})
+                BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,ZIndex=16,Parent=tbg})
             Corner(knob,8)
-            -- UIStroke Transparency 0.6 حول الـ knob
-            New("UIStroke", {
-                Color        = T.Primary,
-                Thickness    = 2,
-                Transparency = 0.6,
-                Parent       = knob,
-            })
-            New("ImageLabel",{Size=UDim2.new(1,14,1,14),
-                Position=UDim2.new(0,-7,0,-5),
-                BackgroundTransparency=1,
-                Image="rbxassetid://6014261993",
-                ImageColor3=T.PrimaryGlow,
-                ImageTransparency=0.82,
-                ScaleType=Enum.ScaleType.Slice,
-                SliceCenter=Rect.new(49,49,450,450),
+            New("UIStroke",{Color=T.Primary,Thickness=2,Transparency=0.6,Parent=knob})
+            New("ImageLabel",{Size=UDim2.new(1,14,1,14),Position=UDim2.new(0,-7,0,-5),
+                BackgroundTransparency=1,Image="rbxassetid://6014261993",
+                ImageColor3=T.PrimaryGlow,ImageTransparency=0.82,
+                ScaleType=Enum.ScaleType.Slice,SliceCenter=Rect.new(49,49,450,450),
                 ZIndex=15,Parent=knob})
             local drag=false
             local cz=New("TextButton",{Size=UDim2.new(1,0,0,34),
@@ -2070,8 +2848,7 @@ function CrozoX:CreateWindow(cfg)
             end
             UserInputService.InputChanged:Connect(function(inp)
                 if drag and inp.UserInputType==Enum.UserInputType.MouseMovement then
-                    local p=math.clamp((inp.Position.X-tbg.AbsolutePosition.X)
-                        /tbg.AbsoluteSize.X,0,1)
+                    local p=math.clamp((inp.Position.X-tbg.AbsolutePosition.X)/tbg.AbsoluteSize.X,0,1)
                     SV(min+p*(max-min))
                 end
             end)
@@ -2080,224 +2857,142 @@ function CrozoX:CreateWindow(cfg)
             return El
         end
 
-        -- ── Dropdown ── يُزيح العناصر بدلاً من الفتح فوقها ──
         function Tab:AddDropdown(dcfg)
             dcfg=dcfg or {}
             local name=dcfg.Name or "Dropdown"
             local opts=dcfg.Options or {}
-            local sel =dcfg.Default or opts[1]
-            local cb  =dcfg.Callback or function() end
+            local sel=dcfg.Default or opts[1]
+            local cb=dcfg.Callback or function() end
             local open=false
 
-            -- حاوية خارجية: تتمدد عند الفتح وتزيح ما تحتها
             local container=New("Frame",{
-                Size=UDim2.new(1,0,0,46),   -- يبدأ بحجم الزر فقط
+                Size=UDim2.new(1,0,0,46),
                 BackgroundTransparency=1,
                 BorderSizePixel=0,
-                ZIndex=13, Parent=tabPage,
+                ZIndex=13,Parent=tabPage,
             })
-
-            -- الزر الرئيسي (header)
             local f=New("Frame",{
                 Size=UDim2.new(1,0,0,46),
                 BackgroundColor3=T.SurfaceAlt,
-                BorderSizePixel=0, ZIndex=13, Parent=container,
+                BorderSizePixel=0,ZIndex=13,Parent=container,
             })
-            Corner(f,12); Stroke(f,T.Border,1,0)
-            -- Shadow
-            New("ImageLabel",{Size=UDim2.new(1,10,1,10),
-                Position=UDim2.new(0,-5,0,2),BackgroundTransparency=1,
-                Image="rbxassetid://6014261993",ImageColor3=Color3.fromRGB(0,0,0),
-                ImageTransparency=0.88,ScaleType=Enum.ScaleType.Slice,
-                SliceCenter=Rect.new(49,49,450,450),ZIndex=12,Parent=f})
-
+            Corner(f,12);Stroke(f,T.Border,1,0)
+            New("ImageLabel",{Size=UDim2.new(1,10,1,10),Position=UDim2.new(0,-5,0,2),
+                BackgroundTransparency=1,Image="rbxassetid://6014261993",ImageColor3=Color3.fromRGB(0,0,0),
+                ImageTransparency=0.88,ScaleType=Enum.ScaleType.Slice,SliceCenter=Rect.new(49,49,450,450),
+                ZIndex=12,Parent=f})
             EL(f,name,12,13,185,20,T.Text,L.FontSemi,L.LabelSize)
             local sl=New("TextLabel",{Size=UDim2.new(0,110,0,20),
                 Position=UDim2.new(1,-145,0,13),BackgroundTransparency=1,
                 Text=tostring(sel or "—"),TextColor3=T.Primary,
                 Font=L.FontBody,TextSize=L.LabelSize,
                 TextXAlignment=Enum.TextXAlignment.Right,ZIndex=14,Parent=f})
-
-            -- Arrow icon
             local arrowFrame=New("Frame",{Size=UDim2.new(0,22,0,22),
-                AnchorPoint=Vector2.new(1,0.5),
-                Position=UDim2.new(1,-8,0.5,0),
-                BackgroundColor3=T.SurfaceHover,
-                BorderSizePixel=0,ZIndex=14,Parent=f})
+                AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,-8,0.5,0),
+                BackgroundColor3=T.SurfaceHover,BorderSizePixel=0,ZIndex=14,Parent=f})
             Corner(arrowFrame,6)
-            local aIco=Img(arrowFrame,Icons.chevrondown,12,
-                UDim2.new(0.5,-6,0.5,-6),T.TextDim,15)
-
-            -- قائمة الخيارات — داخل نفس الـ container مباشرة
+            local aIco=Img(arrowFrame,Icons.chevrondown,12,UDim2.new(0.5,-6,0.5,-6),T.TextDim,15)
             local dl=New("Frame",{
-                Size=UDim2.new(1,0,0,0),        -- يبدأ بصفر
-                Position=UDim2.new(0,0,0,50),   -- تحت الـ header مباشرة
-                BackgroundColor3=T.Surface,
-                BorderSizePixel=0,
-                ClipsDescendants=true,
-                ZIndex=14, Parent=container,
+                Size=UDim2.new(1,0,0,0),Position=UDim2.new(0,0,0,50),
+                BackgroundColor3=T.Surface,BorderSizePixel=0,ClipsDescendants=true,
+                ZIndex=14,Parent=container,
             })
-            Corner(dl,10)
-            Stroke(dl,T.BorderBright,1,0.3)
-            ListLayout(dl,2); Pad(dl,4,4,4,4)
-
-            local ROW_H = 32
+            Corner(dl,10);Stroke(dl,T.BorderBright,1,0.3)
+            ListLayout(dl,2);Pad(dl,4,4,4,4)
+            local ROW_H=32
             local El={Value=sel}
-
-            local function SetSel(o)
-                sel=o; El.Value=o; sl.Text=tostring(o); Safe(cb,o)
-            end
-
+            local function SetSel(o) sel=o;El.Value=o;sl.Text=tostring(o);Safe(cb,o) end
             local function Refresh()
-                for _,c in ipairs(dl:GetChildren()) do
-                    if c:IsA("Frame") then c:Destroy() end
-                end
+                for _,c in ipairs(dl:GetChildren()) do if c:IsA("Frame") then c:Destroy() end end
                 for _,o in ipairs(opts) do
                     local isA=(o==sel)
                     local row=New("Frame",{Size=UDim2.new(1,0,0,ROW_H),
                         BackgroundColor3=isA and T.SurfaceHover or T.SurfaceAlt,
                         BorderSizePixel=0,ZIndex=15,Parent=dl})
                     Corner(row,7)
-                    -- Active indicator
                     if isA then
-                        local ind=New("Frame",{Size=UDim2.new(0,3,0.6,0),
-                            Position=UDim2.new(0,0,0.2,0),
-                            BackgroundColor3=T.Primary,BorderSizePixel=0,
-                            ZIndex=16,Parent=row})
+                        local ind=New("Frame",{Size=UDim2.new(0,3,0.6,0),Position=UDim2.new(0,0,0.2,0),
+                            BackgroundColor3=T.Primary,BorderSizePixel=0,ZIndex=16,Parent=row})
                         Corner(ind,2)
                     end
-                    EL(row,tostring(o),10,0,200,ROW_H,
-                        isA and T.Text or T.TextDim,
+                    EL(row,tostring(o),10,0,200,ROW_H,isA and T.Text or T.TextDim,
                         isA and L.FontSemi or L.FontBody,L.LabelSize,16)
-                    local rb=New("TextButton",{Size=UDim2.new(1,0,1,0),
-                        BackgroundTransparency=1,Text="",ZIndex=17,Parent=row})
-                    rb.MouseEnter:Connect(function()
-                        if o~=sel then Tween(row,{BackgroundColor3=T.SurfaceHover},0.1) end
-                    end)
-                    rb.MouseLeave:Connect(function()
-                        if o~=sel then Tween(row,{BackgroundColor3=T.SurfaceAlt},0.1) end
-                    end)
+                    local rb=New("TextButton",{Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,Text="",ZIndex=17,Parent=row})
+                    rb.MouseEnter:Connect(function() if o~=sel then Tween(row,{BackgroundColor3=T.SurfaceHover},0.1) end end)
+                    rb.MouseLeave:Connect(function() if o~=sel then Tween(row,{BackgroundColor3=T.SurfaceAlt},0.1) end end)
                     rb.MouseButton1Click:Connect(function()
-                        SetSel(o)
-                        -- إغلاق مع انيميشن
-                        open=false
-                        local targetH=46
-                        Tween(container,{Size=UDim2.new(1,0,0,targetH)},
-                            0.28,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-                        Tween(dl,{Size=UDim2.new(1,0,0,0)},
-                            0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-                        Tween(aIco,{Rotation=0},0.2)
-                        Tween(arrowFrame,{BackgroundColor3=T.SurfaceHover},0.2)
+                        SetSel(o);open=false
+                        Tween(container,{Size=UDim2.new(1,0,0,46)},0.28,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+                        Tween(dl,{Size=UDim2.new(1,0,0,0)},0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+                        Tween(aIco,{Rotation=0},0.2);Tween(arrowFrame,{BackgroundColor3=T.SurfaceHover},0.2)
                         Tween(f,{BackgroundColor3=T.SurfaceAlt},0.2)
                     end)
                 end
             end
             Refresh()
-
-            -- تحديث الـ layout عند تغيير canvas
-            local dlLayout=dl:FindFirstChildWhichIsA("UIListLayout")
-            if dlLayout then
-                dlLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                    if open then
-                        dl.CanvasSize=UDim2.new(0,0,0,dlLayout.AbsoluteContentSize.Y+8)
-                    end
-                end)
-            end
-
-            local tog=New("TextButton",{Size=UDim2.new(1,0,1,0),
-                BackgroundTransparency=1,Text="",ZIndex=15,Parent=f})
-
+            local tog=New("TextButton",{Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,Text="",ZIndex=15,Parent=f})
             tog.MouseButton1Click:Connect(function()
-                open=not open
-                Refresh()
+                open=not open;Refresh()
                 if open then
-                    -- حساب الارتفاع المناسب
                     local listH=math.min(#opts*ROW_H+8,200)
-                    local totalH=46+4+listH   -- header + gap + list
-
-                    -- 1. container يتمدد → يزيح العناصر تحته تلقائياً (UIListLayout)
-                    Tween(container,{Size=UDim2.new(1,0,0,totalH)},
-                        0.3,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
-                    -- 2. القائمة تظهر من الأعلى للأسفل
-                    Tween(dl,{Size=UDim2.new(1,0,0,listH)},
-                        0.3,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
-                    -- 3. Header يضيء
+                    local totalH=46+4+listH
+                    Tween(container,{Size=UDim2.new(1,0,0,totalH)},0.3,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
+                    Tween(dl,{Size=UDim2.new(1,0,0,listH)},0.3,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
                     Tween(f,{BackgroundColor3=T.SurfaceHover},0.2)
-                    -- 4. Arrow يدور
                     Tween(aIco,{Rotation=180},0.25,Enum.EasingStyle.Back)
                     Tween(arrowFrame,{BackgroundColor3=T.Border},0.2)
                 else
-                    -- إغلاق: عكس التمدد
-                    Tween(container,{Size=UDim2.new(1,0,0,46)},
-                        0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-                    Tween(dl,{Size=UDim2.new(1,0,0,0)},
-                        0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+                    Tween(container,{Size=UDim2.new(1,0,0,46)},0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+                    Tween(dl,{Size=UDim2.new(1,0,0,0)},0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
                     Tween(f,{BackgroundColor3=T.SurfaceAlt},0.2)
                     Tween(aIco,{Rotation=0},0.2)
                     Tween(arrowFrame,{BackgroundColor3=T.SurfaceHover},0.2)
                 end
             end)
-
-            -- Hover على الـ header
-            tog.MouseEnter:Connect(function()
-                if not open then
-                    Tween(f,{BackgroundColor3=T.SurfaceHover},0.15) end
-            end)
-            tog.MouseLeave:Connect(function()
-                if not open then
-                    Tween(f,{BackgroundColor3=T.SurfaceAlt},0.15) end
-            end)
-
+            tog.MouseEnter:Connect(function() if not open then Tween(f,{BackgroundColor3=T.SurfaceHover},0.15) end end)
+            tog.MouseLeave:Connect(function() if not open then Tween(f,{BackgroundColor3=T.SurfaceAlt},0.15) end end)
             function El:Set(v) SetSel(v) end
             function El:Get() return sel end
-            function El:SetOptions(o) opts=o; Refresh() end
+            function El:SetOptions(o) opts=o;Refresh() end
             return El
         end
 
-        -- ── Keybind ────────────────────────────────────────
         function Tab:AddKeybind(kcfg)
             kcfg=kcfg or {}
             local name=kcfg.Name or "Keybind"
-            local def =kcfg.Default or Enum.KeyCode.RightControl
-            local cb  =kcfg.Callback or function() end
+            local def=kcfg.Default or Enum.KeyCode.RightControl
+            local cb=kcfg.Callback or function() end
             local cur=def;local listen=false
             local f=EF(46)
             EL(f,name,12,13,230,20,T.Text,L.FontSemi,L.LabelSize)
             local kb=New("TextButton",{Size=UDim2.new(0,100,0,28),
                 Position=UDim2.new(1,-112,0.5,-14),BackgroundColor3=T.Background,
-                Text=cur.Name,TextColor3=T.Primary,
-                Font=Enum.Font.GothamBold,TextSize=12,
+                Text=cur.Name,TextColor3=T.Primary,Font=Enum.Font.GothamBold,TextSize=12,
                 BorderSizePixel=0,ZIndex=14,Parent=f})
             Corner(kb,8);Stroke(kb,T.BorderBright,1,0)
-            kb.MouseButton1Click:Connect(function()
-                listen=true;kb.Text="···";kb.TextColor3=T.Warning
-            end)
-            kb.MouseEnter:Connect(function()
-                Tween(kb,{BackgroundColor3=T.SurfaceAlt},0.15) end)
-            kb.MouseLeave:Connect(function()
-                Tween(kb,{BackgroundColor3=T.Background},0.15) end)
+            kb.MouseButton1Click:Connect(function() listen=true;kb.Text="···";kb.TextColor3=T.Warning end)
+            kb.MouseEnter:Connect(function() Tween(kb,{BackgroundColor3=T.SurfaceAlt},0.15) end)
+            kb.MouseLeave:Connect(function() Tween(kb,{BackgroundColor3=T.Background},0.15) end)
             UserInputService.InputBegan:Connect(function(inp,gp)
                 if gp then return end
                 if listen and inp.UserInputType==Enum.UserInputType.Keyboard then
-                    cur=inp.KeyCode;listen=false
-                    kb.Text=inp.KeyCode.Name;kb.TextColor3=T.Primary
+                    cur=inp.KeyCode;listen=false;kb.Text=inp.KeyCode.Name;kb.TextColor3=T.Primary
                     Safe(cb,inp.KeyCode)
-                elseif not listen
-                    and inp.UserInputType==Enum.UserInputType.Keyboard
-                    and inp.KeyCode==cur then Safe(cb,cur) end
+                elseif not listen and inp.UserInputType==Enum.UserInputType.Keyboard and inp.KeyCode==cur then
+                    Safe(cb,cur)
+                end
             end)
             local El={Value=cur}
             function El:Get() return cur end
             return El
         end
 
-        -- ── Input ──────────────────────────────────────────
         function Tab:AddInput(icfg)
             icfg=icfg or {}
             local name=icfg.Name or "Input"
-            local ph  =icfg.Placeholder or "Type here..."
-            local def =icfg.Default or ""
-            local cb  =icfg.Callback or function() end
+            local ph=icfg.Placeholder or "Type here..."
+            local def=icfg.Default or ""
+            local cb=icfg.Callback or function() end
             local f=EF(64)
             EL(f,name,12,8,270,20,T.Text,L.FontSemi,L.LabelSize)
             local box=New("TextBox",{Size=UDim2.new(1,-24,0,28),
@@ -2310,23 +3005,15 @@ function CrozoX:CreateWindow(cfg)
             Corner(box,8);Pad(box,0,0,10,10)
             local bs=Stroke(box,T.Border,1,0)
             box.Focused:Connect(function() Tween(bs,{Color=T.Primary},0.15) end)
-            box.FocusLost:Connect(function(enter)
-                Tween(bs,{Color=T.Border},0.15)
-                if enter then Safe(cb,box.Text) end
-            end)
+            box.FocusLost:Connect(function(enter) Tween(bs,{Color=T.Border},0.15);if enter then Safe(cb,box.Text) end end)
             local El={}
             function El:Get() return box.Text end
             function El:Set(v) box.Text=v end
             return El
         end
 
-        -- إذا كان هذا أول تاب، نختاره بعد ما يرجع الـ Tab
-        -- بكده نضمن إن العناصر اتضافت قبل الاختيار
         if isFirstTab then
-            task.defer(function()
-                task.wait()   -- frame واحد يكفي
-                SelectTab()
-            end)
+            task.defer(function() task.wait(); SelectTab() end)
         end
 
         return Tab
@@ -2343,14 +3030,12 @@ function CrozoX:CreateWindow(cfg)
     function WAPI:CreateTab(c) return Window:CreateTab(c) end
     function WAPI:Toggle()
         if wrapFrame.Visible then
-            Tween(mainFrame,{Size=UDim2.new(1,0,0,0),BackgroundTransparency=1},0.3,
-                Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+            Tween(mainFrame,{Size=UDim2.new(1,0,0,0),BackgroundTransparency=1},0.3,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
             task.delay(0.32,function() wrapFrame.Visible=false end)
         else
             wrapFrame.Visible=true
             mainFrame.Size=UDim2.new(0.88,0,0.88,0)
-            Tween(mainFrame,{Size=UDim2.new(1,0,1,0),BackgroundTransparency=0},
-                0.35,Enum.EasingStyle.Back)
+            Tween(mainFrame,{Size=UDim2.new(1,0,1,0),BackgroundTransparency=0},0.35,Enum.EasingStyle.Back)
         end
     end
     function WAPI:Destroy()
@@ -2367,14 +3052,12 @@ end
 function CrozoX:Notify(cfg)
     cfg=cfg or {}
     local title=cfg.Title or "Notification"
-    local text =cfg.Text  or ""
-    local dur  =cfg.Duration or 4
-    local ntype=cfg.Type  or "Info"
-    local T    =self._Theme
-    local L    =self._Lang
-    local xAlign=(L and L.IsRTL)
-        and Enum.TextXAlignment.Right
-        or  Enum.TextXAlignment.Left
+    local text=cfg.Text or ""
+    local dur=cfg.Duration or 4
+    local ntype=cfg.Type or "Info"
+    local T=self._Theme
+    local L=self._Lang
+    local xAlign=(L and L.IsRTL) and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
     local typeMap={
         Success={color=T.Success,icon=Icons.checkcircle2,bg=T.NotifBgOk},
         Warning={color=T.Warning,icon=Icons.alerttriangle,bg=T.NotifBgWarn},
@@ -2385,15 +3068,14 @@ function CrozoX:Notify(cfg)
     local color=td.color
     self._NotifCount=self._NotifCount+1
 
-    -- ── Responsive sizes ──────────────────────────────────
-    local _nCam   = workspace.CurrentCamera
-    local _nVP    = _nCam and _nCam.ViewportSize or Vector2.new(800,600)
-    local _nMin   = math.min(_nVP.X, _nVP.Y)
-    local isMob   = (Device.IsMobile or Device.IsTablet) or (_nMin < 500)
-    local cardH   = isMob and 72  or 82    -- أكبر شوية للنص
+    local _nCam = workspace.CurrentCamera
+    local _nVP  = _nCam and _nCam.ViewportSize or Vector2.new(800,600)
+    local _nMin = math.min(_nVP.X,_nVP.Y)
+    local isMob = (Device.IsMobile or Device.IsTablet) or (_nMin < 500)
+    local cardH   = isMob and 72  or 82
     local panelW  = isMob and 38  or 46
     local iconSz  = isMob and 18  or 22
-    local titleSz = isMob and 14  or 14    -- نفس الكمبيوتر
+    local titleSz = 14
     local bodySz  = isMob and 12  or (L and L.LabelSize or 13)
     local titleY  = isMob and 10  or 13
     local bodyY   = isMob and 30  or 36
@@ -2407,57 +3089,50 @@ function CrozoX:Notify(cfg)
     Corner(card, isMob and 9 or 13)
     Stroke(card,color,1,0.5)
 
-    -- Coloured left panel
     local panel=New("Frame",{Size=UDim2.new(0,panelW,1,0),
         BackgroundColor3=td.bg,BorderSizePixel=0,ZIndex=901,Parent=card})
-    New("UICorner",{CornerRadius=UDim.new(0, isMob and 9 or 13),Parent=panel})
+    New("UICorner",{CornerRadius=UDim.new(0,isMob and 9 or 13),Parent=panel})
     New("Frame",{Size=UDim2.new(0,8,1,0),Position=UDim2.new(1,-8,0,0),
         BackgroundColor3=td.bg,BorderSizePixel=0,ZIndex=901,Parent=panel})
-    local iconImg=Img(panel,td.icon,iconSz,
-        UDim2.new(0.5,-iconSz/2,0.5,-iconSz/2),color,903)
+    local iconImg=Img(panel,td.icon,iconSz,UDim2.new(0.5,-iconSz/2,0.5,-iconSz/2),color,903)
     iconImg.ImageTransparency=1
 
     local titleLbl=New("TextLabel",{
-        Size=UDim2.new(1,-(txtOffX+36),0,18),  -- +36 بدل +20 → مساحة أكبر للـ X
+        Size=UDim2.new(1,-(txtOffX+36),0,18),
         Position=UDim2.new(0,txtOffX,0,titleY),
         BackgroundTransparency=1,Text=title,TextColor3=T.Text,Font=FONTS.Bold,
         TextSize=titleSz,TextXAlignment=xAlign,TextWrapped=false,
-        TextTruncate=Enum.TextTruncate.AtEnd,
-        TextTransparency=1,ZIndex=902,Parent=card})
+        TextTruncate=Enum.TextTruncate.AtEnd,TextTransparency=1,ZIndex=902,Parent=card})
     local bodyLbl=New("TextLabel",{
-        Size=UDim2.new(1,-(txtOffX+36),0,bodyH),  -- نفس الـ gap
+        Size=UDim2.new(1,-(txtOffX+36),0,bodyH),
         Position=UDim2.new(0,txtOffX,0,bodyY),
         BackgroundTransparency=1,Text=text,TextColor3=T.TextDim,
         Font=L and L.FontBody or FONTS.Body,
         TextSize=bodySz,TextXAlignment=xAlign,TextWrapped=true,
         TextTransparency=1,ZIndex=902,Parent=card})
 
-    -- Close X — صغير ومتناسب مع النص
-    local xBtnSz = isMob and 20 or 24   -- أصغر على موبايل
+    local xBtnSz=isMob and 20 or 24
     local xBtn=New("TextButton",{Size=UDim2.new(0,xBtnSz,0,xBtnSz),
         Position=UDim2.new(1,-(xBtnSz+5),0,5),
         BackgroundColor3=Color3.fromRGB(40,40,40),
         BackgroundTransparency=isMob and 0.2 or 1,
         Text="",ZIndex=904,Parent=card})
-    if isMob then Corner(xBtn, 5) end
-    local xIcoSz = isMob and 10 or 12
-    local xIco=Img(xBtn,Icons.x,xIcoSz,
-        UDim2.new(0.5,-xIcoSz/2,0.5,-xIcoSz/2),T.TextMuted,905)
+    if isMob then Corner(xBtn,5) end
+    local xIcoSz=isMob and 10 or 12
+    local xIco=Img(xBtn,Icons.x,xIcoSz,UDim2.new(0.5,-xIcoSz/2,0.5,-xIcoSz/2),T.TextMuted,905)
     xIco.ImageTransparency=1
 
-    -- Progress bar
     local pbg=New("Frame",{Size=UDim2.new(1,-12,0,2),
         Position=UDim2.new(0,6,1,-5),BackgroundColor3=T.Border,
         BorderSizePixel=0,ZIndex=902,Parent=card})
     Corner(pbg,1)
-    local pfill=New("Frame",{Size=UDim2.new(1,0,1,0),
-        BackgroundColor3=color,BorderSizePixel=0,ZIndex=903,Parent=pbg})
+    local pfill=New("Frame",{Size=UDim2.new(1,0,1,0),BackgroundColor3=color,
+        BorderSizePixel=0,ZIndex=903,Parent=pbg})
     Corner(pfill,1)
     pfill.BackgroundTransparency=1
 
-    -- Slide من اليمين دايماً (موبايل وPC) — أنظف وأوضح
-    local FI = 0.35
-    card.Position = UDim2.new(1, 30, 0, 0)
+    local FI=0.35
+    card.Position=UDim2.new(1,30,0,0)
     Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0,0,0,0)},FI,Enum.EasingStyle.Back)
     Tween(iconImg,{ImageTransparency=0},FI)
     Tween(titleLbl,{TextTransparency=0},FI)
@@ -2468,10 +3143,9 @@ function CrozoX:Notify(cfg)
 
     local dismissed=false
     local function Dismiss()
-        if dismissed then return end; dismissed=true
+        if dismissed then return end;dismissed=true
         local FO=0.25
-        Tween(card,{BackgroundTransparency=1,Position=UDim2.new(1,30,0,0)},FO,
-            Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+        Tween(card,{BackgroundTransparency=1,Position=UDim2.new(1,30,0,0)},FO,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
         Tween(iconImg,{ImageTransparency=1},FO)
         Tween(titleLbl,{TextTransparency=1},FO)
         Tween(bodyLbl,{TextTransparency=1},FO)
@@ -2482,14 +3156,11 @@ function CrozoX:Notify(cfg)
     task.delay(dur,Dismiss)
     xBtn.MouseButton1Click:Connect(Dismiss)
     xBtn.InputEnded:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.Touch then Dismiss() end
+        if inp.UserInputType==Enum.UserInputType.Touch then Dismiss() end
     end)
-    local hov=New("TextButton",{Size=UDim2.new(1,0,1,0),
-        BackgroundTransparency=1,Text="",ZIndex=901,Parent=card})
-    hov.MouseEnter:Connect(function()
-        Tween(card,{BackgroundColor3=T.SurfaceAlt},0.15) end)
-    hov.MouseLeave:Connect(function()
-        Tween(card,{BackgroundColor3=T.Surface},0.15) end)
+    local hov=New("TextButton",{Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,Text="",ZIndex=901,Parent=card})
+    hov.MouseEnter:Connect(function() Tween(card,{BackgroundColor3=T.SurfaceAlt},0.15) end)
+    hov.MouseLeave:Connect(function() Tween(card,{BackgroundColor3=T.Surface},0.15) end)
 end
 
 -- ============================================================
@@ -2537,14 +3208,10 @@ local function Init()
             lib:SetLanguage(langName)
             lib:Notify({
                 Title    = langName=="Arabic" and "مرحباً بك في CrozoX" or "Welcome to CrozoX",
-                Text     = langName=="Arabic"
-                    and "تم تحميل المكتبة بنجاح ✓"
-                    or  "Library loaded successfully ✓",
+                Text     = langName=="Arabic" and "تم تحميل المكتبة بنجاح ✓" or "Library loaded successfully ✓",
                 Duration = 5,
                 Type     = "Success",
             })
-            -- يشغّل الـ callback المسجّل من السكربت الخارجي
-            -- API._pendingWindow هو المكان الصح لأن Hub يكتب على API
             if API._pendingWindow then
                 local fn = API._pendingWindow
                 API._pendingWindow = nil
