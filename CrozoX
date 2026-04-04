@@ -2892,4 +2892,134 @@ local function Init()
     return API
 end
 
-return Init()
+
+-- ══════════════════════════════════════════════════════
+--  RUN DIRECTLY — المكتبة والسكربت في ملف واحد
+-- ══════════════════════════════════════════════════════
+local Library = Init()
+
+local MAP_NAME   = "Blox Fruits"
+local SCRIPT_VER = "v1.0.0"
+
+Library._pendingWindow = function()
+
+    local IsAR = Library:GetLangName() == "Arabic"
+
+    local Window = Library:CreateWindow({
+        Title    = "CrozoX — " .. MAP_NAME,
+        Subtitle = SCRIPT_VER,
+        Size     = UDim2.new(0, 680, 0, 480),
+    })
+
+    local Main   = Window:CreateTab({ Name = IsAR and "رئيسي"   or "Main",     Icon = "home"     })
+    local Farm   = Window:CreateTab({ Name = IsAR and "زراعة"   or "Farm",     Icon = "star"     })
+    local Player = Window:CreateTab({ Name = IsAR and "اللاعب"  or "Player",   Icon = "user"     })
+    local Combat = Window:CreateTab({ Name = IsAR and "قتال"    or "Combat",   Icon = "sword"    })
+    local Misc   = Window:CreateTab({ Name = IsAR and "متفرقات" or "Misc",     Icon = "sliders"  })
+    local Sett   = Window:CreateTab({ Name = IsAR and "إعدادات" or "Settings", Icon = "settings" })
+
+    -- MAIN
+    Main:AddSection(IsAR and "معلومات السكربت" or "Script Info")
+    Main:AddButton({
+        Name        = "🎮 " .. MAP_NAME,
+        Description = IsAR and ("الإصدار: " .. SCRIPT_VER) or ("Version: " .. SCRIPT_VER),
+        Icon        = "gamepad2",
+        Callback    = function()
+            Library:Notify({
+                Title    = IsAR and "مرحباً!" or "Hello!",
+                Text     = IsAR and "السكربت يعمل بشكل صحيح ✓" or "Script working correctly ✓",
+                Type     = "Success",
+                Duration = 3,
+            })
+        end,
+    })
+
+    -- FARM
+    Farm:AddSection(IsAR and "الزراعة التلقائية" or "Auto Farm")
+    Farm:AddToggle({
+        Name     = IsAR and "زراعة تلقائية" or "Auto Farm",
+        Default  = false,
+        Icon     = "star",
+        Callback = function(val)
+            Library:Notify({
+                Title    = val and (IsAR and "تم التفعيل" or "Activated") or (IsAR and "تم الإيقاف" or "Stopped"),
+                Type     = val and "Success" or "Info",
+                Duration = 3,
+            })
+        end,
+    })
+    Farm:AddSlider({ Name = IsAR and "سرعة الزراعة" or "Farm Speed", Min=1, Max=10, Default=5, Callback=function(v) end })
+    Farm:AddDropdown({ Name = IsAR and "اختر الهدف" or "Target", Options={"Enemy1","Enemy2","Boss"}, Default="Enemy1", Callback=function(o) end })
+
+    -- PLAYER
+    Player:AddSection(IsAR and "الحركة" or "Movement")
+    Player:AddToggle({
+        Name = IsAR and "سرعة مخصصة" or "Custom Speed", Default=false,
+        Callback = function(val)
+            local chr = game.Players.LocalPlayer.Character
+            if chr and chr:FindFirstChild("Humanoid") then chr.Humanoid.WalkSpeed = val and 100 or 16 end
+        end,
+    })
+    Player:AddToggle({
+        Name = IsAR and "قفز لا نهائي" or "Infinite Jump", Default=false,
+        Callback = function(val) _G.InfJump = val end,
+    })
+    game:GetService("UserInputService").JumpRequest:Connect(function()
+        if _G.InfJump then
+            local chr = game.Players.LocalPlayer.Character
+            if chr and chr:FindFirstChild("Humanoid") then chr.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end
+        end
+    end)
+    Player:AddSlider({
+        Name = IsAR and "سرعة الجري" or "Walk Speed", Min=16, Max=200, Default=16,
+        Callback = function(val)
+            local chr = game.Players.LocalPlayer.Character
+            if chr and chr:FindFirstChild("Humanoid") then chr.Humanoid.WalkSpeed = val end
+        end,
+    })
+
+    -- COMBAT
+    Combat:AddSection(IsAR and "أدوات القتال" or "Combat Tools")
+    Combat:AddToggle({
+        Name = IsAR and "كشف اللاعبين" or "Player ESP", Default=false, Icon="eye",
+        Callback = function(val)
+            for _, p in ipairs(game.Players:GetPlayers()) do
+                if p ~= game.Players.LocalPlayer and p.Character then
+                    local hl = p.Character:FindFirstChildOfClass("Highlight")
+                    if val and not hl then
+                        local h = Instance.new("Highlight")
+                        h.FillColor=Color3.fromRGB(255,50,50); h.OutlineColor=Color3.new(1,1,1)
+                        h.FillTransparency=0.5; h.Adornee=p.Character; h.Parent=p.Character
+                    elseif not val and hl then hl:Destroy() end
+                end
+            end
+        end,
+    })
+    Combat:AddButton({ Name=IsAR and "قتال الجميع" or "Kill All", Icon="sword", Callback=function() end })
+
+    -- MISC
+    Misc:AddSection(IsAR and "البيئة" or "Environment")
+    Misc:AddToggle({
+        Name = IsAR and "سطوع كامل" or "Full Bright", Default=false, Icon="sun",
+        Callback = function(val)
+            game:GetService("Lighting").Brightness=val and 10 or 1
+            game:GetService("Lighting").GlobalShadows=not val
+        end,
+    })
+    Misc:AddSlider({
+        Name=IsAR and "وقت اليوم" or "Time of Day", Min=0, Max=24, Default=12, Suffix=":00",
+        Callback=function(val) game:GetService("Lighting").TimeOfDay=val..":00:00" end,
+    })
+
+    -- SETTINGS
+    Sett:AddSection(IsAR and "الاختصارات" or "Keybinds")
+    Sett:AddKeybind({
+        Name=IsAR and "إخفاء/إظهار" or "Toggle UI", Default=Enum.KeyCode.RightControl,
+        Callback=function() Window:Toggle() end,
+    })
+    Sett:AddButton({
+        Name="CrozoX "..SCRIPT_VER, Description=IsAR and "صنع بواسطة كروزو ❤️" or "Made by Crozo ❤️",
+        Icon="crown", Callback=function() end,
+    })
+
+end
