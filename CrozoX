@@ -370,7 +370,7 @@ local Icons = {
     redo="rbxassetid://10734932822",redo2="rbxassetid://10734932586",
     refreshccw="rbxassetid://10734933056",refresh="rbxassetid://10734933222",
     refrigerator="rbxassetid://10734933465",regex="rbxassetid://10734933655",
-    repeat="rbxassetid://10734933966",repeat1="rbxassetid://10734933826",
+    ["repeat"]="rbxassetid://10734933966",["repeat1"]="rbxassetid://10734933826",
     reply="rbxassetid://10734934252",replyall="rbxassetid://10734934132",
     rewind="rbxassetid://10734934347",rocket="rbxassetid://10734934585",
     rockingchair="rbxassetid://10734939942",rotate3d="rbxassetid://10734940107",
