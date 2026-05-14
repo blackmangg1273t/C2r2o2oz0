@@ -1750,8 +1750,6 @@ function CrozoX:CreateWindow(cfg)
         BackgroundColor3=Color3.new(1,1,1), BorderSizePixel=0, ZIndex=61, Parent=resizeBtn,
     }); Corner(iconV, 1)
 
-    -- Mouse events (PC)
-    -- متغيرات الـ hold للموبايل
     -- ══════════════════════════════════════════════════════
     --  RESIZE SYSTEM — نهائي ومُصلح للـ Mobile
     --  ✦ Mobile: resize فوري بلمسة واحدة (بدون hold delay)
@@ -2842,9 +2840,41 @@ local function Init()
 
     local API={}; API.Lang=Languages; API.Icons=Icons; API.Fonts=FONTS
 
+    -- ══════════════════════════════════════════════════════
+    --  DEFERRED WINDOW CREATION — ينتظر اختيار اللغة أولاً
+    --  ✦ CreateWindow يخزن الإعدادات مش بيخلق فوراً
+    --  ✦ النافذة بتتخلق بعد ما المستخدم يختار اللغة
+    -- ══════════════════════════════════════════════════════
     function API:CreateWindow(cfg)
         if type(cfg)=="string" then cfg={Title=cfg} end
-        return lib:CreateWindow(cfg)
+        -- لو اللغة اختارت خلاص، نخلق النافذة فوراً
+        if API._langSelected then
+            return lib:CreateWindow(cfg)
+        end
+        -- لو لسه، نخزن الإعدادات ونرجع promise-like object
+        API._pendingWindowCfg = cfg
+        -- نرجع object مؤقت يتحدث بعد إنشاء النافذة
+        return setmetatable({
+            _realWindow = nil,
+            _tabsQueue = {},
+        }, {
+            __index = function(t, k)
+                if t._realWindow then
+                    return t._realWindow[k]
+                end
+                -- return a dummy function that queues calls
+                return function(...)
+                    table.insert(t._tabsQueue, {k, {...}})
+                end
+            end,
+            __call = function(t, c)
+                if t._realWindow then
+                    return t._realWindow(c)
+                end
+                if type(c)=="string" then c={Name=c} end
+                table.insert(t._tabsQueue, {"CreateTab", {c}})
+            end,
+        })
     end
     function API:SetTheme(n)    lib:SetTheme(n)      end
     function API:SetLanguage(n) lib:SetLanguage(n)   end
@@ -2862,10 +2892,16 @@ local function Init()
         elseif type(cfg)=="table" then return lib:CreateWindow(cfg) end
     end})
 
-    -- SEQUENCE: Intro → LangSelect → window
+    -- ══════════════════════════════════════════════════════
+    --  SEQUENCE: Intro → LangSelect → Create Window
+    --  النافذة ما بتتخلقش إلا بعد اختيار اللغة
+    -- ══════════════════════════════════════════════════════
+    API._langSelected = false
+
     PlayIntro(sg, function()
         ShowLangSelect(sg, function(langName)
             lib:SetLanguage(langName)
+            API._langSelected = true
             lib:Notify({
                 Title    = langName=="Arabic" and "مرحباً بك في CrozoX" or "Welcome to CrozoX",
                 Text     = langName=="Arabic"
@@ -2874,8 +2910,30 @@ local function Init()
                 Duration = 5,
                 Type     = "Success",
             })
-            -- يشغّل الـ callback المسجّل من السكربت الخارجي
-            -- API._pendingWindow هو المكان الصح لأن Hub يكتب على API
+
+            -- ══════════════════════════════════════════════════════
+            --  CREATE PENDING WINDOW — بعد اختيار اللغة
+            -- ══════════════════════════════════════════════════════
+            if API._pendingWindowCfg then
+                local cfg = API._pendingWindowCfg
+                API._pendingWindowCfg = nil
+                local window = lib:CreateWindow(cfg)
+                -- Process any queued tab/element calls
+                if API._windowProxy and API._windowProxy._tabsQueue then
+                    for _, call in ipairs(API._windowProxy._tabsQueue) do
+                        local methodName, args = call[1], call[2]
+                        if methodName == "CreateTab" then
+                            window:CreateTab(unpack(args))
+                        elseif window[methodName] then
+                            window[methodName](window, unpack(args))
+                        end
+                    end
+                    -- Update the proxy to point to real window
+                    API._windowProxy._realWindow = window
+                end
+            end
+
+            -- يشغّل الـ callback المسجّل من السكربت الخارجي (legacy support)
             if API._pendingWindow then
                 local fn = API._pendingWindow
                 API._pendingWindow = nil
