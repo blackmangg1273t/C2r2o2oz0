@@ -765,193 +765,322 @@ end
 --  INTRO ANIMATION
 -- ============================================================
 local function PlayIntro(sg, onDone)
-    -- ── Responsive scale للإنترو ────────────────────────────
     Device.Refresh()
-    local _introCam = workspace.CurrentCamera
-    local _introVP  = _introCam and _introCam.ViewportSize or Vector2.new(800,600)
-    local _introScale = math.clamp(math.min(_introVP.X,_introVP.Y) / 500, 0.45, 1.15)
+    local cam = workspace.CurrentCamera
+    local vp = cam and cam.ViewportSize or Vector2.new(800,600)
+    local introScale = math.clamp(math.min(vp.X,vp.Y) / 560, 0.56, 1.08)
+    local blue = Color3.fromRGB(40,118,255)
+    local red = Color3.fromRGB(255,45,78)
+    local darkA = Color3.fromRGB(3,5,12)
+    local darkB = Color3.fromRGB(12,4,18)
+    local glowAsset = "rbxassetid://5028857084"
+    local logoAsset = "rbxassetid://93116857865430"
 
-    local CFG={
-        Logo="rbxassetid://93116857865430",
-        HubName="CrozoX", TagLine="Clean Script Hub",
-        GlowColor=Color3.fromRGB(56,132,255),
-        AccentColor=Color3.fromRGB(235,48,72),
-        BlueColor=Color3.fromRGB(56,132,255),
-        RedColor=Color3.fromRGB(235,48,72),
-        ParticleN=0, FadeIn=0.45, ZoomDur=0.5,
-        HoldDur=0.85, PulseDur=0.36, FadeOut=0.38,
-        LogoStart=UDim2.new(0,86,0,86),
-        LogoEnd=UDim2.new(0,138,0,138),
-        LogoPulse=UDim2.new(0,146,0,146),
-    }
-    local bg=New("Frame",{Size=UDim2.new(1,0,1,0),
+    local bg = New("Frame",{
+        Size=UDim2.new(1,0,1,0),
         BackgroundColor3=Color3.fromRGB(0,0,0),
-        BackgroundTransparency=1,BorderSizePixel=0,ZIndex=100,Parent=sg})
-    local bgBlend=New("UIGradient",{
+        BackgroundTransparency=1,
+        BorderSizePixel=0,
+        ZIndex=100,
+        Parent=sg,
+    })
+    local bgGrad = New("UIGradient",{
         Color=ColorSequence.new{
-            ColorSequenceKeypoint.new(0,Color3.fromRGB(18,24,70)),
-            ColorSequenceKeypoint.new(0.5,Color3.fromRGB(30,12,28)),
-            ColorSequenceKeypoint.new(1,Color3.fromRGB(90,16,34)),
+            ColorSequenceKeypoint.new(0,darkA),
+            ColorSequenceKeypoint.new(0.46,darkB),
+            ColorSequenceKeypoint.new(1,Color3.fromRGB(4,8,22)),
         },
-        Rotation=25,
+        Rotation=22,
         Parent=bg,
     })
 
-    -- container مع UIScale — كل عناصر الإنترو بتتضغط proportionally
-    -- AnchorPoint(0.5,0.5) + Position(0.5,0.5) → يفضل centered حتى بعد الـ scale
-    local introCont=New("Frame",{
+    local blueAura = New("ImageLabel",{
+        Size=UDim2.new(0,720,0,720),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(0.30,0,0.48,0),
+        BackgroundTransparency=1,
+        Image=glowAsset,
+        ImageColor3=blue,
+        ImageTransparency=1,
+        ZIndex=101,
+        Parent=bg,
+    })
+    local redAura = New("ImageLabel",{
+        Size=UDim2.new(0,680,0,680),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(0.70,0,0.52,0),
+        BackgroundTransparency=1,
+        Image=glowAsset,
+        ImageColor3=red,
+        ImageTransparency=1,
+        ZIndex=101,
+        Parent=bg,
+    })
+    local centerAura = New("ImageLabel",{
+        Size=UDim2.new(0,360,0,360),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(0.5,0,0.5,-24),
+        BackgroundTransparency=1,
+        Image=glowAsset,
+        ImageColor3=Color3.fromRGB(180,70,255),
+        ImageTransparency=1,
+        ZIndex=102,
+        Parent=bg,
+    })
+
+    local sweep = New("Frame",{
+        Size=UDim2.new(0,820,0,2),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(-0.08,0,0.42,0),
+        BackgroundColor3=Color3.new(1,1,1),
+        BackgroundTransparency=1,
+        BorderSizePixel=0,
+        Rotation=-14,
+        ZIndex=103,
+        Parent=bg,
+    })
+    New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0,blue),
+            ColorSequenceKeypoint.new(0.5,Color3.new(1,1,1)),
+            ColorSequenceKeypoint.new(1,red),
+        },
+        Transparency=NumberSequence.new{
+            NumberSequenceKeypoint.new(0,1),
+            NumberSequenceKeypoint.new(0.42,0.35),
+            NumberSequenceKeypoint.new(0.5,0.05),
+            NumberSequenceKeypoint.new(0.58,0.35),
+            NumberSequenceKeypoint.new(1,1),
+        },
+        Parent=sweep,
+    })
+
+    local cont = New("Frame",{
         Size=UDim2.new(1,0,1,0),
         AnchorPoint=Vector2.new(0.5,0.5),
         Position=UDim2.new(0.5,0,0.5,0),
-        BackgroundTransparency=1,ZIndex=100,Parent=bg})
-    if _introScale < 0.98 then
-        New("UIScale",{Scale=_introScale,Parent=introCont})
+        BackgroundTransparency=1,
+        ZIndex=110,
+        Parent=bg,
+    })
+    if introScale < 0.99 then
+        New("UIScale",{Scale=introScale,Parent=cont})
     end
 
-    local glowOuter=New("ImageLabel",{Size=UDim2.new(0,340,0,340),
-        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
-        BackgroundTransparency=1,Image="rbxassetid://5028857084",
-        ImageColor3=CFG.GlowColor,ImageTransparency=1,ZIndex=101,Parent=introCont})
-    local glowInner=New("ImageLabel",{Size=UDim2.new(0,220,0,220),
-        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
-        BackgroundTransparency=1,Image="rbxassetid://5028857084",
-        ImageColor3=CFG.AccentColor,ImageTransparency=1,ZIndex=102,Parent=introCont})
-    local logoHolder=New("Frame",{Size=CFG.LogoStart,
-        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
-        BackgroundTransparency=1,ZIndex=103,Parent=introCont})
-    local logoImg=New("ImageLabel",{Size=UDim2.new(1,0,1,0),
-        BackgroundTransparency=1,Image=CFG.Logo,ImageTransparency=1,
-        ScaleType=Enum.ScaleType.Fit,ZIndex=104,Parent=logoHolder})
-    Corner(logoImg,18)
-    local logoStroke=Stroke(logoImg,CFG.GlowColor,3,1)
-    local nameLabel=New("TextLabel",{Size=UDim2.new(0,320,0,44),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,110),
-        BackgroundTransparency=1,Text=CFG.HubName,
-        TextColor3=Color3.fromRGB(255,255,255),Font=Enum.Font.GothamBlack,
-        TextSize=38,TextTransparency=1,ZIndex=104,Parent=introCont})
-    local tagLabel=New("TextLabel",{Size=UDim2.new(0,320,0,22),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,158),
-        BackgroundTransparency=1,Text=CFG.TagLine,
-        TextColor3=CFG.GlowColor,Font=Enum.Font.GothamSemibold,
-        TextSize=14,TextTransparency=1,ZIndex=104,Parent=introCont})
-    local line=New("Frame",{Size=UDim2.new(0,0,0,2),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,152),
-        BackgroundColor3=CFG.GlowColor,BorderSizePixel=0,ZIndex=104,Parent=introCont})
-    local lineBlend=New("UIGradient",{
+    local logoGlow = New("ImageLabel",{
+        Size=UDim2.new(0,248,0,248),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(0.5,0,0.5,-48),
+        BackgroundTransparency=1,
+        Image=glowAsset,
+        ImageColor3=blue,
+        ImageTransparency=1,
+        ZIndex=111,
+        Parent=cont,
+    })
+    local logoCard = New("Frame",{
+        Size=UDim2.new(0,104,0,104),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(0.5,0,0.5,-48),
+        BackgroundColor3=Color3.fromRGB(8,10,18),
+        BackgroundTransparency=1,
+        BorderSizePixel=0,
+        ClipsDescendants=true,
+        ZIndex=112,
+        Parent=cont,
+    })
+    Corner(logoCard,26)
+    local logoCardGrad = New("UIGradient",{
         Color=ColorSequence.new{
-            ColorSequenceKeypoint.new(0,CFG.BlueColor),
-            ColorSequenceKeypoint.new(1,CFG.RedColor),
+            ColorSequenceKeypoint.new(0,Color3.fromRGB(13,18,40)),
+            ColorSequenceKeypoint.new(0.5,Color3.fromRGB(18,8,22)),
+            ColorSequenceKeypoint.new(1,Color3.fromRGB(38,9,18)),
+        },
+        Rotation=35,
+        Parent=logoCard,
+    })
+    local logoStroke = Stroke(logoCard,blue,1.8,1)
+    local logoStrokeGrad = New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0,blue),
+            ColorSequenceKeypoint.new(0.5,Color3.fromRGB(255,255,255)),
+            ColorSequenceKeypoint.new(1,red),
+        },
+        Parent=logoStroke,
+    })
+    local logoImg = New("ImageLabel",{
+        Size=UDim2.new(1,-28,1,-28),
+        Position=UDim2.new(0,14,0,14),
+        BackgroundTransparency=1,
+        Image=logoAsset,
+        ImageTransparency=1,
+        ScaleType=Enum.ScaleType.Fit,
+        ZIndex=113,
+        Parent=logoCard,
+    })
+    local logoShine = New("Frame",{
+        Size=UDim2.new(0,42,1,80),
+        Position=UDim2.new(-0.45,0,0,-40),
+        BackgroundColor3=Color3.new(1,1,1),
+        BackgroundTransparency=0.72,
+        BorderSizePixel=0,
+        Rotation=18,
+        ZIndex=114,
+        Parent=logoCard,
+    })
+    New("UIGradient",{
+        Transparency=NumberSequence.new{
+            NumberSequenceKeypoint.new(0,1),
+            NumberSequenceKeypoint.new(0.5,0.05),
+            NumberSequenceKeypoint.new(1,1),
+        },
+        Parent=logoShine,
+    })
+
+    local title = New("TextLabel",{
+        Size=UDim2.new(0,380,0,50),
+        AnchorPoint=Vector2.new(0.5,0),
+        Position=UDim2.new(0.5,0,0.5,46),
+        BackgroundTransparency=1,
+        Text="CrozoX",
+        TextColor3=Color3.fromRGB(255,255,255),
+        Font=Enum.Font.GothamBlack,
+        TextSize=42,
+        TextTransparency=1,
+        ZIndex=114,
+        Parent=cont,
+    })
+    New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0,Color3.fromRGB(235,242,255)),
+            ColorSequenceKeypoint.new(0.5,Color3.fromRGB(255,255,255)),
+            ColorSequenceKeypoint.new(1,Color3.fromRGB(255,226,232)),
+        },
+        Parent=title,
+    })
+    local sub = New("TextLabel",{
+        Size=UDim2.new(0,380,0,22),
+        AnchorPoint=Vector2.new(0.5,0),
+        Position=UDim2.new(0.5,0,0.5,95),
+        BackgroundTransparency=1,
+        Text="Premium Script Interface",
+        TextColor3=Color3.fromRGB(174,184,206),
+        Font=Enum.Font.GothamMedium,
+        TextSize=14,
+        TextTransparency=1,
+        ZIndex=114,
+        Parent=cont,
+    })
+    local line = New("Frame",{
+        Size=UDim2.new(0,0,0,2),
+        AnchorPoint=Vector2.new(0.5,0),
+        Position=UDim2.new(0.5,0,0.5,128),
+        BackgroundColor3=Color3.new(1,1,1),
+        BackgroundTransparency=0.08,
+        BorderSizePixel=0,
+        ZIndex=114,
+        Parent=cont,
+    })
+    Corner(line,2)
+    local lineGrad = New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0,blue),
+            ColorSequenceKeypoint.new(0.5,Color3.fromRGB(255,255,255)),
+            ColorSequenceKeypoint.new(1,red),
         },
         Parent=line,
     })
-    local loaderBg=New("Frame",{Size=UDim2.new(0,220,0,4),
-        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,186),
-        BackgroundColor3=Color3.fromRGB(40,40,40),BackgroundTransparency=1,
-        BorderSizePixel=0,ZIndex=104,Parent=introCont})
-    Corner(loaderBg,2)
-    local loaderFill=New("Frame",{Size=UDim2.new(0,0,1,0),
-        BackgroundColor3=CFG.GlowColor,BorderSizePixel=0,ZIndex=105,Parent=loaderBg})
-    Corner(loaderFill,2)
-    local loaderBlend=New("UIGradient",{
-        Color=ColorSequence.new{
-            ColorSequenceKeypoint.new(0,CFG.BlueColor),
-            ColorSequenceKeypoint.new(1,CFG.RedColor),
-        },
-        Parent=loaderFill,
+    local loader = New("Frame",{
+        Size=UDim2.new(0,236,0,4),
+        AnchorPoint=Vector2.new(0.5,0),
+        Position=UDim2.new(0.5,0,0.5,148),
+        BackgroundColor3=Color3.fromRGB(255,255,255),
+        BackgroundTransparency=1,
+        BorderSizePixel=0,
+        ZIndex=114,
+        Parent=cont,
     })
-    local particles={}
-    local RADIUS=130
-    for i=1,CFG.ParticleN do
-        local angle=(i/CFG.ParticleN)*math.pi*2
-        local sz=math.random(3,7)
-        local dot=New("Frame",{Size=UDim2.new(0,sz,0,sz),
-            AnchorPoint=Vector2.new(0.5,0.5),
-            Position=UDim2.new(0.5+(RADIUS*math.cos(angle))/sg.AbsoluteSize.X,0,
-                0.5+(RADIUS*math.sin(angle))/sg.AbsoluteSize.Y,-20),
-            BackgroundColor3=(i%3==0) and CFG.AccentColor or CFG.GlowColor,
-            BackgroundTransparency=1,BorderSizePixel=0,ZIndex=103,Parent=bg})
-        Corner(dot,100)
-        table.insert(particles,{dot=dot,angle=angle})
-    end
-    local startT=tick()
-    local orbConn
-    orbConn=RunService.RenderStepped:Connect(function()
-        if not bg.Parent then orbConn:Disconnect();return end
-        local t=tick()-startT
-        local sw=sg.AbsoluteSize.X; local sh=sg.AbsoluteSize.Y
-        if sw<=0 or sh<=0 then return end
-        local blend=(math.sin(t*1.45)+1)/2
-        local cA=CFG.BlueColor:Lerp(CFG.RedColor,blend)
-        local cB=CFG.RedColor:Lerp(CFG.BlueColor,blend)
-        bgBlend.Rotation=(25+t*18)%360
-        bgBlend.Offset=Vector2.new(math.sin(t*0.7)*0.28,math.cos(t*0.55)*0.12)
-        glowOuter.ImageColor3=cA
-        glowInner.ImageColor3=cB
-        logoStroke.Color=cA
-        tagLabel.TextColor3=cA
-        line.BackgroundColor3=cB
-        loaderFill.BackgroundColor3=cA
-        lineBlend.Rotation=(t*90)%360
-        loaderBlend.Offset=Vector2.new(math.sin(t*1.4)*0.45,0)
-        for i,p in ipairs(particles) do
-            local speed=0.45+(i%3)*0.15
-            local a=p.angle+t*speed
-            local r=RADIUS+math.sin(t*1.8+i)*12
-            p.dot.Position=UDim2.new(0.5+(r*math.cos(a))/sw,0,
-                0.5+(r*math.sin(a))/sh,-20)
-        end
+    Corner(loader,2)
+    local loaderTrackGrad = New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0,blue:Lerp(Color3.new(1,1,1),0.2)),
+            ColorSequenceKeypoint.new(1,red:Lerp(Color3.new(1,1,1),0.2)),
+        },
+        Transparency=NumberSequence.new{
+            NumberSequenceKeypoint.new(0,0.55),
+            NumberSequenceKeypoint.new(0.5,0.25),
+            NumberSequenceKeypoint.new(1,0.55),
+        },
+        Parent=loader,
+    })
+    local fill = New("Frame",{
+        Size=UDim2.new(0,0,1,0),
+        BackgroundColor3=Color3.new(1,1,1),
+        BackgroundTransparency=0,
+        BorderSizePixel=0,
+        ZIndex=115,
+        Parent=loader,
+    })
+    Corner(fill,2)
+    local fillGrad = New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0,blue),
+            ColorSequenceKeypoint.new(0.5,Color3.fromRGB(255,255,255)),
+            ColorSequenceKeypoint.new(1,red),
+        },
+        Parent=fill,
+    })
+
+    local startT = tick()
+    local conn
+    conn = RunService.RenderStepped:Connect(function()
+        if not bg.Parent then if conn then conn:Disconnect() end; return end
+        local t = tick()-startT
+        local mix = (math.sin(t*0.9)+1)/2
+        local cA = blue:Lerp(red,mix)
+        local cB = red:Lerp(blue,mix)
+        bgGrad.Rotation = (22 + t*7) % 360
+        blueAura.Position = UDim2.new(0.28+math.sin(t*0.48)*0.055,0,0.48+math.cos(t*0.42)*0.05,0)
+        redAura.Position = UDim2.new(0.72+math.cos(t*0.44)*0.055,0,0.52+math.sin(t*0.50)*0.05,0)
+        centerAura.ImageColor3 = cA:Lerp(cB,0.5)
+        logoGlow.ImageColor3 = cA
+        logoCard.Rotation = math.sin(t*0.85)*1.4
+        logoCardGrad.Rotation = (35 + t*18) % 360
+        logoStroke.Color = cA
+        logoStrokeGrad.Rotation = (t*95) % 360
+        lineGrad.Offset = Vector2.new(math.sin(t*1.2)*0.35,0)
+        fillGrad.Offset = Vector2.new(math.sin(t*1.8)*0.32,0)
+        loaderTrackGrad.Offset = Vector2.new(math.cos(t*1.1)*0.28,0)
     end)
+
     task.spawn(function()
-        TweenWait(bg,{BackgroundTransparency=0.06},0.35,Enum.EasingStyle.Quad)
-        Tween(glowOuter,{ImageTransparency=0.5},0.5)
-        Tween(glowInner,{ImageTransparency=0.72},0.5)
-        Tween(logoHolder,{Size=CFG.LogoEnd},CFG.ZoomDur,Enum.EasingStyle.Back)
-        TweenWait(logoImg,{ImageTransparency=0},CFG.FadeIn)
-        Tween(logoStroke,{Transparency=0.2},0.4)
-        Tween(nameLabel,{TextTransparency=0},0.45)
+        Tween(bg,{BackgroundTransparency=0.02},0.32,Enum.EasingStyle.Quart)
+        Tween(blueAura,{ImageTransparency=0.48,Size=UDim2.new(0,820,0,820)},0.72,Enum.EasingStyle.Quart)
+        Tween(redAura,{ImageTransparency=0.50,Size=UDim2.new(0,780,0,780)},0.72,Enum.EasingStyle.Quart)
+        Tween(centerAura,{ImageTransparency=0.58},0.5,Enum.EasingStyle.Quart)
+        Tween(sweep,{BackgroundTransparency=0.18,Position=UDim2.new(1.08,0,0.55,0)},1.05,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+        Tween(logoGlow,{ImageTransparency=0.46,Size=UDim2.new(0,300,0,300)},0.6,Enum.EasingStyle.Quart)
+        Tween(logoCard,{Size=UDim2.new(0,146,0,146),BackgroundTransparency=0.13},0.58,Enum.EasingStyle.Back)
+        Tween(logoStroke,{Transparency=0.12},0.45,Enum.EasingStyle.Quart)
         task.wait(0.12)
-        Tween(tagLabel,{TextTransparency=0},0.4)
-        Tween(line,{Size=UDim2.new(0,200,0,2)},0.5)
-        Tween(loaderBg,{BackgroundTransparency=0},0.3)
-        TweenWait(loaderFill,{Size=UDim2.new(1,0,1,0)},
-            CFG.HoldDur*0.85,Enum.EasingStyle.Quart,Enum.EasingDirection.InOut)
-        for i,p in ipairs(particles) do
-            task.delay((i-1)*0.04,function()
-                Tween(p.dot,{BackgroundTransparency=0.22},0.3) end)
-        end
-        for _=1,1 do
-            Tween(logoHolder,{Size=CFG.LogoPulse},CFG.PulseDur*0.45,Enum.EasingStyle.Quad)
-            Tween(logoStroke,{Transparency=0.04},CFG.PulseDur*0.45)
-            Tween(glowOuter,{ImageTransparency=0.3},CFG.PulseDur*0.45)
-            task.wait(CFG.PulseDur*0.45)
-            Tween(logoHolder,{Size=CFG.LogoEnd},CFG.PulseDur*0.55,Enum.EasingStyle.Quad,Enum.EasingDirection.In)
-            Tween(logoStroke,{Transparency=0.25},CFG.PulseDur*0.55)
-            Tween(glowOuter,{ImageTransparency=0.52},CFG.PulseDur*0.55)
-            task.wait(CFG.PulseDur*0.55)
-        end
-        for i,p in ipairs(particles) do
-            local far=RADIUS*2.4
-            task.delay((i-1)*0.018,function()
-                Tween(p.dot,{
-                    Position=UDim2.new(0.5+(far*math.cos(p.angle))/sg.AbsoluteSize.X,0,
-                        0.5+(far*math.sin(p.angle))/sg.AbsoluteSize.Y,-20),
-                    BackgroundTransparency=1,Size=UDim2.new(0,1,0,1),
-                },CFG.FadeOut,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-            end)
-        end
+        Tween(logoImg,{ImageTransparency=0},0.35,Enum.EasingStyle.Quart)
+        Tween(logoShine,{Position=UDim2.new(1.25,0,0,-40)},0.78,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
         task.wait(0.08)
-        Tween(logoImg,{ImageTransparency=1},CFG.FadeOut)
-        Tween(nameLabel,{TextTransparency=1},CFG.FadeOut)
-        Tween(tagLabel,{TextTransparency=1},CFG.FadeOut)
-        Tween(line,{BackgroundTransparency=1},CFG.FadeOut)
-        Tween(loaderBg,{BackgroundTransparency=1},CFG.FadeOut)
-        Tween(glowOuter,{ImageTransparency=1},CFG.FadeOut)
-        Tween(glowInner,{ImageTransparency=1},CFG.FadeOut)
-        Tween(logoHolder,{Size=UDim2.new(0,55,0,55)},CFG.FadeOut,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-        TweenWait(bg,{BackgroundTransparency=1},CFG.FadeOut,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-        orbConn:Disconnect()
-        task.wait(0.08)
-        bg:Destroy()
+        Tween(title,{TextTransparency=0},0.36,Enum.EasingStyle.Quart)
+        Tween(sub,{TextTransparency=0},0.38,Enum.EasingStyle.Quart)
+        Tween(line,{Size=UDim2.new(0,228,0,2)},0.42,Enum.EasingStyle.Quart)
+        Tween(loader,{BackgroundTransparency=0.22},0.28,Enum.EasingStyle.Quart)
+        TweenWait(fill,{Size=UDim2.new(1,0,1,0)},1.08,Enum.EasingStyle.Quart,Enum.EasingDirection.InOut)
+        Tween(logoGlow,{ImageTransparency=0.34,Size=UDim2.new(0,322,0,322)},0.22,Enum.EasingStyle.Quad)
+        Tween(logoCard,{Size=UDim2.new(0,152,0,152)},0.2,Enum.EasingStyle.Quad)
+        task.wait(0.2)
+        Tween(logoGlow,{ImageTransparency=0.48,Size=UDim2.new(0,300,0,300)},0.28,Enum.EasingStyle.Quad)
+        Tween(logoCard,{Size=UDim2.new(0,146,0,146)},0.28,Enum.EasingStyle.Quad)
+        task.wait(0.12)
+        FadeOutGuiTree(bg,0.44)
+        TweenWait(bg,{BackgroundTransparency=1},0.44,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+        if conn then conn:Disconnect() end
+        if bg then bg:Destroy() end
         if onDone then task.spawn(onDone) end
     end)
 end
