@@ -727,518 +727,375 @@ do
 end
 
 -- ============================================================
---  INTRO ANIMATION — عصري وبسيط
---  ✦ Fade in سلس للـ logo + text
---  ✦ بدون particles معقدة — نظيف وحديث
---  ✦ سرعة مناسبة (1.8s total)
+--  INTRO ANIMATION
 -- ============================================================
 local function PlayIntro(sg, onDone)
+    -- ── Responsive scale للإنترو ────────────────────────────
     local _introCam = workspace.CurrentCamera
     local _introVP  = _introCam and _introCam.ViewportSize or Vector2.new(800,600)
-    local _introScale = math.clamp(math.min(_introVP.X,_introVP.Y) / 500, 0.5, 1.1)
+    local _introScale = math.clamp(math.min(_introVP.X,_introVP.Y) / 500, 0.45, 1.15)
 
-    local CFG = {
-        Logo       = "rbxassetid://93116857865430",
-        HubName    = "CrozoX",
-        TagLine    = "Professional Script Hub",
-        Primary    = Color3.fromRGB(220, 38, 38),
-        PrimaryLight = Color3.fromRGB(255, 80, 60),
+    local CFG={
+        Logo="rbxassetid://93116857865430",
+        HubName="CrozoX", TagLine="Professional Script Hub",
+        GlowColor=Color3.fromRGB(220,38,38),
+        AccentColor=Color3.fromRGB(255,80,60),
+        ParticleN=14, FadeIn=0.7, ZoomDur=0.8,
+        HoldDur=1.3, PulseDur=0.5, FadeOut=0.55,
+        LogoStart=UDim2.new(0,80,0,80),
+        LogoEnd=UDim2.new(0,165,0,165),
+        LogoPulse=UDim2.new(0,178,0,178),
     }
+    local bg=New("Frame",{Size=UDim2.new(1,0,1,0),
+        BackgroundColor3=Color3.fromRGB(0,0,0),
+        BackgroundTransparency=1,BorderSizePixel=0,ZIndex=100,Parent=sg})
 
-    -- Background
-    local bg = New("Frame", {
-        Size = UDim2.new(1,0,1,0),
-        BackgroundColor3 = Color3.fromRGB(5,5,5),
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-        ZIndex = 100,
-        Parent = sg,
-    })
-
-    -- Scale container
-    local cont = New("Frame", {
-        Size = UDim2.new(1,0,1,0),
-        AnchorPoint = Vector2.new(0.5,0.5),
-        Position = UDim2.new(0.5,0,0.5,0),
-        BackgroundTransparency = 1,
-        ZIndex = 101,
-        Parent = bg,
-    })
+    -- container مع UIScale — كل عناصر الإنترو بتتضغط proportionally
+    -- AnchorPoint(0.5,0.5) + Position(0.5,0.5) → يفضل centered حتى بعد الـ scale
+    local introCont=New("Frame",{
+        Size=UDim2.new(1,0,1,0),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(0.5,0,0.5,0),
+        BackgroundTransparency=1,ZIndex=100,Parent=bg})
     if _introScale < 0.98 then
-        New("UIScale", { Scale = _introScale, Parent = cont })
+        New("UIScale",{Scale=_introScale,Parent=introCont})
     end
 
-    -- Glow behind logo
-    local glow = New("ImageLabel", {
-        Size = UDim2.new(0, 200, 0, 200),
-        AnchorPoint = Vector2.new(0.5,0.5),
-        Position = UDim2.new(0.5, 0, 0.5, -40),
-        BackgroundTransparency = 1,
-        Image = "rbxassetid://5028857084",
-        ImageColor3 = CFG.Primary,
-        ImageTransparency = 1,
-        ZIndex = 102,
-        Parent = cont,
-    })
-
-    -- Logo
-    local logo = New("ImageLabel", {
-        Size = UDim2.new(0, 100, 0, 100),
-        AnchorPoint = Vector2.new(0.5,0.5),
-        Position = UDim2.new(0.5, 0, 0.5, -40),
-        BackgroundTransparency = 1,
-        Image = CFG.Logo,
-        ImageTransparency = 1,
-        ScaleType = Enum.ScaleType.Fit,
-        ZIndex = 103,
-        Parent = cont,
-    })
-    Corner(logo, 20)
-
-    -- Logo stroke
-    local logoStroke = Stroke(logo, CFG.Primary, 2, 1)
-
-    -- Hub name
-    local nameLbl = New("TextLabel", {
-        Size = UDim2.new(0, 300, 0, 40),
-        AnchorPoint = Vector2.new(0.5, 0),
-        Position = UDim2.new(0.5, 0, 0.5, 55),
-        BackgroundTransparency = 1,
-        Text = CFG.HubName,
-        TextColor3 = Color3.fromRGB(255,255,255),
-        Font = Enum.Font.GothamBlack,
-        TextSize = 36,
-        TextTransparency = 1,
-        ZIndex = 104,
-        Parent = cont,
-    })
-
-    -- Tagline
-    local tagLbl = New("TextLabel", {
-        Size = UDim2.new(0, 300, 0, 18),
-        AnchorPoint = Vector2.new(0.5, 0),
-        Position = UDim2.new(0.5, 0, 0.5, 95),
-        BackgroundTransparency = 1,
-        Text = CFG.TagLine,
-        TextColor3 = CFG.PrimaryLight,
-        Font = Enum.Font.GothamSemibold,
-        TextSize = 13,
-        TextTransparency = 1,
-        ZIndex = 104,
-        Parent = cont,
-    })
-
-    -- Progress bar bg
-    local barBg = New("Frame", {
-        Size = UDim2.new(0, 180, 0, 3),
-        AnchorPoint = Vector2.new(0.5, 0),
-        Position = UDim2.new(0.5, 0, 0.5, 125),
-        BackgroundColor3 = Color3.fromRGB(40,40,40),
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-        ZIndex = 104,
-        Parent = cont,
-    })
-    Corner(barBg, 2)
-
-    -- Progress bar fill
-    local barFill = New("Frame", {
-        Size = UDim2.new(0, 0, 1, 0),
-        BackgroundColor3 = CFG.Primary,
-        BorderSizePixel = 0,
-        ZIndex = 105,
-        Parent = barBg,
-    })
-    Corner(barFill, 2)
-
-    -- ══════════════════════════════════════════════════════
-    --  ANIMATION SEQUENCE
-    -- ══════════════════════════════════════════════════════
+    local glowOuter=New("ImageLabel",{Size=UDim2.new(0,340,0,340),
+        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
+        BackgroundTransparency=1,Image="rbxassetid://5028857084",
+        ImageColor3=CFG.GlowColor,ImageTransparency=1,ZIndex=101,Parent=introCont})
+    local glowInner=New("ImageLabel",{Size=UDim2.new(0,220,0,220),
+        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
+        BackgroundTransparency=1,Image="rbxassetid://5028857084",
+        ImageColor3=CFG.AccentColor,ImageTransparency=1,ZIndex=102,Parent=introCont})
+    local logoHolder=New("Frame",{Size=CFG.LogoStart,
+        AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.new(0.5,0,0.5,-20),
+        BackgroundTransparency=1,ZIndex=103,Parent=introCont})
+    local logoImg=New("ImageLabel",{Size=UDim2.new(1,0,1,0),
+        BackgroundTransparency=1,Image=CFG.Logo,ImageTransparency=1,
+        ScaleType=Enum.ScaleType.Fit,ZIndex=104,Parent=logoHolder})
+    Corner(logoImg,18)
+    local logoStroke=Stroke(logoImg,CFG.GlowColor,3,1)
+    local nameLabel=New("TextLabel",{Size=UDim2.new(0,320,0,44),
+        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,110),
+        BackgroundTransparency=1,Text=CFG.HubName,
+        TextColor3=Color3.fromRGB(255,255,255),Font=Enum.Font.GothamBlack,
+        TextSize=38,TextTransparency=1,ZIndex=104,Parent=introCont})
+    local tagLabel=New("TextLabel",{Size=UDim2.new(0,320,0,22),
+        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,158),
+        BackgroundTransparency=1,Text=CFG.TagLine,
+        TextColor3=CFG.GlowColor,Font=Enum.Font.GothamSemibold,
+        TextSize=14,TextTransparency=1,ZIndex=104,Parent=introCont})
+    local line=New("Frame",{Size=UDim2.new(0,0,0,2),
+        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,152),
+        BackgroundColor3=CFG.GlowColor,BorderSizePixel=0,ZIndex=104,Parent=introCont})
+    local loaderBg=New("Frame",{Size=UDim2.new(0,220,0,4),
+        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,186),
+        BackgroundColor3=Color3.fromRGB(40,40,40),BackgroundTransparency=1,
+        BorderSizePixel=0,ZIndex=104,Parent=introCont})
+    Corner(loaderBg,2)
+    local loaderFill=New("Frame",{Size=UDim2.new(0,0,1,0),
+        BackgroundColor3=CFG.GlowColor,BorderSizePixel=0,ZIndex=105,Parent=loaderBg})
+    Corner(loaderFill,2)
+    local particles={}
+    local RADIUS=130
+    for i=1,CFG.ParticleN do
+        local angle=(i/CFG.ParticleN)*math.pi*2
+        local sz=math.random(3,7)
+        local dot=New("Frame",{Size=UDim2.new(0,sz,0,sz),
+            AnchorPoint=Vector2.new(0.5,0.5),
+            Position=UDim2.new(0.5+(RADIUS*math.cos(angle))/sg.AbsoluteSize.X,0,
+                0.5+(RADIUS*math.sin(angle))/sg.AbsoluteSize.Y,-20),
+            BackgroundColor3=(i%3==0) and CFG.AccentColor or CFG.GlowColor,
+            BackgroundTransparency=1,BorderSizePixel=0,ZIndex=103,Parent=bg})
+        Corner(dot,100)
+        table.insert(particles,{dot=dot,angle=angle})
+    end
+    local startT=tick()
+    local orbConn
+    orbConn=RunService.RenderStepped:Connect(function()
+        if not bg.Parent then orbConn:Disconnect();return end
+        local t=tick()-startT
+        local sw=sg.AbsoluteSize.X; local sh=sg.AbsoluteSize.Y
+        if sw<=0 or sh<=0 then return end
+        for i,p in ipairs(particles) do
+            local speed=0.45+(i%3)*0.15
+            local a=p.angle+t*speed
+            local r=RADIUS+math.sin(t*1.8+i)*12
+            p.dot.Position=UDim2.new(0.5+(r*math.cos(a))/sw,0,
+                0.5+(r*math.sin(a))/sh,-20)
+        end
+    end)
     task.spawn(function()
-        -- Phase 1: Fade in bg
-        Tween(bg, { BackgroundTransparency = 0 }, 0.4)
-        task.wait(0.2)
-
-        -- Phase 2: Logo appears with glow
-        Tween(glow, { ImageTransparency = 0.6 }, 0.5)
-        Tween(logo, { ImageTransparency = 0 }, 0.5, Enum.EasingStyle.Quart)
-        Tween(logoStroke, { Transparency = 0.3 }, 0.5)
-        task.wait(0.3)
-
-        -- Phase 3: Text appears
-        Tween(nameLbl, { TextTransparency = 0 }, 0.4)
-        task.wait(0.1)
-        Tween(tagLbl, { TextTransparency = 0 }, 0.4)
-        task.wait(0.1)
-
-        -- Phase 4: Progress bar
-        Tween(barBg, { BackgroundTransparency = 0 }, 0.2)
-        Tween(barFill, { Size = UDim2.new(1, 0, 1, 0) }, 1.0, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut)
-        task.wait(1.1)
-
-        -- Phase 5: Fade out everything together
-        local FO = 0.35
-        Tween(bg, { BackgroundTransparency = 1 }, FO)
-        Tween(glow, { ImageTransparency = 1 }, FO)
-        Tween(logo, { ImageTransparency = 1 }, FO)
-        Tween(logoStroke, { Transparency = 1 }, FO)
-        Tween(nameLbl, { TextTransparency = 1 }, FO)
-        Tween(tagLbl, { TextTransparency = 1 }, FO)
-        Tween(barBg, { BackgroundTransparency = 1 }, FO)
-        Tween(barFill, { BackgroundTransparency = 1 }, FO)
-
-        task.wait(FO + 0.1)
+        TweenWait(bg,{BackgroundTransparency=0.06},0.35,Enum.EasingStyle.Quad)
+        Tween(glowOuter,{ImageTransparency=0.5},0.5)
+        Tween(glowInner,{ImageTransparency=0.72},0.5)
+        Tween(logoHolder,{Size=CFG.LogoEnd},CFG.ZoomDur,Enum.EasingStyle.Back)
+        TweenWait(logoImg,{ImageTransparency=0},CFG.FadeIn)
+        Tween(logoStroke,{Transparency=0.2},0.4)
+        Tween(nameLabel,{TextTransparency=0},0.45)
+        task.wait(0.12)
+        Tween(tagLabel,{TextTransparency=0},0.4)
+        Tween(line,{Size=UDim2.new(0,200,0,2)},0.5)
+        Tween(loaderBg,{BackgroundTransparency=0},0.3)
+        TweenWait(loaderFill,{Size=UDim2.new(1,0,1,0)},
+            CFG.HoldDur*0.85,Enum.EasingStyle.Quart,Enum.EasingDirection.InOut)
+        for i,p in ipairs(particles) do
+            task.delay((i-1)*0.04,function()
+                Tween(p.dot,{BackgroundTransparency=0.22},0.3) end)
+        end
+        for _=1,3 do
+            Tween(logoHolder,{Size=CFG.LogoPulse},CFG.PulseDur*0.45,Enum.EasingStyle.Quad)
+            Tween(logoStroke,{Transparency=0.04},CFG.PulseDur*0.45)
+            Tween(glowOuter,{ImageTransparency=0.3},CFG.PulseDur*0.45)
+            task.wait(CFG.PulseDur*0.45)
+            Tween(logoHolder,{Size=CFG.LogoEnd},CFG.PulseDur*0.55,Enum.EasingStyle.Quad,Enum.EasingDirection.In)
+            Tween(logoStroke,{Transparency=0.25},CFG.PulseDur*0.55)
+            Tween(glowOuter,{ImageTransparency=0.52},CFG.PulseDur*0.55)
+            task.wait(CFG.PulseDur*0.55)
+        end
+        for i,p in ipairs(particles) do
+            local far=RADIUS*2.4
+            task.delay((i-1)*0.018,function()
+                Tween(p.dot,{
+                    Position=UDim2.new(0.5+(far*math.cos(p.angle))/sg.AbsoluteSize.X,0,
+                        0.5+(far*math.sin(p.angle))/sg.AbsoluteSize.Y,-20),
+                    BackgroundTransparency=1,Size=UDim2.new(0,1,0,1),
+                },CFG.FadeOut,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+            end)
+        end
+        task.wait(0.08)
+        Tween(logoImg,{ImageTransparency=1},CFG.FadeOut)
+        Tween(nameLabel,{TextTransparency=1},CFG.FadeOut)
+        Tween(tagLabel,{TextTransparency=1},CFG.FadeOut)
+        Tween(line,{BackgroundTransparency=1},CFG.FadeOut)
+        Tween(loaderBg,{BackgroundTransparency=1},CFG.FadeOut)
+        Tween(glowOuter,{ImageTransparency=1},CFG.FadeOut)
+        Tween(glowInner,{ImageTransparency=1},CFG.FadeOut)
+        Tween(logoHolder,{Size=UDim2.new(0,55,0,55)},CFG.FadeOut,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+        TweenWait(bg,{BackgroundTransparency=1},CFG.FadeOut,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+        orbConn:Disconnect()
+        task.wait(0.08)
         bg:Destroy()
         if onDone then task.spawn(onDone) end
     end)
 end
 
 -- ============================================================
---  LANGUAGE SELECT — عصري مع انيميشن متزامن
---  ✦ كل العناصر تختفي دفعة واحدة ككتلة
---  ✦ انيميشن اختيار سلس بين اللغتين
---  ✦ خروج متزامن لكل العناصر
+--  LANGUAGE SELECT
+--  ← FIX: auto-confirm English after 15 seconds
+--  ← FIX: fully rounded corners everywhere
+--  ← FIX: RGB border runs along rounded edges properly
 -- ============================================================
 local function ShowLangSelect(sg, onDone)
-    local W, H = 440, 330
+    local W,H = 440,330
+    local RING = 4  -- سماكة الحد الملوّن
 
-    -- Responsive scale
+    -- ── Responsive scale للـ lang card ──────────────────────
     local _lsCam = workspace.CurrentCamera
     local _lsVP  = _lsCam and _lsCam.ViewportSize or Vector2.new(800,600)
-    local _lsScale = math.clamp(math.min(_lsVP.X, _lsVP.Y) / 500, 0.50, 1.15)
+    local _lsMinDim = math.min(_lsVP.X, _lsVP.Y)
+    -- على موبايل الشاشة ~400px height → scale ≈ 0.75 → card بيبقى ~330px عرض
+    local _lsScale = math.clamp(_lsMinDim / 500, 0.50, 1.15)
 
-    -- Overlay
-    local overlay = New("Frame", {
-        Size = UDim2.new(1,0,1,0),
-        BackgroundColor3 = Color3.fromRGB(0,0,0),
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-        ZIndex = 200,
-        Parent = sg,
-    })
+    -- Overlay (full screen — مش محتاج scale)
+    local overlay=New("Frame",{Size=UDim2.new(1,0,1,0),
+        BackgroundColor3=Color3.fromRGB(0,0,0),
+        BackgroundTransparency=1,BorderSizePixel=0,ZIndex=200,Parent=sg})
+    Tween(overlay,{BackgroundTransparency=0.52},0.4)
 
-    -- Wrapper
-    local lsWrapper = New("Frame", {
-        Size = UDim2.new(1,0,1,0),
-        AnchorPoint = Vector2.new(0.5,0.5),
-        Position = UDim2.new(0.5,0,0.5,0),
-        BackgroundTransparency = 1,
-        ZIndex = 201,
-        Parent = sg,
-    })
+    -- ── Scale wrapper — بيضم الـ ringBg والـ card ───────────
+    -- AnchorPoint(0.5,0.5) + Position(0.5,0,0.5,0) → centered دايماً
+    -- UIScale بيشغّل على محور المركز → مفيش offset بعد الـ scale
+    local lsWrapper=New("Frame",{
+        Size=UDim2.new(1,0,1,0),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(0.5,0,0.5,0),
+        BackgroundTransparency=1,
+        ZIndex=201,Parent=sg})
     if _lsScale < 0.98 then
-        New("UIScale", { Scale = _lsScale, Parent = lsWrapper })
+        New("UIScale",{Scale=_lsScale,Parent=lsWrapper})
     end
 
-    -- Card
-    local card = New("Frame", {
-        Size = UDim2.new(0, W, 0, H),
-        AnchorPoint = Vector2.new(0.5,0.5),
-        Position = UDim2.new(0.5, 0, 0.6, 0),
-        BackgroundColor3 = Color3.fromRGB(17, 18, 26),
-        BorderSizePixel = 0,
-        BackgroundTransparency = 1,
-        ZIndex = 203,
-        Parent = lsWrapper,
-    })
-    Corner(card, 18)
-    Stroke(card, Color3.fromRGB(42, 46, 68), 1, 0)
+    -- ── Rainbow border ──────────────────────────────────────
+    local ringBg=New("Frame",{
+        Size=UDim2.new(0,W+RING*2,0,H+RING*2),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(0.5,0,0.65,0),
+        BackgroundColor3=Color3.fromRGB(255,80,80),
+        BorderSizePixel=0,
+        BackgroundTransparency=1,
+        ZIndex=201,Parent=lsWrapper})
+    Corner(ringBg, 22)
 
-    -- Logo
-    local cardLogo = New("ImageLabel", {
-        Size = UDim2.new(0, 52, 0, 52),
-        AnchorPoint = Vector2.new(0.5, 0),
-        Position = UDim2.new(0.5, 0, 0, 18),
-        BackgroundTransparency = 1,
-        Image = "rbxassetid://93116857865430",
-        ImageTransparency = 1,
-        ScaleType = Enum.ScaleType.Fit,
-        ZIndex = 205,
-        Parent = card,
-    })
-    Corner(cardLogo, 12)
+    -- Animate the colour of the ring frame
+    local hue=0
+    local rainbowConn
+    rainbowConn=RunService.RenderStepped:Connect(function(dt)
+        if not ringBg.Parent then rainbowConn:Disconnect();return end
+        hue=(hue+dt*0.45)%1
+        ringBg.BackgroundColor3=Color3.fromHSV(hue,0.9,1)
+    end)
 
-    local titleLbl = New("TextLabel", {
-        Size = UDim2.new(1, 0, 0, 30),
-        Position = UDim2.new(0, 0, 0, 76),
-        BackgroundTransparency = 1,
-        Text = "CrozoX",
-        TextColor3 = Color3.fromRGB(235, 238, 255),
-        Font = Enum.Font.GothamBlack,
-        TextSize = 22,
-        TextTransparency = 1,
-        ZIndex = 205,
-        Parent = card,
-    })
+    -- ── Card ────────────────────────────────────────────────
+    local card=New("Frame",{
+        Size=UDim2.new(0,W,0,H),
+        AnchorPoint=Vector2.new(0.5,0.5),
+        Position=UDim2.new(0.5,0,0.5,0),
+        BackgroundColor3=Color3.fromRGB(17,18,26),
+        BorderSizePixel=0,
+        BackgroundTransparency=1,
+        ZIndex=203,Parent=lsWrapper})
+    Corner(card,18)
 
-    local descLbl = New("TextLabel", {
-        Size = UDim2.new(1, -32, 0, 18),
-        Position = UDim2.new(0, 16, 0, 108),
-        BackgroundTransparency = 1,
-        Text = "Select Language / اختر اللغة",
-        TextColor3 = Color3.fromRGB(125, 130, 158),
-        Font = Enum.Font.Gotham,
-        TextSize = 12,
-        TextTransparency = 1,
-        ZIndex = 205,
-        Parent = card,
-    })
+    -- ── Logo ──────────────────────────────────────────────────
+    local cardLogo=New("ImageLabel",{Size=UDim2.new(0,56,0,56),
+        AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0,16),
+        BackgroundTransparency=1,Image="rbxassetid://93116857865430",
+        ScaleType=Enum.ScaleType.Fit,ZIndex=205,Parent=card})
+    Corner(cardLogo,12)
 
-    local sep = New("Frame", {
-        Size = UDim2.new(0.7, 0, 0, 1),
-        AnchorPoint = Vector2.new(0.5, 0),
-        Position = UDim2.new(0.5, 0, 0, 132),
-        BackgroundColor3 = Color3.fromRGB(42, 46, 68),
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-        ZIndex = 205,
-        Parent = card,
-    })
+    New("TextLabel",{Size=UDim2.new(1,0,0,32),Position=UDim2.new(0,0,0,78),
+        BackgroundTransparency=1,Text="CrozoX",
+        TextColor3=Color3.fromRGB(235,238,255),Font=Enum.Font.GothamBlack,
+        TextSize=24,ZIndex=205,Parent=card})
 
-    -- Language buttons row
-    local row = New("Frame", {
-        Size = UDim2.new(1, -48, 0, 90),
-        Position = UDim2.new(0, 24, 0, 146),
-        BackgroundTransparency = 1,
-        ZIndex = 205,
-        Parent = card,
-    })
-    ListLayout(row, 14, Enum.FillDirection.Horizontal,
-        Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Center)
+    New("TextLabel",{Size=UDim2.new(1,-32,0,20),Position=UDim2.new(0,16,0,112),
+        BackgroundTransparency=1,
+        Text="Select Language  /  اختر اللغة",
+        TextColor3=Color3.fromRGB(125,130,158),Font=Enum.Font.Gotham,
+        TextSize=13,ZIndex=205,Parent=card})
 
-    local selectedLang = "English"
-    local btnData = {}
-    local THEME_COLORS = { English = Color3.fromRGB(56, 132, 255), Arabic = Color3.fromRGB(220, 38, 38) }
+    New("Frame",{Size=UDim2.new(0.72,0,0,1),AnchorPoint=Vector2.new(0.5,0),
+        Position=UDim2.new(0.5,0,0,138),BackgroundColor3=Color3.fromRGB(42,46,68),
+        BorderSizePixel=0,ZIndex=205,Parent=card})
 
-    local function MakeLangBtn(langName, flagEmoji, labelText, isDefault)
-        local tc = THEME_COLORS[langName]
-        local frame = New("Frame", {
-            Size = UDim2.new(0, 160, 0, 84),
-            BackgroundColor3 = isDefault and Color3.fromRGB(20, 26, 46) or Color3.fromRGB(18, 18, 24),
-            BorderSizePixel = 0,
-            BackgroundTransparency = 1,
-            ZIndex = 206,
-            Parent = row,
-        })
-        Corner(frame, 12)
-        local fStroke = Stroke(frame, isDefault and tc or Color3.fromRGB(42, 46, 68), isDefault and 2 or 1, 0)
+    -- ── Language buttons ──────────────────────────────────────
+    local row=New("Frame",{Size=UDim2.new(1,-48,0,94),
+        Position=UDim2.new(0,24,0,152),BackgroundTransparency=1,
+        ZIndex=205,Parent=card})
+    ListLayout(row,14,Enum.FillDirection.Horizontal,
+        Enum.HorizontalAlignment.Center,Enum.VerticalAlignment.Center)
 
-        local flagLbl = New("TextLabel", {
-            Size = UDim2.new(1, 0, 0, 36),
-            Position = UDim2.new(0, 0, 0, 8),
-            BackgroundTransparency = 1,
-            Text = flagEmoji,
-            TextSize = 28,
-            TextTransparency = 1,
-            ZIndex = 207,
-            Parent = frame,
-        })
+    local selectedLang="English"
+    local btnData={}
+    local THEME_COLORS={English=Color3.fromRGB(56,132,255),Arabic=Color3.fromRGB(220,38,38)}
 
-        local lbl = New("TextLabel", {
-            Size = UDim2.new(1, -8, 0, 22),
-            Position = UDim2.new(0, 4, 0, 50),
-            BackgroundTransparency = 1,
-            Text = labelText,
-            TextColor3 = isDefault and tc or Color3.fromRGB(148, 152, 172),
-            Font = Enum.Font.GothamBold,
-            TextSize = 13,
-            TextTransparency = 1,
-            ZIndex = 207,
-            Parent = frame,
-        })
-
-        local dot = New("Frame", {
-            Size = UDim2.new(0, 6, 0, 6),
-            AnchorPoint = Vector2.new(1, 0),
-            Position = UDim2.new(1, -8, 0, 8),
-            BackgroundColor3 = tc,
-            BackgroundTransparency = isDefault and 1 or 1,
-            BorderSizePixel = 0,
-            ZIndex = 208,
-            Parent = frame,
-        })
-        Corner(dot, 3)
-
-        local clickBtn = New("TextButton", {
-            Size = UDim2.new(1, 0, 1, 0),
-            BackgroundTransparency = 1,
-            Text = "",
-            ZIndex = 209,
-            Parent = frame,
-        })
-
-        -- Hover
+    local function MakeLangBtn(langName,flagEmoji,labelText,isDefault)
+        local tc=THEME_COLORS[langName]
+        local frame=New("Frame",{Size=UDim2.new(0,165,0,88),
+            BackgroundColor3=isDefault and Color3.fromRGB(20,26,46) or Color3.fromRGB(18,18,24),
+            BorderSizePixel=0,ZIndex=206,Parent=row})
+        Corner(frame,14)  -- ← حواف منحنية كبيرة
+        local fStroke=Stroke(frame,isDefault and tc or Color3.fromRGB(42,46,68),
+            isDefault and 2 or 1,0)
+        New("TextLabel",{Size=UDim2.new(1,0,0,40),Position=UDim2.new(0,0,0,8),
+            BackgroundTransparency=1,Text=flagEmoji,TextSize=30,ZIndex=207,Parent=frame})
+        local lbl=New("TextLabel",{Size=UDim2.new(1,-8,0,26),
+            Position=UDim2.new(0,4,0,54),BackgroundTransparency=1,
+            Text=labelText,
+            TextColor3=isDefault and tc or Color3.fromRGB(148,152,172),
+            Font=Enum.Font.GothamBold,TextSize=14,ZIndex=207,Parent=frame})
+        local dot=New("Frame",{Size=UDim2.new(0,7,0,7),
+            AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,-6,0,6),
+            BackgroundColor3=tc,
+            BackgroundTransparency=isDefault and 0 or 1,
+            BorderSizePixel=0,ZIndex=208,Parent=frame})
+        Corner(dot,4)
+        local clickBtn=New("TextButton",{Size=UDim2.new(1,0,1,0),
+            BackgroundTransparency=1,Text="",ZIndex=209,Parent=frame})
         clickBtn.MouseEnter:Connect(function()
-            if selectedLang ~= langName then
-                Tween(frame, { BackgroundColor3 = Color3.fromRGB(24, 28, 40) }, 0.15)
-            end
+            if selectedLang~=langName then
+                Tween(frame,{BackgroundColor3=Color3.fromRGB(24,28,40)},0.15) end
         end)
         clickBtn.MouseLeave:Connect(function()
-            if selectedLang ~= langName then
-                Tween(frame, { BackgroundColor3 = Color3.fromRGB(18, 18, 24) }, 0.15)
-            end
+            if selectedLang~=langName then
+                Tween(frame,{BackgroundColor3=Color3.fromRGB(18,18,24)},0.15) end
         end)
-
-        btnData[langName] = { frame = frame, stroke = fStroke, label = lbl, dot = dot,
-            flag = flagLbl, color = tc, clickBtn = clickBtn }
+        btnData[langName]={frame=frame,stroke=fStroke,label=lbl,dot=dot,
+            color=tc,clickBtn=clickBtn}
         return clickBtn
     end
+    MakeLangBtn("English","🇺🇸","English",true)
+    MakeLangBtn("Arabic","🇸🇦","العربية",false)
 
-    MakeLangBtn("English", "🇺🇸", "English", true)
-    MakeLangBtn("Arabic", "🇸🇦", "العربية", false)
-
-    local confirmBtn
+    local confirmBtn  -- forward-declare for use in SelectLang
 
     local function SelectLang(name)
-        if selectedLang == name then return end
-        local prev = btnData[selectedLang]
-        local nxt = btnData[name]
-
-        -- Animation: prev shrinks, next grows
+        if selectedLang==name then return end
+        local prev=btnData[selectedLang]; local next=btnData[name]
         if prev then
-            Tween(prev.frame, { BackgroundColor3 = Color3.fromRGB(18, 18, 24) }, 0.25)
-            Tween(prev.frame, { Size = UDim2.new(0, 155, 0, 80) }, 0.25, Enum.EasingStyle.Quart)
-            prev.stroke.Color = Color3.fromRGB(42, 46, 68)
-            prev.stroke.Thickness = 1
-            prev.label.TextColor3 = Color3.fromRGB(148, 152, 172)
-            Tween(prev.dot, { BackgroundTransparency = 1 }, 0.2)
+            Tween(prev.frame,{BackgroundColor3=Color3.fromRGB(18,18,24)},0.22)
+            prev.stroke.Color=Color3.fromRGB(42,46,68); prev.stroke.Thickness=1
+            prev.label.TextColor3=Color3.fromRGB(148,152,172)
+            prev.dot.BackgroundTransparency=1
         end
-
-        if nxt then
-            Tween(nxt.frame, { BackgroundColor3 = Color3.fromRGB(20, 26, 46) }, 0.25)
-            Tween(nxt.frame, { Size = UDim2.new(0, 165, 0, 88) }, 0.3, Enum.EasingStyle.Back)
-            nxt.stroke.Color = nxt.color
-            nxt.stroke.Thickness = 2
-            nxt.label.TextColor3 = nxt.color
-            Tween(nxt.dot, { BackgroundTransparency = 0 }, 0.2)
+        if next then
+            Tween(next.frame,{BackgroundColor3=Color3.fromRGB(20,26,46)},0.22)
+            next.stroke.Color=next.color; next.stroke.Thickness=2
+            next.label.TextColor3=next.color
+            next.dot.BackgroundTransparency=0
         end
-
-        selectedLang = name
+        selectedLang=name
         if confirmBtn then
-            Tween(confirmBtn, { BackgroundColor3 = THEME_COLORS[name] }, 0.2)
+            Tween(confirmBtn,{BackgroundColor3=THEME_COLORS[name]},0.2)
         end
     end
 
-    for ln, d in pairs(btnData) do
+    for ln,d in pairs(btnData) do
         d.clickBtn.MouseButton1Click:Connect(function() SelectLang(ln) end)
     end
 
-    -- Confirm button
-    confirmBtn = New("TextButton", {
-        Size = UDim2.new(1, -48, 0, 42),
-        Position = UDim2.new(0, 24, 1, -56),
-        BackgroundColor3 = THEME_COLORS.English,
-        BackgroundTransparency = 1,
-        Text = "Continue →",
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        Font = Enum.Font.GothamBold,
-        TextSize = 14,
-        TextTransparency = 1,
-        BorderSizePixel = 0,
-        ZIndex = 206,
-        Parent = card,
-    })
-    Corner(confirmBtn, 10)
+    -- ── Confirm button ─────────────────────────────────────────
+    confirmBtn=New("TextButton",{Size=UDim2.new(1,-48,0,44),
+        Position=UDim2.new(0,24,1,-58),
+        BackgroundColor3=THEME_COLORS.English,
+        Text="Continue  →",
+        TextColor3=Color3.fromRGB(255,255,255),
+        Font=Enum.Font.GothamBold,TextSize=15,
+        BorderSizePixel=0,ZIndex=206,Parent=card})
+    Corner(confirmBtn,12)
 
     confirmBtn.MouseEnter:Connect(function()
-        Tween(confirmBtn, { BackgroundColor3 = THEME_COLORS[selectedLang]:Lerp(Color3.fromRGB(0, 0, 0), 0.25) }, 0.15)
+        Tween(confirmBtn,{BackgroundColor3=THEME_COLORS[selectedLang]:Lerp(
+            Color3.fromRGB(0,0,0),0.25)},0.15)
     end)
     confirmBtn.MouseLeave:Connect(function()
-        Tween(confirmBtn, { BackgroundColor3 = THEME_COLORS[selectedLang] }, 0.15)
+        Tween(confirmBtn,{BackgroundColor3=THEME_COLORS[selectedLang]},0.15)
     end)
 
-    -- ══════════════════════════════════════════════════════
-    --  ENTRANCE ANIMATION — كل العناصر تظهر مع بعض
-    -- ══════════════════════════════════════════════════════
-    local EI = 0.45  -- entrance duration
+    -- ── Entrance animation ─────────────────────────────────────
+    ringBg.Position=UDim2.new(0.5,0,0.65,0)
+    card.Position=UDim2.new(0.5,0,0.65,0)
+    Tween(ringBg,{BackgroundTransparency=0,Position=UDim2.new(0.5,0,0.5,0)},
+        0.5,Enum.EasingStyle.Back)
+    Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0.5,0,0.5,0)},
+        0.5,Enum.EasingStyle.Back)
 
-    -- Overlay
-    Tween(overlay, { BackgroundTransparency = 0.55 }, 0.4)
-
-    -- Card slides up + fades in
-    Tween(card, { BackgroundTransparency = 0, Position = UDim2.new(0.5, 0, 0.5, 0) }, EI, Enum.EasingStyle.Back)
-
-    -- Logo
-    task.delay(0.1, function()
-        Tween(cardLogo, { ImageTransparency = 0 }, 0.35)
-    end)
-
-    -- Title
-    task.delay(0.15, function()
-        Tween(titleLbl, { TextTransparency = 0 }, 0.3)
-    end)
-
-    -- Desc
-    task.delay(0.2, function()
-        Tween(descLbl, { TextTransparency = 0 }, 0.3)
-    end)
-
-    -- Separator
-    task.delay(0.25, function()
-        Tween(sep, { BackgroundTransparency = 0 }, 0.25)
-    end)
-
-    -- Language buttons (staggered)
-    task.delay(0.3, function()
-        for i, lang in ipairs({"English", "Arabic"}) do
-            local d = btnData[lang]
-            task.delay((i-1) * 0.08, function()
-                Tween(d.frame, { BackgroundTransparency = 0 }, 0.3)
-                Tween(d.flag, { TextTransparency = 0 }, 0.25)
-                Tween(d.label, { TextTransparency = 0 }, 0.25)
-            end)
-        end
-    end)
-
-    -- Confirm button
-    task.delay(0.5, function()
-        Tween(confirmBtn, { BackgroundTransparency = 0, TextTransparency = 0 }, 0.3)
-    end)
-
-    -- ══════════════════════════════════════════════════════
-    --  EXIT — كل العناصر تختفي ككتلة واحدة
-    -- ══════════════════════════════════════════════════════
-    local fired = false
+    -- ── Confirm ────────────────────────────────────────────────
+    local fired=false
     local function FireConfirm()
         if fired then return end
-        fired = true
-
-        local FO = 0.3  -- fast unified exit
-
-        -- 1. Card and all children fade together
-        Tween(card, { BackgroundTransparency = 1, Position = UDim2.new(0.5, 0, 0.45, 0) }, FO, Enum.EasingStyle.Quart)
-
-        -- 2. All visible children fade simultaneously
-        local allChildren = {}
-        local function collect(obj)
-            for _, c in ipairs(obj:GetChildren()) do
-                if c:IsA("GuiObject") then
-                    table.insert(allChildren, c)
-                    collect(c)
-                end
+        fired=true
+        rainbowConn:Disconnect()
+        local FO = 0.4
+        -- كل العناصر تختفي مع بعض في نفس الوقت
+        Tween(overlay, {BackgroundTransparency=1}, FO)
+        Tween(ringBg,  {BackgroundTransparency=1, Position=UDim2.new(0.5,0,0.44,0)}, FO, Enum.EasingStyle.Quart)
+        Tween(card,    {BackgroundTransparency=1, Position=UDim2.new(0.5,0,0.44,0)}, FO, Enum.EasingStyle.Quart)
+        -- كل children في الـ card تختفي
+        for _, child in ipairs(card:GetDescendants()) do
+            if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("ImageLabel") then
+                Tween(child, {
+                    TextTransparency  = child:IsA("TextLabel")  and 1 or nil,
+                    BackgroundTransparency = 1,
+                    ImageTransparency = child:IsA("ImageLabel") and 1 or nil,
+                }, FO)
             end
         end
-        collect(card)
-
-        for _, c in ipairs(allChildren) do
-            if c:IsA("TextLabel") or c:IsA("TextButton") then
-                Tween(c, { TextTransparency = 1 }, FO)
-            end
-            if c:IsA("ImageLabel") then
-                Tween(c, { ImageTransparency = 1 }, FO)
-            end
-            if c:IsA("Frame") and c ~= card then
-                Tween(c, { BackgroundTransparency = 1 }, FO)
-            end
-        end
-
-        -- 3. Overlay fades last
-        Tween(overlay, { BackgroundTransparency = 1 }, FO + 0.05)
-
-        -- 4. Cleanup
-        task.delay(FO + 0.1, function()
-            overlay:Destroy()
-            lsWrapper:Destroy()
+        task.delay(FO+0.05, function()
+            overlay:Destroy(); lsWrapper:Destroy()
             if onDone then task.spawn(function() onDone(selectedLang) end) end
         end)
     end
@@ -2026,11 +1883,9 @@ function CrozoX:CreateWindow(cfg)
         end
     end)
 
-    -- ══════════════════════════════════════════════════════
-    --  OPEN ANIMATION — مع scaling للموبايل
-    --  ✦ الموبايل: الواجهة تصغر والعناصر تكبر (UIScale)
-    --  ✦ PC: حجم طبيعي بدون scaling
-    -- ══════════════════════════════════════════════════════
+    -- ── Open animation — الحل النهائي ──────────────────────
+    -- wrapFrame Position لا تتغير أبداً
+    -- Animation على mainFrame Scale فقط
     mainFrame.BackgroundTransparency = 1
 
     task.defer(function()
@@ -2038,60 +1893,38 @@ function CrozoX:CreateWindow(cfg)
         local sw = sg.AbsoluteSize.X
         local sh = sg.AbsoluteSize.Y
 
-        local baseW = size.X.Offset   -- 660
+        local baseW = size.X.Offset   -- 660 (base PC size)
         local baseH = size.Y.Offset   -- 470
 
-        -- حساب الـ scale المناسب
+        -- CalcLayout يرجع: visualW, visualH, scaleVal
+        -- visualW/H = الحجم الفعلي المعروض على الشاشة
+        -- scaleVal  = الـ UIScale المطبّق على wrapFrame
         local visualW, visualH, scaleVal = Device.CalcLayout(baseW, baseH)
 
-        -- ══════════════════════════════════════════════════════
-        --  MOBILE: نستخدم UIScale لتكبير العناصر داخل الواجهة
-        --  ✦ الواجهة تصغر (base size)
-        --  ✦ العناصر تكبر (UIScale > 1)
-        -- ══════════════════════════════════════════════════════
-        if Device.IsMobile then
-            -- على الموبايل: نصغر الواجهة ونكبّر العناصر
-            local mobileScale = math.clamp(1.35, 1.0, 1.8)
-            wrapFrame.Size = UDim2.new(0, baseW, 0, baseH)
-            wrapFrame.Position = UDim2.new(
-                0, math.floor((sw - baseW * mobileScale) / 2),
-                0, math.floor((sh - baseH * mobileScale) / 2)
-            )
-            -- UIScale يكبّر كل العناصر داخل الواجهة
-            local existing = wrapFrame:FindFirstChildWhichIsA("UIScale")
-            if existing then existing:Destroy() end
-            New("UIScale", { Scale = mobileScale, Parent = wrapFrame })
+        -- wrapFrame Size = base size دايماً (UIScale هو اللي يكبّره)
+        wrapFrame.Size = UDim2.new(0, baseW, 0, baseH)
 
-        elseif Device.IsTablet then
-            -- Tablet: scale معتدل
-            local tabletScale = math.clamp(1.15, 1.0, 1.5)
-            wrapFrame.Size = UDim2.new(0, baseW, 0, baseH)
-            wrapFrame.Position = UDim2.new(
-                0, math.floor((sw - baseW * tabletScale) / 2),
-                0, math.floor((sh - baseH * tabletScale) / 2)
-            )
-            local existing = wrapFrame:FindFirstChildWhichIsA("UIScale")
-            if existing then existing:Destroy() end
-            New("UIScale", { Scale = tabletScale, Parent = wrapFrame })
+        -- Position بناءً على الـ visual size (مش base size!)
+        -- ده هو الخطأ في v38 — كان بيحسب بـ base بدل visual
+        wrapFrame.Position = UDim2.new(
+            0, math.floor((sw - visualW) / 2),
+            0, math.floor((sh - visualH) / 2)
+        )
 
-        else
-            -- PC: عادي بدون scale
-            wrapFrame.Size = UDim2.new(0, baseW, 0, baseH)
-            wrapFrame.Position = UDim2.new(
-                0, math.floor((sw - visualW) / 2),
-                0, math.floor((sh - visualH) / 2)
-            )
-            local existing = wrapFrame:FindFirstChildWhichIsA("UIScale")
-            if existing then existing:Destroy() end
-            if scaleVal ~= 1 then
-                New("UIScale", { Scale = scaleVal, Parent = wrapFrame })
-            end
+        -- طبّق UIScale على wrapFrame
+        local existing = wrapFrame:FindFirstChildWhichIsA("UIScale")
+        if existing then existing:Destroy() end
+        if scaleVal ~= 1 then
+            New("UIScale", { Scale = scaleVal, Parent = wrapFrame })
         end
 
-        -- Animation
+        -- resizeBtn موجود دايماً — PC وموبايل
+        -- الـ hold-to-resize على موبايل اتعمل فوق عند التعريف
+
+        -- Animation على mainFrame فقط
         mainFrame.Size = UDim2.new(0.88, 0, 0.88, 0)
         Tween(mainFrame, {
-            Size = UDim2.new(1, 0, 1, 0),
+            Size                   = UDim2.new(1, 0, 1, 0),
             BackgroundTransparency = 0,
         }, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
     end)
@@ -2099,47 +1932,13 @@ function CrozoX:CreateWindow(cfg)
     -- ── Close / Minimize ───────────────────────────────────
     local isMin = false
 
-    -- ══════════════════════════════════════════════════════
-    --  CLOSE — كل العناصر تختفي ككتلة واحدة + انيميشن
-    -- ══════════════════════════════════════════════════════
     local function DoClose()
-        local FO = 0.3
-
-        -- 1. Fade out all main elements simultaneously
-        local allGui = {}
-        local function collect(obj)
-            for _, c in ipairs(obj:GetChildren()) do
-                if c:IsA("GuiObject") then
-                    table.insert(allGui, c)
-                    collect(c)
-                end
-            end
-        end
-        collect(mainFrame)
-
-        for _, c in ipairs(allGui) do
-            if c:IsA("TextLabel") or c:IsA("TextButton") then
-                Tween(c, { TextTransparency = 1 }, FO)
-            end
-            if c:IsA("ImageLabel") then
-                Tween(c, { ImageTransparency = 1 }, FO)
-            end
-            if c:IsA("Frame") then
-                Tween(c, { BackgroundTransparency = 1 }, FO)
-            end
-        end
-
-        -- 2. Shrink + fade the main frame
         Tween(mainFrame, {
-            Size = UDim2.new(0.85, 0, 0.85, 0),
+            Size                   = UDim2.new(0.9, 0, 0.9, 0),
             BackgroundTransparency = 1,
-        }, FO, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-
-        -- 3. Fade shadow
-        Tween(shadowImg, { ImageTransparency = 1 }, FO)
-
-        -- 4. Cleanup
-        task.delay(FO + 0.05, function()
+        }, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+        Tween(shadowImg, {ImageTransparency = 1}, 0.25)
+        task.delay(0.32, function()
             wrapFrame:Destroy()
         end)
     end
@@ -2204,87 +2003,58 @@ function CrozoX:CreateWindow(cfg)
     local Window={}; local tabsList={}; local activeTab=nil
 
     function Window:CreateTab(tcfg)
-        tcfg = tcfg or {}
-        local tabName   = tcfg.Name or "Tab"
-        local iconKey   = tcfg.Icon or "layers"
-        local iconAsset = Icons[iconKey] or Icons.layers
-
-        -- ══════════════════════════════════════════════════════
-        --  MOBILE SCALING — عناصر أكبر على الهاتف
-        -- ══════════════════════════════════════════════════════
-        local isMobile = Device.IsMobile or Device.IsTablet
-        local _tabH    = isMobile and 52 or 40
-        local _icoSz   = isMobile and 22 or 18
-        local _tabTxtSz= isMobile and 16 or L.TabSize
-        local _elmPad  = isMobile and 18 or 14   -- padding for elements
-        local _elmSpac = isMobile and 14 or 10   -- spacing for elements
+        tcfg=tcfg or {}
+        local tabName  =tcfg.Name or "Tab"
+        local iconKey  =tcfg.Icon or "layers"
+        local iconAsset=Icons[iconKey] or Icons.layers
 
         -- Tab button frame
-        local tabBtn = New("Frame", {
-            Name = "Tab_" .. tabName,
-            Size = UDim2.new(1, 0, 0, _tabH),
-            BackgroundColor3 = T.SurfaceAlt,
-            BorderSizePixel = 0,
-            ZIndex = 13,
-            Parent = tabList,
-        })
-        Corner(tabBtn, 10)
+        local _tabH = (Device.IsMobile or Device.IsTablet) and 48 or 38
+        local tabBtn=New("Frame",{Name="Tab_"..tabName,
+            Size=UDim2.new(1,0,0,_tabH),
+            BackgroundColor3=T.SurfaceAlt,BorderSizePixel=0,
+            ZIndex=13,Parent=tabList})
+        Corner(tabBtn,10)
 
-        -- Left indicator
+        -- Left indicator — خط رفيع 3px فقط، بدون Glow
         local indicator = New("Frame", {
-            Size = UDim2.new(0, 3, 0, 0),
-            Position = UDim2.new(0, 0, 0.5, 0),
-            AnchorPoint = Vector2.new(0, 0.5),
+            Size             = UDim2.new(0, 3, 0, 0),
+            Position         = UDim2.new(0, 0, 0.5, 0),
+            AnchorPoint      = Vector2.new(0, 0.5),
             BackgroundColor3 = T.Primary,
             BackgroundTransparency = 1,
-            BorderSizePixel = 0,
-            ZIndex = 14,
-            Parent = tabBtn,
+            BorderSizePixel  = 0,
+            ZIndex           = 14,
+            Parent           = tabBtn,
         })
         Corner(indicator, 2)
 
         -- Icon
-        local tabIcon = Img(tabBtn, iconAsset, _icoSz,
-            UDim2.new(0, 12, 0.5, -_icoSz / 2), T.TextMuted, 14)
+        local _icoSz = (Device.IsMobile or Device.IsTablet) and 20 or 17
+        local tabIcon=Img(tabBtn,iconAsset,_icoSz,
+            UDim2.new(0,12,0.5,-_icoSz/2),T.TextMuted,14)
 
         -- Label
-        local tabLabel = New("TextLabel", {
-            Size = UDim2.new(1, -40, 1, 0),
-            Position = UDim2.new(0, 38, 0, 0),
-            BackgroundTransparency = 1,
-            Text = tabName,
-            TextColor3 = T.TextMuted,
-            Font = L.FontSemi,
-            TextSize = _tabTxtSz,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            ZIndex = 14,
-            Parent = tabBtn,
-        })
+        local _tabTxtSz = (Device.IsMobile or Device.IsTablet) and 15 or L.TabSize
+        local tabLabel=New("TextLabel",{Size=UDim2.new(1,-36,1,0),
+            Position=UDim2.new(0,36,0,0),BackgroundTransparency=1,
+            Text=tabName,TextColor3=T.TextMuted,
+            Font=L.FontSemi,TextSize=_tabTxtSz,
+            TextXAlignment=Enum.TextXAlignment.Left,
+            ZIndex=14,Parent=tabBtn})
 
-        local tabClick = New("TextButton", {
-            Size = UDim2.new(1, 0, 1, 0),
-            BackgroundTransparency = 1,
-            Text = "",
-            ZIndex = 15,
-            Parent = tabBtn,
-        })
+        local tabClick=New("TextButton",{Size=UDim2.new(1,0,1,0),
+            BackgroundTransparency=1,Text="",ZIndex=15,Parent=tabBtn})
 
         -- Content page
-        local tabPage = New("ScrollingFrame", {
-            Name = "Page_" .. tabName,
-            Size = UDim2.new(1, 0, 1, 0),
-            BackgroundTransparency = 1,
-            ScrollBarThickness = isMobile and 4 or 3,
-            ScrollBarImageColor3 = T.BorderBright,
-            BorderSizePixel = 0,
-            Visible = false,
-            ZIndex = 12,
-            Parent = contentArea,
-        })
-        local pageLayout = ListLayout(tabPage, _elmSpac)
-        Pad(tabPage, _elmPad, _elmPad, _elmPad, _elmPad)
+        local tabPage=New("ScrollingFrame",{Name="Page_"..tabName,
+            Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,
+            ScrollBarThickness=3,ScrollBarImageColor3=T.BorderBright,
+            BorderSizePixel=0,Visible=false,ZIndex=12,Parent=contentArea})
+        local pageLayout=ListLayout(tabPage,12)   -- 12px spacing
+        Pad(tabPage,16,16,16,16)
         pageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            tabPage.CanvasSize = UDim2.new(0, 0, 0, pageLayout.AbsoluteContentSize.Y + 32)
+            tabPage.CanvasSize=UDim2.new(0,0,0,pageLayout.AbsoluteContentSize.Y+32)
         end)
 
         local function SelectTab()
@@ -2335,74 +2105,44 @@ function CrozoX:CreateWindow(cfg)
         local isFirstTab = (#tabsList == 0)
         table.insert(tabsList,tabName)
 
-        -- ══════════════════════════════════════════════════════
-        --  AUTO-SELECT FIRST TAB — مهم جداً!
-        --  ✦ أول تاب يتعمله select تلقائياً
-        --  ✦ كل العناصر بتظهر فيه
-        -- ══════════════════════════════════════════════════════
-        if isFirstTab then
-            task.defer(function()
-                task.wait(0.1)
-                SelectTab()
-            end)
-        end
-
         -- ============================================================
         --  ELEMENTS
         -- ============================================================
         local Tab={}
 
-        -- ══════════════════════════════════════════════════════
-        --  ELEMENT FRAME — مع scaling للموبايل
-        -- ══════════════════════════════════════════════════════
-        local isMobile = Device.IsMobile or Device.IsTablet
-        local _elmH = isMobile and 56 or 48   -- element height
-
+        -- Element frame — card background + proper depth
         local function EF(h)
-            local actualH = h or _elmH
-            local f = New("Frame", {
-                Size = UDim2.new(1, 0, 0, actualH),
-                BackgroundColor3 = T.SurfaceCard,
-                BorderSizePixel = 0,
-                ZIndex = 13,
-                Parent = tabPage,
-            })
-            Corner(f, 10)
-            Stroke(f, T.Border, 1, 0)
+            local f=New("Frame",{Size=UDim2.new(1,0,0,h or 48),
+                BackgroundColor3=T.SurfaceCard,BorderSizePixel=0,
+                ZIndex=13,Parent=tabPage})
+            Corner(f,10)
+            Stroke(f,T.Border,1,0)
             -- Top highlight
-            New("Frame", {
-                Size = UDim2.new(1, -2, 0, 1),
-                Position = UDim2.new(0, 1, 0, 0),
-                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                BackgroundTransparency = 0.92,
-                BorderSizePixel = 0,
-                ZIndex = 14,
-                Parent = f,
-            })
+            New("Frame",{Size=UDim2.new(1,-2,0,1),
+                Position=UDim2.new(0,1,0,0),
+                BackgroundColor3=Color3.fromRGB(255,255,255),
+                BackgroundTransparency=0.92,
+                BorderSizePixel=0,ZIndex=14,Parent=f})
             -- Drop shadow
-            New("ImageLabel", {
-                Size = UDim2.new(1, 16, 1, 16),
-                Position = UDim2.new(0, -8, 0, 4),
-                BackgroundTransparency = 1,
-                Image = "rbxassetid://6014261993",
-                ImageColor3 = Color3.fromRGB(0, 0, 0),
-                ImageTransparency = 0.85,
-                ScaleType = Enum.ScaleType.Slice,
-                SliceCenter = Rect.new(49, 49, 450, 450),
-                ZIndex = 12,
-                Parent = f,
-            })
+            New("ImageLabel",{Size=UDim2.new(1,16,1,16),
+                Position=UDim2.new(0,-8,0,4),
+                BackgroundTransparency=1,
+                Image="rbxassetid://6014261993",
+                ImageColor3=Color3.fromRGB(0,0,0),
+                ImageTransparency=0.85,
+                ScaleType=Enum.ScaleType.Slice,
+                SliceCenter=Rect.new(49,49,450,450),
+                ZIndex=12,Parent=f})
             return f
         end
 
-        -- ══════════════════════════════════════════════════════
-        --  FONT SYSTEM — موبايل: كل حاجة أكبر بـ ~30%
-        -- ══════════════════════════════════════════════════════
+        -- Font system — موبايل: كل حاجة أكبر بـ ~20%
+        local _mobTxt = (Device.IsMobile or Device.IsTablet)
         local FS = {
-            Title   = isMobile and 20 or 15,
-            Button  = isMobile and 19 or 15,
-            Body    = isMobile and 17 or 13,
-            Section = isMobile and 15 or 11,
+            Title   = _mobTxt and 18 or 15,
+            Button  = _mobTxt and 17 or 15,
+            Body    = _mobTxt and 15 or 13,
+            Section = _mobTxt and 13 or 11,
         }
 
         -- Label helper
@@ -2909,6 +2649,15 @@ function CrozoX:CreateWindow(cfg)
             return El
         end
 
+        -- إذا كان هذا أول تاب، نختاره بعد ما يرجع الـ Tab
+        -- بكده نضمن إن العناصر اتضافت قبل الاختيار
+        if isFirstTab then
+            task.defer(function()
+                task.wait()   -- frame واحد يكفي
+                SelectTab()
+            end)
+        end
+
         return Tab
     end -- CreateTab
 
@@ -2942,224 +2691,134 @@ function CrozoX:CreateWindow(cfg)
 end
 
 -- ============================================================
---  NOTIFICATIONS — اختفاء متزامن ككتلة واحدة
---  ✦ كل العناصر تختفي دفعة واحدة مع الـ card
---  ✦ انيميشن سلس ومتناسق
+--  NOTIFICATIONS
 -- ============================================================
 function CrozoX:Notify(cfg)
-    cfg = cfg or {}
-    local title = cfg.Title or "Notification"
-    local text  = cfg.Text or ""
-    local dur   = cfg.Duration or 4
-    local ntype = cfg.Type or "Info"
-    local T     = self._Theme
-    local L     = self._Lang
-    local xAlign = (L and L.IsRTL) and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
-
-    local typeMap = {
-        Success = { color = T.Success, icon = Icons.checkcircle2, bg = T.NotifBgOk },
-        Warning = { color = T.Warning, icon = Icons.alerttriangle, bg = T.NotifBgWarn },
-        Error   = { color = T.Error,   icon = Icons.xcircle,       bg = T.NotifBgErr },
-        Info    = { color = T.Primary, icon = Icons.info,          bg = T.NotifBgInfo },
+    cfg=cfg or {}
+    local title=cfg.Title or "Notification"
+    local text =cfg.Text  or ""
+    local dur  =cfg.Duration or 4
+    local ntype=cfg.Type  or "Info"
+    local T    =self._Theme
+    local L    =self._Lang
+    local xAlign=(L and L.IsRTL)
+        and Enum.TextXAlignment.Right
+        or  Enum.TextXAlignment.Left
+    local typeMap={
+        Success={color=T.Success,icon=Icons.checkcircle2,bg=T.NotifBgOk},
+        Warning={color=T.Warning,icon=Icons.alerttriangle,bg=T.NotifBgWarn},
+        Error  ={color=T.Error,  icon=Icons.xcircle,      bg=T.NotifBgErr},
+        Info   ={color=T.Primary,icon=Icons.info,          bg=T.NotifBgInfo},
     }
-    local td = typeMap[ntype] or typeMap.Info
-    local color = td.color
-    self._NotifCount = self._NotifCount + 1
+    local td=typeMap[ntype] or typeMap.Info
+    local color=td.color
+    self._NotifCount=self._NotifCount+1
 
-    -- Responsive sizes
-    local _nCam = workspace.CurrentCamera
-    local _nVP  = _nCam and _nCam.ViewportSize or Vector2.new(800, 600)
-    local _nMin = math.min(_nVP.X, _nVP.Y)
-    local isMob = (Device.IsMobile or Device.IsTablet) or (_nMin < 500)
-    local cardH   = isMob and 68 or 78
-    local panelW  = isMob and 36 or 44
-    local iconSz  = isMob and 16 or 20
-    local bodySz  = isMob and 11 or (L and L.LabelSize or 12)
-    local txtOffX = isMob and (panelW + 8) or 54
+    -- ── Responsive sizes ──────────────────────────────────
+    local _nCam   = workspace.CurrentCamera
+    local _nVP    = _nCam and _nCam.ViewportSize or Vector2.new(800,600)
+    local _nMin   = math.min(_nVP.X, _nVP.Y)
+    local isMob   = (Device.IsMobile or Device.IsTablet) or (_nMin < 500)
+    local cardH   = isMob and 72  or 82    -- أكبر شوية للنص
+    local panelW  = isMob and 38  or 46
+    local iconSz  = isMob and 18  or 22
+    local titleSz = isMob and 14  or 14    -- نفس الكمبيوتر
+    local bodySz  = isMob and 12  or (L and L.LabelSize or 13)
+    local titleY  = isMob and 10  or 13
+    local bodyY   = isMob and 30  or 36
+    local bodyH   = isMob and 26  or 32
+    local txtOffX = isMob and (panelW+8) or 56
 
-    -- Main card
-    local card = New("Frame", {
-        Name = "Notif_" .. self._NotifCount,
-        Size = UDim2.new(1, 0, 0, cardH),
-        BackgroundColor3 = T.Surface,
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-        ZIndex = 900,
-        Parent = self._NotifContainer,
-    })
-    Corner(card, isMob and 8 or 12)
-    Stroke(card, color, 1, 0.5)
+    local card=New("Frame",{Name="Notif_"..self._NotifCount,
+        Size=UDim2.new(1,0,0,cardH),
+        BackgroundColor3=T.Surface,BackgroundTransparency=1,
+        BorderSizePixel=0,ZIndex=900,Parent=self._NotifContainer})
+    Corner(card, isMob and 9 or 13)
+    Stroke(card,color,1,0.5)
 
     -- Coloured left panel
-    local panel = New("Frame", {
-        Size = UDim2.new(0, panelW, 1, 0),
-        BackgroundColor3 = td.bg,
-        BorderSizePixel = 0,
-        ZIndex = 901,
-        Parent = card,
-    })
-    New("UICorner", { CornerRadius = UDim.new(0, isMob and 8 or 12), Parent = panel })
-    New("Frame", {
-        Size = UDim2.new(0, 8, 1, 0),
-        Position = UDim2.new(1, -8, 0, 0),
-        BackgroundColor3 = td.bg,
-        BorderSizePixel = 0,
-        ZIndex = 901,
-        Parent = panel,
-    })
+    local panel=New("Frame",{Size=UDim2.new(0,panelW,1,0),
+        BackgroundColor3=td.bg,BorderSizePixel=0,ZIndex=901,Parent=card})
+    New("UICorner",{CornerRadius=UDim.new(0, isMob and 9 or 13),Parent=panel})
+    New("Frame",{Size=UDim2.new(0,8,1,0),Position=UDim2.new(1,-8,0,0),
+        BackgroundColor3=td.bg,BorderSizePixel=0,ZIndex=901,Parent=panel})
+    local iconImg=Img(panel,td.icon,iconSz,
+        UDim2.new(0.5,-iconSz/2,0.5,-iconSz/2),color,903)
+    iconImg.ImageTransparency=1
 
-    -- Icon
-    local iconImg = Img(panel, td.icon, iconSz,
-        UDim2.new(0.5, -iconSz / 2, 0.5, -iconSz / 2), color, 903)
-    iconImg.ImageTransparency = 1
+    local titleLbl=New("TextLabel",{
+        Size=UDim2.new(1,-(txtOffX+36),0,18),  -- +36 بدل +20 → مساحة أكبر للـ X
+        Position=UDim2.new(0,txtOffX,0,titleY),
+        BackgroundTransparency=1,Text=title,TextColor3=T.Text,Font=FONTS.Bold,
+        TextSize=titleSz,TextXAlignment=xAlign,TextWrapped=false,
+        TextTruncate=Enum.TextTruncate.AtEnd,
+        TextTransparency=1,ZIndex=902,Parent=card})
+    local bodyLbl=New("TextLabel",{
+        Size=UDim2.new(1,-(txtOffX+36),0,bodyH),  -- نفس الـ gap
+        Position=UDim2.new(0,txtOffX,0,bodyY),
+        BackgroundTransparency=1,Text=text,TextColor3=T.TextDim,
+        Font=L and L.FontBody or FONTS.Body,
+        TextSize=bodySz,TextXAlignment=xAlign,TextWrapped=true,
+        TextTransparency=1,ZIndex=902,Parent=card})
 
-    -- Title
-    local titleLbl = New("TextLabel", {
-        Size = UDim2.new(1, -(txtOffX + 32), 0, 17),
-        Position = UDim2.new(0, txtOffX, 0, 10),
-        BackgroundTransparency = 1,
-        Text = title,
-        TextColor3 = T.Text,
-        Font = FONTS.Bold,
-        TextSize = 13,
-        TextXAlignment = xAlign,
-        TextWrapped = false,
-        TextTruncate = Enum.TextTruncate.AtEnd,
-        TextTransparency = 1,
-        ZIndex = 902,
-        Parent = card,
-    })
-
-    -- Body
-    local bodyLbl = New("TextLabel", {
-        Size = UDim2.new(1, -(txtOffX + 32), 0, 28),
-        Position = UDim2.new(0, txtOffX, 0, 30),
-        BackgroundTransparency = 1,
-        Text = text,
-        TextColor3 = T.TextDim,
-        Font = L and L.FontBody or FONTS.Body,
-        TextSize = bodySz,
-        TextXAlignment = xAlign,
-        TextWrapped = true,
-        TextTransparency = 1,
-        ZIndex = 902,
-        Parent = card,
-    })
-
-    -- Close X
-    local xBtnSz = isMob and 18 or 22
-    local xBtn = New("TextButton", {
-        Size = UDim2.new(0, xBtnSz, 0, xBtnSz),
-        Position = UDim2.new(1, -(xBtnSz + 6), 0, 6),
-        BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-        BackgroundTransparency = 1,
-        Text = "",
-        ZIndex = 904,
-        Parent = card,
-    })
-    if isMob then Corner(xBtn, 4) end
-    local xIcoSz = isMob and 9 or 11
-    local xIco = Img(xBtn, Icons.x, xIcoSz,
-        UDim2.new(0.5, -xIcoSz / 2, 0.5, -xIcoSz / 2), T.TextMuted, 905)
-    xIco.ImageTransparency = 1
+    -- Close X — صغير ومتناسب مع النص
+    local xBtnSz = isMob and 20 or 24   -- أصغر على موبايل
+    local xBtn=New("TextButton",{Size=UDim2.new(0,xBtnSz,0,xBtnSz),
+        Position=UDim2.new(1,-(xBtnSz+5),0,5),
+        BackgroundColor3=Color3.fromRGB(40,40,40),
+        BackgroundTransparency=isMob and 0.2 or 1,
+        Text="",ZIndex=904,Parent=card})
+    if isMob then Corner(xBtn, 5) end
+    local xIcoSz = isMob and 10 or 12
+    local xIco=Img(xBtn,Icons.x,xIcoSz,
+        UDim2.new(0.5,-xIcoSz/2,0.5,-xIcoSz/2),T.TextMuted,905)
+    xIco.ImageTransparency=1
 
     -- Progress bar
-    local pbg = New("Frame", {
-        Size = UDim2.new(1, -12, 0, 2),
-        Position = UDim2.new(0, 6, 1, -5),
-        BackgroundColor3 = T.Border,
-        BorderSizePixel = 0,
-        ZIndex = 902,
-        Parent = card,
-    })
-    Corner(pbg, 1)
-    local pfill = New("Frame", {
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundColor3 = color,
-        BorderSizePixel = 0,
-        ZIndex = 903,
-        Parent = pbg,
-    })
-    Corner(pfill, 1)
-    pfill.BackgroundTransparency = 1
+    local pbg=New("Frame",{Size=UDim2.new(1,-12,0,2),
+        Position=UDim2.new(0,6,1,-5),BackgroundColor3=T.Border,
+        BorderSizePixel=0,ZIndex=902,Parent=card})
+    Corner(pbg,1)
+    local pfill=New("Frame",{Size=UDim2.new(1,0,1,0),
+        BackgroundColor3=color,BorderSizePixel=0,ZIndex=903,Parent=pbg})
+    Corner(pfill,1)
+    pfill.BackgroundTransparency=1
 
-    -- ══════════════════════════════════════════════════════
-    --  ENTRANCE — كل العناصر تظهر مع بعض
-    -- ══════════════════════════════════════════════════════
+    -- Slide من اليمين دايماً (موبايل وPC) — أنظف وأوضح
     local FI = 0.35
     card.Position = UDim2.new(1, 30, 0, 0)
+    Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0,0,0,0)},FI,Enum.EasingStyle.Back)
+    Tween(iconImg,{ImageTransparency=0},FI)
+    Tween(titleLbl,{TextTransparency=0},FI)
+    Tween(bodyLbl,{TextTransparency=0},FI)
+    Tween(pfill,{BackgroundTransparency=0},FI)
+    Tween(xIco,{ImageTransparency=0},FI)
+    Tween(pfill,{Size=UDim2.new(0,0,1,0)},dur,Enum.EasingStyle.Linear)
 
-    Tween(card, { BackgroundTransparency = 0, Position = UDim2.new(0, 0, 0, 0) }, FI, Enum.EasingStyle.Back)
-    Tween(iconImg, { ImageTransparency = 0 }, FI)
-    Tween(titleLbl, { TextTransparency = 0 }, FI)
-    Tween(bodyLbl, { TextTransparency = 0 }, FI)
-    Tween(pfill, { BackgroundTransparency = 0 }, FI)
-    Tween(xIco, { ImageTransparency = 0 }, FI)
-    Tween(pfill, { Size = UDim2.new(0, 0, 1, 0) }, dur, Enum.EasingStyle.Linear)
-
-    -- ══════════════════════════════════════════════════════
-    --  DISMISS — كتلة واحدة تختفي كلها مع بعض
-    -- ══════════════════════════════════════════════════════
-    local dismissed = false
+    local dismissed=false
     local function Dismiss()
-        if dismissed then return end
-        dismissed = true
-
-        local FO = 0.25
-
-        -- Card slides out + fades
-        Tween(card, {
-            BackgroundTransparency = 1,
-            Position = UDim2.new(1, 30, 0, 0),
-        }, FO, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-
-        -- All children fade simultaneously
-        local allChildren = {}
-        local function collect(obj)
-            for _, c in ipairs(obj:GetChildren()) do
-                if c:IsA("GuiObject") then
-                    table.insert(allChildren, c)
-                    collect(c)
-                end
-            end
-        end
-        collect(card)
-
-        for _, c in ipairs(allChildren) do
-            if c:IsA("TextLabel") or c:IsA("TextButton") then
-                Tween(c, { TextTransparency = 1 }, FO)
-            end
-            if c:IsA("ImageLabel") then
-                Tween(c, { ImageTransparency = 1 }, FO)
-            end
-            if c:IsA("Frame") and c ~= card then
-                Tween(c, { BackgroundTransparency = 1 }, FO)
-            end
-        end
-
-        task.delay(FO + 0.05, function() card:Destroy() end)
+        if dismissed then return end; dismissed=true
+        local FO=0.25
+        Tween(card,{BackgroundTransparency=1,Position=UDim2.new(1,30,0,0)},FO,
+            Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+        Tween(iconImg,{ImageTransparency=1},FO)
+        Tween(titleLbl,{TextTransparency=1},FO)
+        Tween(bodyLbl,{TextTransparency=1},FO)
+        Tween(pfill,{BackgroundTransparency=1},FO)
+        Tween(xIco,{ImageTransparency=1},FO)
+        task.delay(FO+0.05,function() card:Destroy() end)
     end
-
-    task.delay(dur, Dismiss)
+    task.delay(dur,Dismiss)
     xBtn.MouseButton1Click:Connect(Dismiss)
     xBtn.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.Touch then Dismiss() end
     end)
-
-    -- Hover effect
-    local hov = New("TextButton", {
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 1,
-        Text = "",
-        ZIndex = 901,
-        Parent = card,
-    })
+    local hov=New("TextButton",{Size=UDim2.new(1,0,1,0),
+        BackgroundTransparency=1,Text="",ZIndex=901,Parent=card})
     hov.MouseEnter:Connect(function()
-        Tween(card, { BackgroundColor3 = T.SurfaceAlt }, 0.15)
-    end)
+        Tween(card,{BackgroundColor3=T.SurfaceAlt},0.15) end)
     hov.MouseLeave:Connect(function()
-        Tween(card, { BackgroundColor3 = T.Surface }, 0.15)
-    end)
+        Tween(card,{BackgroundColor3=T.Surface},0.15) end)
 end
 
 -- ============================================================
