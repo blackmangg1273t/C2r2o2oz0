@@ -589,6 +589,32 @@ end
 local function TweenWait(obj, props, t, style, dir)
     local tw = Tween(obj,props,t,style,dir); tw.Completed:Wait(); return tw
 end
+local function FadeOutGuiTree(root, t)
+    if not root then return end
+    local function fade(inst)
+        local props={}
+        if inst:IsA("GuiObject") then
+            props.BackgroundTransparency=1
+        end
+        if inst:IsA("TextLabel") or inst:IsA("TextButton") or inst:IsA("TextBox") then
+            props.TextTransparency=1
+            props.TextStrokeTransparency=1
+        end
+        if inst:IsA("ImageLabel") or inst:IsA("ImageButton") then
+            props.ImageTransparency=1
+        end
+        if next(props) then
+            Tween(inst,props,t,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+        end
+        if inst:IsA("UIStroke") then
+            Tween(inst,{Transparency=1},t,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+        end
+    end
+    fade(root)
+    for _, inst in ipairs(root:GetDescendants()) do
+        fade(inst)
+    end
+end
 local function New(class, props)
     local o = Instance.new(class)
     for k,v in pairs(props or {}) do if k~="Parent" then o[k]=v end end
@@ -670,27 +696,35 @@ end
 local Device = {}
 
 do
-    local cam = workspace.CurrentCamera
-    local vp  = cam and cam.ViewportSize or Vector2.new(800, 600)
-    local sw, sh = vp.X, vp.Y
+    function Device.Refresh()
+        local cam = workspace.CurrentCamera
+        local vp  = cam and cam.ViewportSize or Vector2.new(800, 600)
+        local sw, sh = vp.X, vp.Y
+        if sw <= 0 or sh <= 0 then
+            sw, sh = 800, 600
+        end
 
-    -- الشاشة الصغيرة (< 800 في أقل بُعد) = موبايل/تابلت
-    -- هذا أكثر موثوقية من TouchEnabled في بيئة الـ executors
-    local minDim = math.min(sw, sh)
-    local maxDim = math.max(sw, sh)
+        -- الشاشة الصغيرة (< 800 في أقل بُعد) = موبايل/تابلت
+        -- هذا أكثر موثوقية من TouchEnabled في بيئة الـ executors
+        local minDim = math.min(sw, sh)
+        local maxDim = math.max(sw, sh)
 
-    Device.IsPC     = minDim >= 700   -- PC أو شاشة كبيرة
-    Device.IsTablet = minDim >= 500 and minDim < 700
-    Device.IsMobile = minDim < 500    -- هاتف
+        Device.IsPC     = minDim >= 700   -- PC أو شاشة كبيرة
+        Device.IsTablet = minDim >= 500 and minDim < 700
+        Device.IsMobile = minDim < 500    -- هاتف
 
-    -- أيضاً نضيف TouchEnabled كـ override للتأكيد
-    local UIS = UserInputService
-    if UIS.TouchEnabled and not UIS.KeyboardEnabled then
-        -- موبايل مؤكد
-        Device.IsPC     = false
-        Device.IsTablet = false
-        Device.IsMobile = true
+        -- أيضاً نضيف TouchEnabled كـ override للتأكيد
+        local UIS = UserInputService
+        if UIS.TouchEnabled and not UIS.KeyboardEnabled then
+            -- موبايل مؤكد
+            Device.IsPC     = false
+            Device.IsTablet = false
+            Device.IsMobile = true
+        end
+
+        return sw, sh, minDim, maxDim
     end
+    Device.Refresh()
 
     --[[
         CalcUIScale: يحسب الـ UIScale المطلوب عشان الواجهة (baseW x baseH)
@@ -698,25 +732,26 @@ do
         بعدين نحسب الـ position بناءً على الـ visual size الفعلي.
     ]]
     function Device.CalcLayout(baseW, baseH)
+        local sw, sh = Device.Refresh()
         local fillW, fillH
         if Device.IsPC then
             -- PC: لا تغيير
             return baseW, baseH, 1.0
         elseif Device.IsMobile then
-            -- موبايل: 90% من أصغر بُعد — سواء landscape أو portrait
-            fillW = sw * 0.92
-            fillH = sh * 0.88
+            -- موبايل: نافذة أصغر، لكن العناصر الداخلية أكبر وأسهل للمس
+            fillW = sw * 0.88
+            fillH = sh * 0.78
         else
             -- تابلت
-            fillW = sw * 0.88
-            fillH = sh * 0.84
+            fillW = sw * 0.84
+            fillH = sh * 0.80
         end
 
         -- نحسب الـ scale المناسب: نختار أصغر نسبة عشان الواجهة تكون visible كاملاً
         local scaleByW = fillW / baseW
         local scaleByH = fillH / baseH
         local scale    = math.min(scaleByW, scaleByH)
-        scale = math.clamp(scale, 0.4, 3.0)
+        scale = math.clamp(scale, 0.50, 3.0)
 
         -- الـ visual size بعد الـ scale
         local visualW = math.floor(baseW * scale)
@@ -731,20 +766,21 @@ end
 -- ============================================================
 local function PlayIntro(sg, onDone)
     -- ── Responsive scale للإنترو ────────────────────────────
+    Device.Refresh()
     local _introCam = workspace.CurrentCamera
     local _introVP  = _introCam and _introCam.ViewportSize or Vector2.new(800,600)
     local _introScale = math.clamp(math.min(_introVP.X,_introVP.Y) / 500, 0.45, 1.15)
 
     local CFG={
         Logo="rbxassetid://93116857865430",
-        HubName="CrozoX", TagLine="Professional Script Hub",
-        GlowColor=Color3.fromRGB(220,38,38),
-        AccentColor=Color3.fromRGB(255,80,60),
-        ParticleN=14, FadeIn=0.7, ZoomDur=0.8,
-        HoldDur=1.3, PulseDur=0.5, FadeOut=0.55,
-        LogoStart=UDim2.new(0,80,0,80),
-        LogoEnd=UDim2.new(0,165,0,165),
-        LogoPulse=UDim2.new(0,178,0,178),
+        HubName="CrozoX", TagLine="Clean Script Hub",
+        GlowColor=Color3.fromRGB(56,132,255),
+        AccentColor=Color3.fromRGB(120,180,255),
+        ParticleN=0, FadeIn=0.45, ZoomDur=0.5,
+        HoldDur=0.85, PulseDur=0.36, FadeOut=0.38,
+        LogoStart=UDim2.new(0,86,0,86),
+        LogoEnd=UDim2.new(0,138,0,138),
+        LogoPulse=UDim2.new(0,146,0,146),
     }
     local bg=New("Frame",{Size=UDim2.new(1,0,1,0),
         BackgroundColor3=Color3.fromRGB(0,0,0),
@@ -845,7 +881,7 @@ local function PlayIntro(sg, onDone)
             task.delay((i-1)*0.04,function()
                 Tween(p.dot,{BackgroundTransparency=0.22},0.3) end)
         end
-        for _=1,3 do
+        for _=1,1 do
             Tween(logoHolder,{Size=CFG.LogoPulse},CFG.PulseDur*0.45,Enum.EasingStyle.Quad)
             Tween(logoStroke,{Transparency=0.04},CFG.PulseDur*0.45)
             Tween(glowOuter,{ImageTransparency=0.3},CFG.PulseDur*0.45)
@@ -890,9 +926,11 @@ end
 -- ============================================================
 local function ShowLangSelect(sg, onDone)
     local W,H = 440,330
-    local RING = 4  -- سماكة الحد الملوّن
+    local RING = 2
+    local THEME_COLORS={English=Color3.fromRGB(56,132,255),Arabic=Color3.fromRGB(220,38,38)}
 
     -- ── Responsive scale للـ lang card ──────────────────────
+    Device.Refresh()
     local _lsCam = workspace.CurrentCamera
     local _lsVP  = _lsCam and _lsCam.ViewportSize or Vector2.new(800,600)
     local _lsMinDim = math.min(_lsVP.X, _lsVP.Y)
@@ -923,20 +961,13 @@ local function ShowLangSelect(sg, onDone)
         Size=UDim2.new(0,W+RING*2,0,H+RING*2),
         AnchorPoint=Vector2.new(0.5,0.5),
         Position=UDim2.new(0.5,0,0.65,0),
-        BackgroundColor3=Color3.fromRGB(255,80,80),
+        BackgroundColor3=THEME_COLORS.English,
         BorderSizePixel=0,
         BackgroundTransparency=1,
         ZIndex=201,Parent=lsWrapper})
     Corner(ringBg, 22)
 
-    -- Animate the colour of the ring frame
-    local hue=0
-    local rainbowConn
-    rainbowConn=RunService.RenderStepped:Connect(function(dt)
-        if not ringBg.Parent then rainbowConn:Disconnect();return end
-        hue=(hue+dt*0.45)%1
-        ringBg.BackgroundColor3=Color3.fromHSV(hue,0.9,1)
-    end)
+    local rainbowConn=nil
 
     -- ── Card ────────────────────────────────────────────────
     local card=New("Frame",{
@@ -980,7 +1011,6 @@ local function ShowLangSelect(sg, onDone)
 
     local selectedLang="English"
     local btnData={}
-    local THEME_COLORS={English=Color3.fromRGB(56,132,255),Arabic=Color3.fromRGB(220,38,38)}
 
     local function MakeLangBtn(langName,flagEmoji,labelText,isDefault)
         local tc=THEME_COLORS[langName]
@@ -990,6 +1020,7 @@ local function ShowLangSelect(sg, onDone)
         Corner(frame,14)  -- ← حواف منحنية كبيرة
         local fStroke=Stroke(frame,isDefault and tc or Color3.fromRGB(42,46,68),
             isDefault and 2 or 1,0)
+        local fScale=New("UIScale",{Scale=isDefault and 1.02 or 1,Parent=frame})
         New("TextLabel",{Size=UDim2.new(1,0,0,40),Position=UDim2.new(0,0,0,8),
             BackgroundTransparency=1,Text=flagEmoji,TextSize=30,ZIndex=207,Parent=frame})
         local lbl=New("TextLabel",{Size=UDim2.new(1,-8,0,26),
@@ -1013,7 +1044,7 @@ local function ShowLangSelect(sg, onDone)
             if selectedLang~=langName then
                 Tween(frame,{BackgroundColor3=Color3.fromRGB(18,18,24)},0.15) end
         end)
-        btnData[langName]={frame=frame,stroke=fStroke,label=lbl,dot=dot,
+        btnData[langName]={frame=frame,stroke=fStroke,label=lbl,dot=dot,scale=fScale,
             color=tc,clickBtn=clickBtn}
         return clickBtn
     end
@@ -1023,28 +1054,51 @@ local function ShowLangSelect(sg, onDone)
     local confirmBtn  -- forward-declare for use in SelectLang
 
     local function SelectLang(name)
-        if selectedLang==name then return end
+        if selectedLang==name then
+            local cur=btnData[name]
+            if cur then
+                Tween(cur.scale,{Scale=1.06},0.12,Enum.EasingStyle.Back)
+                task.delay(0.12,function()
+                    if cur.scale and cur.scale.Parent then
+                        Tween(cur.scale,{Scale=1.02},0.12,Enum.EasingStyle.Quart)
+                    end
+                end)
+            end
+            return
+        end
         local prev=btnData[selectedLang]; local next=btnData[name]
         if prev then
             Tween(prev.frame,{BackgroundColor3=Color3.fromRGB(18,18,24)},0.22)
             prev.stroke.Color=Color3.fromRGB(42,46,68); prev.stroke.Thickness=1
             prev.label.TextColor3=Color3.fromRGB(148,152,172)
             prev.dot.BackgroundTransparency=1
+            Tween(prev.scale,{Scale=1},0.18)
         end
         if next then
             Tween(next.frame,{BackgroundColor3=Color3.fromRGB(20,26,46)},0.22)
             next.stroke.Color=next.color; next.stroke.Thickness=2
             next.label.TextColor3=next.color
             next.dot.BackgroundTransparency=0
+            Tween(next.scale,{Scale=1.07},0.14,Enum.EasingStyle.Back)
+            task.delay(0.14,function()
+                if next.scale and next.scale.Parent then
+                    Tween(next.scale,{Scale=1.02},0.14,Enum.EasingStyle.Quart)
+                end
+            end)
+            Tween(ringBg,{BackgroundColor3=next.color},0.22)
         end
         selectedLang=name
         if confirmBtn then
             Tween(confirmBtn,{BackgroundColor3=THEME_COLORS[name]},0.2)
+            confirmBtn.Text = name=="Arabic" and "متابعة  ←" or "Continue  →"
         end
     end
 
     for ln,d in pairs(btnData) do
-        d.clickBtn.MouseButton1Click:Connect(function() SelectLang(ln) end)
+        d.clickBtn.MouseButton1Click:Connect(function()
+            Ripple(d.clickBtn)
+            SelectLang(ln)
+        end)
     end
 
     -- ── Confirm button ─────────────────────────────────────────
@@ -1078,22 +1132,13 @@ local function ShowLangSelect(sg, onDone)
     local function FireConfirm()
         if fired then return end
         fired=true
-        rainbowConn:Disconnect()
+        if rainbowConn then rainbowConn:Disconnect() end
         local FO = 0.4
         -- كل العناصر تختفي مع بعض في نفس الوقت
         Tween(overlay, {BackgroundTransparency=1}, FO)
         Tween(ringBg,  {BackgroundTransparency=1, Position=UDim2.new(0.5,0,0.44,0)}, FO, Enum.EasingStyle.Quart)
         Tween(card,    {BackgroundTransparency=1, Position=UDim2.new(0.5,0,0.44,0)}, FO, Enum.EasingStyle.Quart)
-        -- كل children في الـ card تختفي
-        for _, child in ipairs(card:GetDescendants()) do
-            if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("ImageLabel") then
-                Tween(child, {
-                    TextTransparency  = child:IsA("TextLabel")  and 1 or nil,
-                    BackgroundTransparency = 1,
-                    ImageTransparency = child:IsA("ImageLabel") and 1 or nil,
-                }, FO)
-            end
-        end
+        FadeOutGuiTree(lsWrapper, FO)
         task.delay(FO+0.05, function()
             overlay:Destroy(); lsWrapper:Destroy()
             if onDone then task.spawn(function() onDone(selectedLang) end) end
@@ -1124,9 +1169,8 @@ function CrozoX:_Init()
     -- NotifContainer — على الجانب الأيمن دايماً (موبايل وPC)
     -- موبايل: عرض 260px من اليمين | PC: 345px
     do
-        local _nc  = workspace.CurrentCamera
-        local _nv  = _nc and _nc.ViewportSize or Vector2.new(800,600)
-        local isMobInit = (Device.IsMobile or Device.IsTablet) or (math.min(_nv.X,_nv.Y) < 500)
+        local _, _, _minDim = Device.Refresh()
+        local isMobInit = (Device.IsMobile or Device.IsTablet) or (_minDim < 500)
         local notifW    = isMobInit and 260 or 345
         local notifOff  = notifW + 12  -- margin من حافة الشاشة
         local notifGap  = isMobInit and 6 or 10
@@ -1154,14 +1198,19 @@ end
 -- ============================================================
 function CrozoX:CreateWindow(cfg)
     cfg=cfg or {}
+    Device.Refresh()
+    local isCompact = Device.IsMobile or Device.IsTablet
     local title   =cfg.Title    or "CrozoX"
     local subtitle=cfg.Subtitle or "v4.0.0"
     local logoId  =cfg.Logo     or "rbxassetid://93116857865430"
-    local size    =cfg.Size     or UDim2.new(0,660,0,470)
+    local defaultSize = isCompact and UDim2.new(0,560,0,440) or UDim2.new(0,660,0,470)
+    local size    =cfg.Size     or defaultSize
     size = UDim2.new(0, size.X.Offset, 0, size.Y.Offset)
     local T       =self._Theme
     local L       =self._Lang
     local sg      =self._ScreenGui
+    local titleH  =isCompact and 52 or 54
+    local sidebarW=isCompact and 168 or 220
 
     -- ════════════════════════════════════════════════════════
     --  MAIN FRAME — frame واحد فقط، UICorner عليه مباشرة
@@ -1264,7 +1313,7 @@ function CrozoX:CreateWindow(cfg)
 
     -- ── Titlebar — شفاف عشان حواف MainFrame تظهر ──────────
     local titleBar = New("Frame", {
-        Size                   = UDim2.new(1, 0, 0, 54),
+        Size                   = UDim2.new(1, 0, 0, titleH),
         Position               = UDim2.new(0, 0, 0, 0),
         BackgroundTransparency = 1,   -- ← شفاف: لا يغطي الحواف
         BorderSizePixel        = 0,
@@ -1428,8 +1477,8 @@ function CrozoX:CreateWindow(cfg)
 
     -- ── Sidebar — width 220 ───────────────────────────────
     local sidebar = New("Frame", {
-        Size                   = UDim2.new(0, 220, 1, -54),
-        Position               = UDim2.new(0, 0, 0, 54),
+        Size                   = UDim2.new(0, sidebarW, 1, -titleH),
+        Position               = UDim2.new(0, 0, 0, titleH),
         BackgroundColor3       = T.Surface,
         BackgroundTransparency = 0.1,
         BorderSizePixel        = 0,
@@ -1630,8 +1679,8 @@ function CrozoX:CreateWindow(cfg)
 
     -- ── Content area ───────────────────────────────────────
     local contentArea = New("Frame", {
-        Size             = UDim2.new(1, -220, 1, -54),
-        Position         = UDim2.new(0, 220, 0, 54),
+        Size             = UDim2.new(1, -sidebarW, 1, -titleH),
+        Position         = UDim2.new(0, sidebarW, 0, titleH),
         BackgroundTransparency = 1,
         BorderSizePixel  = 0,
         ClipsDescendants = true,
@@ -1652,7 +1701,7 @@ function CrozoX:CreateWindow(cfg)
     local rH         = 0
     local rPX        = 0
     local rPY        = 0
-    local MIN_W, MIN_H = 420, 300
+    local MIN_W, MIN_H = isCompact and 500 or 420, isCompact and 360 or 300
     local MAX_W, MAX_H = 1200, 800
 
     -- ── Drag Button — TextButton شفاف فوق titleBar ─────────
@@ -1718,7 +1767,7 @@ function CrozoX:CreateWindow(cfg)
 
     -- ── Resize Handle — تصميم عصري: خطوط متوازية زي iOS
     -- ── Resize Button — نفس تصميم PC على الموبايل، خارج الواجهة
-    local rBtnSz = Device.IsPC and 22 or 32   -- أكبر بكثير على موبايل لتسهيل اللمس
+    local rBtnSz = Device.IsPC and 22 or 38   -- أكبر على موبايل لتسهيل اللمس
 
     local resizeBtn = New("TextButton", {
         Name                   = "ResizeBtn",
@@ -1764,7 +1813,7 @@ function CrozoX:CreateWindow(cfg)
             resizing = true; dragging = false; touchDragging = false
             local mp = UserInputService:GetMouseLocation()
             rStartX = mp.X; rStartY = mp.Y
-            rW = wrapFrame.AbsoluteSize.X; rH = wrapFrame.AbsoluteSize.Y
+            rW = wrapFrame.Size.X.Offset; rH = wrapFrame.Size.Y.Offset
             rPX = wrapFrame.Position.X.Offset; rPY = wrapFrame.Position.Y.Offset
             Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.1)
 
@@ -1773,7 +1822,7 @@ function CrozoX:CreateWindow(cfg)
             resizing = true; dragging = false; touchDragging = false
             resizeTouchPos = inp.Position
             rStartX = inp.Position.X; rStartY = inp.Position.Y
-            rW = wrapFrame.AbsoluteSize.X; rH = wrapFrame.AbsoluteSize.Y
+            rW = wrapFrame.Size.X.Offset; rH = wrapFrame.Size.Y.Offset
             rPX = wrapFrame.Position.X.Offset; rPY = wrapFrame.Position.Y.Offset
             Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.1)
         end
@@ -1858,8 +1907,10 @@ function CrozoX:CreateWindow(cfg)
                 curX, curY = mp.X, mp.Y
             end
 
-            local newW = math.clamp(rW + (curX - rStartX), MIN_W, MAX_W)
-            local newH = math.clamp(rH + (curY - rStartY), MIN_H, MAX_H)
+            local uiScale = wrapFrame:FindFirstChildWhichIsA("UIScale")
+            local s = (uiScale and uiScale.Scale and uiScale.Scale > 0) and uiScale.Scale or 1
+            local newW = math.clamp(rW + ((curX - rStartX) / s), MIN_W, MAX_W)
+            local newH = math.clamp(rH + ((curY - rStartY) / s), MIN_H, MAX_H)
             wrapFrame.Size     = UDim2.new(0, newW, 0, newH)
             wrapFrame.Position = UDim2.new(0, rPX, 0, rPY)
             -- sync smooth vars عشان drag بعد resize ما يقفز
@@ -1931,8 +1982,15 @@ function CrozoX:CreateWindow(cfg)
 
     -- ── Close / Minimize ───────────────────────────────────
     local isMin = false
+    local isClosed = false
 
     local function DoClose()
+        if isClosed then return end
+        isClosed = true
+        dragging = false
+        resizing = false
+        touchDragging = false
+        FadeOutGuiTree(wrapFrame,0.28)
         Tween(mainFrame, {
             Size                   = UDim2.new(0.9, 0, 0.9, 0),
             BackgroundTransparency = 1,
@@ -1946,7 +2004,7 @@ function CrozoX:CreateWindow(cfg)
     local function DoMinimize()
         isMin = not isMin
         if isMin then
-            Tween(mainFrame, {Size = UDim2.new(1, 0, 0, 54)}, 0.3)
+            Tween(mainFrame, {Size = UDim2.new(1, 0, 0, titleH)}, 0.3)
             Tween(shadowImg, {ImageTransparency = 1}, 0.2)
             if Device.IsPC then
                 Tween(resizeBtn,{Size=UDim2.new(0,0,0,0),BackgroundTransparency=1},0.2,Enum.EasingStyle.Quart)
@@ -1962,7 +2020,7 @@ function CrozoX:CreateWindow(cfg)
             if Device.IsPC then
                 resizeBtn.Visible = true
                 resizeBtn.Size    = UDim2.new(0, 0, 0, 0)
-                Tween(resizeBtn,{Size=UDim2.new(0,22,0,22),BackgroundTransparency=0.1},0.3,Enum.EasingStyle.Back)
+                Tween(resizeBtn,{Size=UDim2.new(0,rBtnSz,0,rBtnSz),BackgroundTransparency=0.1},0.3,Enum.EasingStyle.Back)
             else
                 Tween(resizeBtn,{BackgroundTransparency=0.3},0.2)
             end
@@ -2112,7 +2170,9 @@ function CrozoX:CreateWindow(cfg)
 
         -- Element frame — card background + proper depth
         local function EF(h)
-            local f=New("Frame",{Size=UDim2.new(1,0,0,h or 48),
+            local cardH=(h or 48)
+            if isCompact then cardH=math.floor(cardH*1.15) end
+            local f=New("Frame",{Size=UDim2.new(1,0,0,cardH),
                 BackgroundColor3=T.SurfaceCard,BorderSizePixel=0,
                 ZIndex=13,Parent=tabPage})
             Corner(f,10)
@@ -2139,9 +2199,9 @@ function CrozoX:CreateWindow(cfg)
         -- Font system — موبايل: كل حاجة أكبر بـ ~20%
         local _mobTxt = (Device.IsMobile or Device.IsTablet)
         local FS = {
-            Title   = _mobTxt and 18 or 15,
-            Button  = _mobTxt and 17 or 15,
-            Body    = _mobTxt and 15 or 13,
+            Title   = _mobTxt and 20 or 15,
+            Button  = _mobTxt and 18 or 15,
+            Body    = _mobTxt and 16 or 13,
             Section = _mobTxt and 13 or 11,
         }
 
@@ -2201,9 +2261,9 @@ function CrozoX:CreateWindow(cfg)
                     UDim2.new(0,12,0.5,-9),T.TextDim,14)
                 xOff=38
             end
-            EL(f,name,xOff,desc~="" and 10 or 13,240,20,T.Text,L.FontSemi,L.LabelSize)
+            EL(f,name,xOff,desc~="" and 10 or 13,240,20,T.Text,L.FontSemi,FS.Title)
             if desc~="" then
-                EL(f,desc,xOff,32,240,16,T.TextMuted,L.FontBody,12)
+                EL(f,desc,xOff,32,240,16,T.TextMuted,L.FontBody,FS.Body)
             end
 
             -- ── زر تفعيل/إيقاف ────────────────────────────
@@ -2281,8 +2341,8 @@ function CrozoX:CreateWindow(cfg)
             local callback=tcfg.Callback or function() end
             local h=desc~="" and 60 or 46
             local f=EF(h)
-            EL(f,name,12,desc~="" and 10 or 13,240,20,T.Text,L.FontSemi,L.LabelSize)
-            if desc~="" then EL(f,desc,12,32,240,16,T.TextMuted,L.FontBody,12) end
+            EL(f,name,12,desc~="" and 10 or 13,240,20,T.Text,L.FontSemi,FS.Title)
+            if desc~="" then EL(f,desc,12,32,240,16,T.TextMuted,L.FontBody,FS.Body) end
 
             local track=New("Frame",{Size=UDim2.new(0,50,0,28),
                 Position=UDim2.new(1,-62,0.5,-14),
@@ -2340,11 +2400,11 @@ function CrozoX:CreateWindow(cfg)
             local cb  =scfg.Callback or function() end
             local val =def
             local f=EF(66)
-            EL(f,name,12,10,220,20,T.Text,L.FontSemi,L.LabelSize)
+            EL(f,name,12,10,220,20,T.Text,L.FontSemi,FS.Title)
             local vl=New("TextLabel",{Size=UDim2.new(0,88,0,20),
                 Position=UDim2.new(1,-100,0,10),BackgroundTransparency=1,
                 Text=tostring(val)..suf,TextColor3=T.Primary,
-                Font=Enum.Font.GothamBold,TextSize=L.LabelSize,
+                Font=Enum.Font.GothamBold,TextSize=FS.Button,
                 TextXAlignment=Enum.TextXAlignment.Right,ZIndex=14,Parent=f})
             local tbg=New("Frame",{Size=UDim2.new(1,-24,0,6),
                 Position=UDim2.new(0,12,0,48),BackgroundColor3=T.Border,
@@ -2440,11 +2500,11 @@ function CrozoX:CreateWindow(cfg)
                 ImageTransparency=0.88,ScaleType=Enum.ScaleType.Slice,
                 SliceCenter=Rect.new(49,49,450,450),ZIndex=12,Parent=f})
 
-            EL(f,name,12,13,185,20,T.Text,L.FontSemi,L.LabelSize)
+            EL(f,name,12,13,185,20,T.Text,L.FontSemi,FS.Title)
             local sl=New("TextLabel",{Size=UDim2.new(0,110,0,20),
                 Position=UDim2.new(1,-145,0,13),BackgroundTransparency=1,
                 Text=tostring(sel or "—"),TextColor3=T.Primary,
-                Font=L.FontBody,TextSize=L.LabelSize,
+                Font=L.FontBody,TextSize=FS.Body,
                 TextXAlignment=Enum.TextXAlignment.Right,ZIndex=14,Parent=f})
 
             -- Arrow icon
@@ -2497,7 +2557,7 @@ function CrozoX:CreateWindow(cfg)
                     end
                     EL(row,tostring(o),10,0,200,ROW_H,
                         isA and T.Text or T.TextDim,
-                        isA and L.FontSemi or L.FontBody,L.LabelSize,16)
+                        isA and L.FontSemi or L.FontBody,FS.Body,16)
                     local rb=New("TextButton",{Size=UDim2.new(1,0,1,0),
                         BackgroundTransparency=1,Text="",ZIndex=17,Parent=row})
                     rb.MouseEnter:Connect(function()
@@ -2591,7 +2651,7 @@ function CrozoX:CreateWindow(cfg)
             local cb  =kcfg.Callback or function() end
             local cur=def;local listen=false
             local f=EF(46)
-            EL(f,name,12,13,230,20,T.Text,L.FontSemi,L.LabelSize)
+            EL(f,name,12,13,230,20,T.Text,L.FontSemi,FS.Title)
             local kb=New("TextButton",{Size=UDim2.new(0,100,0,28),
                 Position=UDim2.new(1,-112,0.5,-14),BackgroundColor3=T.Background,
                 Text=cur.Name,TextColor3=T.Primary,
@@ -2628,11 +2688,11 @@ function CrozoX:CreateWindow(cfg)
             local def =icfg.Default or ""
             local cb  =icfg.Callback or function() end
             local f=EF(64)
-            EL(f,name,12,8,270,20,T.Text,L.FontSemi,L.LabelSize)
+            EL(f,name,12,8,270,20,T.Text,L.FontSemi,FS.Title)
             local box=New("TextBox",{Size=UDim2.new(1,-24,0,28),
                 Position=UDim2.new(0,12,0,30),BackgroundColor3=T.Background,
                 Text=def,PlaceholderText=ph,PlaceholderColor3=T.TextMuted,
-                TextColor3=T.Text,Font=L.FontBody,TextSize=L.LabelSize,
+                TextColor3=T.Text,Font=L.FontBody,TextSize=FS.Body,
                 BorderSizePixel=0,ClearTextOnFocus=false,
                 TextXAlignment=L.IsRTL and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left,
                 ZIndex=14,Parent=f})
@@ -2715,18 +2775,19 @@ function CrozoX:Notify(cfg)
     self._NotifCount=self._NotifCount+1
 
     -- ── Responsive sizes ──────────────────────────────────
+    Device.Refresh()
     local _nCam   = workspace.CurrentCamera
     local _nVP    = _nCam and _nCam.ViewportSize or Vector2.new(800,600)
     local _nMin   = math.min(_nVP.X, _nVP.Y)
     local isMob   = (Device.IsMobile or Device.IsTablet) or (_nMin < 500)
-    local cardH   = isMob and 72  or 82    -- أكبر شوية للنص
-    local panelW  = isMob and 38  or 46
-    local iconSz  = isMob and 18  or 22
-    local titleSz = isMob and 14  or 14    -- نفس الكمبيوتر
-    local bodySz  = isMob and 12  or (L and L.LabelSize or 13)
+    local cardH   = isMob and 78  or 82    -- أكبر شوية للنص
+    local panelW  = isMob and 40  or 46
+    local iconSz  = isMob and 20  or 22
+    local titleSz = isMob and 15  or 14
+    local bodySz  = isMob and 13  or (L and L.LabelSize or 13)
     local titleY  = isMob and 10  or 13
     local bodyY   = isMob and 30  or 36
-    local bodyH   = isMob and 26  or 32
+    local bodyH   = isMob and 30  or 32
     local txtOffX = isMob and (panelW+8) or 56
 
     local card=New("Frame",{Name="Notif_"..self._NotifCount,
@@ -2801,11 +2862,7 @@ function CrozoX:Notify(cfg)
         local FO=0.25
         Tween(card,{BackgroundTransparency=1,Position=UDim2.new(1,30,0,0)},FO,
             Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-        Tween(iconImg,{ImageTransparency=1},FO)
-        Tween(titleLbl,{TextTransparency=1},FO)
-        Tween(bodyLbl,{TextTransparency=1},FO)
-        Tween(pfill,{BackgroundTransparency=1},FO)
-        Tween(xIco,{ImageTransparency=1},FO)
+        FadeOutGuiTree(card,FO)
         task.delay(FO+0.05,function() card:Destroy() end)
     end
     task.delay(dur,Dismiss)
@@ -2854,7 +2911,8 @@ local function Init()
         -- لو لسه، نخزن الإعدادات ونرجع promise-like object
         API._pendingWindowCfg = cfg
         -- نرجع object مؤقت يتحدث بعد إنشاء النافذة
-        return setmetatable({
+        local proxy
+        proxy = setmetatable({
             _realWindow = nil,
             _tabsQueue = {},
         }, {
@@ -2862,19 +2920,46 @@ local function Init()
                 if t._realWindow then
                     return t._realWindow[k]
                 end
+                if k=="CreateTab" then
+                    return function(first, second)
+                        local tcfg = (first==t) and second or first
+                        if type(tcfg)=="string" then tcfg={Name=tcfg} end
+                        local tabProxy
+                        tabProxy=setmetatable({
+                            _realTab=nil,
+                            _calls={},
+                        },{
+                            __index=function(tp, tk)
+                                if tp._realTab then
+                                    return tp._realTab[tk]
+                                end
+                                return function(...)
+                                    local args={...}
+                                    if args[1]==tp then table.remove(args,1) end
+                                    table.insert(tp._calls,{tk,args})
+                                end
+                            end,
+                        })
+                        table.insert(t._tabsQueue, {"CreateTab", {tcfg}, tabProxy})
+                        return tabProxy
+                    end
+                end
                 -- return a dummy function that queues calls
                 return function(...)
-                    table.insert(t._tabsQueue, {k, {...}})
+                    local args={...}
+                    if args[1]==t then table.remove(args,1) end
+                    table.insert(t._tabsQueue, {k, args})
                 end
             end,
             __call = function(t, c)
                 if t._realWindow then
                     return t._realWindow(c)
                 end
-                if type(c)=="string" then c={Name=c} end
-                table.insert(t._tabsQueue, {"CreateTab", {c}})
+                return t:CreateTab(c)
             end,
         })
+        API._windowProxy = proxy
+        return proxy
     end
     function API:SetTheme(n)    lib:SetTheme(n)      end
     function API:SetLanguage(n) lib:SetLanguage(n)   end
@@ -2888,8 +2973,8 @@ local function Init()
     setmetatable(API,{__call=function(_,cfg)
         if type(cfg)=="string" then
             if Themes[cfg] then lib:SetTheme(cfg);return API end
-            return lib:CreateWindow({Title=cfg})
-        elseif type(cfg)=="table" then return lib:CreateWindow(cfg) end
+            return API:CreateWindow({Title=cfg})
+        elseif type(cfg)=="table" then return API:CreateWindow(cfg) end
     end})
 
     -- ══════════════════════════════════════════════════════
@@ -2923,7 +3008,17 @@ local function Init()
                     for _, call in ipairs(API._windowProxy._tabsQueue) do
                         local methodName, args = call[1], call[2]
                         if methodName == "CreateTab" then
-                            window:CreateTab(unpack(args))
+                            local tab = window:CreateTab(unpack(args))
+                            local tabProxy = call[3]
+                            if tabProxy then
+                                tabProxy._realTab = tab
+                                for _, tabCall in ipairs(tabProxy._calls) do
+                                    local tabMethod, tabArgs = tabCall[1], tabCall[2]
+                                    if tab[tabMethod] then
+                                        tab[tabMethod](tab, unpack(tabArgs))
+                                    end
+                                end
+                            end
                         elseif window[methodName] then
                             window[methodName](window, unpack(args))
                         end
