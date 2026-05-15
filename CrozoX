@@ -2911,70 +2911,178 @@ local function Init()
     local sg=lib._ScreenGui
 
     local API={}; API.Lang=Languages; API.Icons=Icons; API.Fonts=FONTS
+    API._pendingWindows = {}
 
     -- ══════════════════════════════════════════════════════
     --  DEFERRED WINDOW CREATION — ينتظر اختيار اللغة أولاً
     --  ✦ CreateWindow يخزن الإعدادات مش بيخلق فوراً
     --  ✦ النافذة بتتخلق بعد ما المستخدم يختار اللغة
     -- ══════════════════════════════════════════════════════
+    local unpackArgs = table.unpack or unpack
+    local TAB_METHODS = {
+        "AddSection","AddButton","AddToggle","AddSlider",
+        "AddDropdown","AddInput","AddKeybind",
+    }
+
+    local function WarnReplay(scope, name, err)
+        warn(("[CrozoX] Replay failed in %s.%s: %s")
+            :format(tostring(scope), tostring(name), tostring(err)))
+    end
+
+    local function CallMethod(target, methodName, args, scope)
+        local method = target and target[methodName]
+        if not method then
+            warn(("[CrozoX] Replay skipped missing %s.%s")
+                :format(tostring(scope), tostring(methodName)))
+            return nil
+        end
+        local ok, result = pcall(function()
+            return method(target, unpackArgs(args or {}))
+        end)
+        if not ok then
+            WarnReplay(scope, methodName, result)
+            return nil
+        end
+        return result
+    end
+
+    local function MakeTabProxy(windowPending, tabCfg)
+        if type(tabCfg)=="string" then tabCfg={Name=tabCfg} end
+        tabCfg = tabCfg or {}
+
+        local tabPending = {
+            cfg      = tabCfg,
+            calls    = {},
+            realTab  = nil,
+            proxy    = nil,
+        }
+        local tabProxy = {}
+        tabPending.proxy = tabProxy
+        table.insert(windowPending.tabs, tabPending)
+
+        local function CallOrQueue(methodName, args)
+            args = args or {}
+            if tabPending.realTab then
+                return CallMethod(tabPending.realTab, methodName, args, "Tab")
+            end
+            table.insert(tabPending.calls, {name=methodName, args=args})
+            return nil
+        end
+
+        for _, methodName in ipairs(TAB_METHODS) do
+            tabProxy[methodName] = function(first, ...)
+                local args = {...}
+                if first ~= tabProxy then
+                    table.insert(args, 1, first)
+                end
+                return CallOrQueue(methodName, args)
+            end
+        end
+
+        setmetatable(tabProxy, {
+            __index = function(_, key)
+                if tabPending.realTab then
+                    return tabPending.realTab[key]
+                end
+                return function(first, ...)
+                    local args = {...}
+                    if first ~= tabProxy then
+                        table.insert(args, 1, first)
+                    end
+                    return CallOrQueue(key, args)
+                end
+            end,
+        })
+
+        return tabProxy
+    end
+
+    local function RealizeWindow(windowPending)
+        if windowPending.realWindow then
+            return windowPending.realWindow
+        end
+
+        local ok, window = pcall(function()
+            return lib:CreateWindow(windowPending.cfg)
+        end)
+        if not ok or not window then
+            WarnReplay("Window", "CreateWindow", window)
+            return nil
+        end
+
+        windowPending.realWindow = window
+        windowPending.proxy._realWindow = window
+
+        for _, tabPending in ipairs(windowPending.tabs) do
+            local okTab, tab = pcall(function()
+                return window:CreateTab(tabPending.cfg)
+            end)
+            if okTab and tab then
+                tabPending.realTab = tab
+                tabPending.proxy._realTab = tab
+                for _, call in ipairs(tabPending.calls) do
+                    CallMethod(tab, call.name, call.args, "Tab")
+                end
+                tabPending.calls = {}
+            else
+                WarnReplay("Window", "CreateTab", tab)
+            end
+        end
+        windowPending.tabs = {}
+
+        for _, call in ipairs(windowPending.calls) do
+            CallMethod(window, call.name, call.args, "Window")
+        end
+        windowPending.calls = {}
+
+        return window
+    end
+
     function API:CreateWindow(cfg)
         if type(cfg)=="string" then cfg={Title=cfg} end
-        -- لو اللغة اختارت خلاص، نخلق النافذة فوراً
         if API._langSelected then
             return lib:CreateWindow(cfg)
         end
-        -- لو لسه، نخزن الإعدادات ونرجع promise-like object
-        API._pendingWindowCfg = cfg
-        -- نرجع object مؤقت يتحدث بعد إنشاء النافذة
-        local proxy
-        proxy = setmetatable({
-            _realWindow = nil,
-            _tabsQueue = {},
-        }, {
-            __index = function(t, k)
-                if t._realWindow then
-                    return t._realWindow[k]
+
+        local windowPending = {
+            cfg        = cfg or {},
+            tabs       = {},
+            calls      = {},
+            realWindow = nil,
+            proxy      = nil,
+        }
+        local windowProxy = {}
+        windowPending.proxy = windowProxy
+
+        function windowProxy.CreateTab(first, tabCfg)
+            local cfgArg = first == windowProxy and tabCfg or first
+            if windowPending.realWindow then
+                return windowPending.realWindow:CreateTab(cfgArg)
+            end
+            return MakeTabProxy(windowPending, cfgArg)
+        end
+
+        setmetatable(windowProxy, {
+            __index = function(_, key)
+                if windowPending.realWindow then
+                    return windowPending.realWindow[key]
                 end
-                if k=="CreateTab" then
-                    return function(first, second)
-                        local tcfg = (first==t) and second or first
-                        if type(tcfg)=="string" then tcfg={Name=tcfg} end
-                        local tabProxy
-                        tabProxy=setmetatable({
-                            _realTab=nil,
-                            _calls={},
-                        },{
-                            __index=function(tp, tk)
-                                if tp._realTab then
-                                    return tp._realTab[tk]
-                                end
-                                return function(...)
-                                    local args={...}
-                                    if args[1]==tp then table.remove(args,1) end
-                                    table.insert(tp._calls,{tk,args})
-                                end
-                            end,
-                        })
-                        table.insert(t._tabsQueue, {"CreateTab", {tcfg}, tabProxy})
-                        return tabProxy
+                return function(first, ...)
+                    local args = {...}
+                    if first ~= windowProxy then
+                        table.insert(args, 1, first)
                     end
-                end
-                -- return a dummy function that queues calls
-                return function(...)
-                    local args={...}
-                    if args[1]==t then table.remove(args,1) end
-                    table.insert(t._tabsQueue, {k, args})
+                    table.insert(windowPending.calls, {name=key, args=args})
+                    return nil
                 end
             end,
-            __call = function(t, c)
-                if t._realWindow then
-                    return t._realWindow(c)
-                end
-                return t:CreateTab(c)
+            __call = function(_, tabCfg)
+                return windowProxy:CreateTab(tabCfg)
             end,
         })
-        API._windowProxy = proxy
-        return proxy
+
+        table.insert(API._pendingWindows, windowPending)
+        return windowProxy
     end
     function API:SetTheme(n)    lib:SetTheme(n)      end
     function API:SetLanguage(n) lib:SetLanguage(n)   end
@@ -3014,35 +3122,10 @@ local function Init()
             -- ══════════════════════════════════════════════════════
             --  CREATE PENDING WINDOW — بعد اختيار اللغة
             -- ══════════════════════════════════════════════════════
-            if API._pendingWindowCfg then
-                local cfg = API._pendingWindowCfg
-                API._pendingWindowCfg = nil
-                local window = lib:CreateWindow(cfg)
-                -- Process any queued tab/element calls
-                local proxy = API._windowProxy
-                if proxy and proxy._tabsQueue then
-                    proxy._realWindow = window
-                    for _, call in ipairs(proxy._tabsQueue) do
-                        local methodName, args = call[1], call[2]
-                        if methodName == "CreateTab" then
-                            local tab = window:CreateTab(unpack(args))
-                            local tabProxy = call[3]
-                            if tabProxy then
-                                tabProxy._realTab = tab
-                                for _, tabCall in ipairs(tabProxy._calls) do
-                                    local tabMethod, tabArgs = tabCall[1], tabCall[2]
-                                    if tab[tabMethod] then
-                                        tab[tabMethod](tab, unpack(tabArgs))
-                                    end
-                                end
-                            end
-                        elseif window[methodName] then
-                            window[methodName](window, unpack(args))
-                        end
-                    end
-                    proxy._tabsQueue = {}
-                end
+            for _, pendingWindow in ipairs(API._pendingWindows) do
+                RealizeWindow(pendingWindow)
             end
+            API._pendingWindows = {}
 
             -- يشغّل الـ callback المسجّل من السكربت الخارجي (legacy support)
             if API._pendingWindow then

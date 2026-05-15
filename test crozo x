@@ -1,198 +1,174 @@
---[[
-    CrozoX — Example Script Hub
-    Import via loadstring:
-    
-    local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/blackmangg1273t/C2r2o2oz0/refs/heads/main/CrozoX"))()
-    
-    Replace YOUR_GITHUB_RAW_URL with the raw URL of CrozoX.lua on GitHub.
---]]
+-- ═══════════════════════════════════════════════════════════════
+--  CrozoX Example Script — سكربت مثال لأي لعبة / ماب
+-- ═══════════════════════════════════════════════════════════════
 
--- ── Import ───────────────────────────────────────────────────
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/blackmangg1273t/C2r2o2oz0/refs/heads/main/CrozoX"))()
+local url = "https://raw.githubusercontent.com/blackmangg1273t/C2r2o2oz0/main/CrozoX?cacheBust=" .. tostring(os.time())
+local CrozoX = loadstring(game:HttpGet(url))()
 
--- ── OPTIONAL: Override language/theme before window opens ──
--- Library:SetLanguage("Arabic")  -- Also sets theme to Red
--- Library:SetTheme("Purple")     -- Manual override
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
--- ── Create main window ───────────────────────────────────────
-local Window = Library:CreateWindow({
+local function GetHumanoid()
+    local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    return character:FindFirstChildOfClass("Humanoid")
+end
+
+local Window = CrozoX:CreateWindow({
     Title    = "CrozoX Hub",
-    Subtitle = "v1.0.0 | Universal",
-    Size     = UDim2.new(0, 620, 0, 440),
+    Subtitle = "v7.0.0 | Universal",
+    Logo     = "rbxassetid://93116857865430",
+    Size     = UDim2.new(0, 660, 0, 470),
 })
 
--- ── MAIN TAB ─────────────────────────────────────────────────
-local Main = Window:CreateTab({ Name = "Main", Icon = "⚡" })
+local MainTab   = Window:CreateTab({ Name = "Main",   Icon = "home" })
+local FarmTab   = Window:CreateTab({ Name = "Farm",   Icon = "sprout" })
+local PlayerTab = Window:CreateTab({ Name = "Player", Icon = "user" })
+local MiscTab   = Window:CreateTab({ Name = "Misc",   Icon = "settings" })
 
-Main:AddSection("Combat")
+-- ═══════════════════════════════════════════════════════════════
+--  Main Tab
+-- ═══════════════════════════════════════════════════════════════
 
-local AutoFarmToggle = Main:AddToggle({
-    Name     = Library:GetLang().AutoFarm,
-    Default  = false,
+MainTab:AddSection("General")
+
+MainTab:AddToggle({
+    Name = "Auto Farm",
+    Description = "يقوم بالزراعة التلقائية",
+    Default = false,
     Callback = function(value)
-        -- your logic here
-        Library:Notify({
+        print("Auto Farm:", value)
+
+        CrozoX:Notify({
             Title = "Auto Farm",
-            Text  = value and "Enabled!" or "Disabled!",
-            Type  = value and "Success" or "Warning",
-            Duration = 3,
+            Text = value and "تم تفعيل الزراعة التلقائية" or "تم إيقاف الزراعة التلقائية",
+            Type = value and "Success" or "Info",
+            Duration = 3
         })
-    end,
+    end
 })
 
-Main:AddButton({
-    Name        = "Kill All Enemies",
-    Description = "Eliminates all enemies in the map",
-    Callback    = function()
-        Library:Notify({ Title = "Action", Text = "Killing all enemies...", Type = "Info", Duration = 2 })
-    end,
+MainTab:AddButton({
+    Name = "Collect All",
+    Description = "يجمع كل الموارد في الخريطة",
+    Icon = "package",
+    Callback = function()
+        CrozoX:Notify({
+            Title = "Collect",
+            Text = "تم جمع جميع الموارد!",
+            Type = "Info",
+            Duration = 3
+        })
+    end
 })
 
-Main:AddSection("Movement")
-
-local SpeedSlider = Main:AddSlider({
-    Name     = Library:GetLang().Speed,
-    Min      = 16,
-    Max      = 500,
-    Default  = 16,
-    Suffix   = " studs/s",
+MainTab:AddSlider({
+    Name = "Walk Speed",
+    Min = 16,
+    Max = 200,
+    Default = 16,
+    Suffix = " Studs/s",
     Callback = function(value)
-        local char = game.Players.LocalPlayer.Character
-        if char and char:FindFirstChild("Humanoid") then
-            char.Humanoid.WalkSpeed = value
+        local humanoid = GetHumanoid()
+        if humanoid then
+            humanoid.WalkSpeed = value
         end
-    end,
+    end
 })
 
-Main:AddSlider({
-    Name     = "Jump Height",
-    Min      = 7,
-    Max      = 200,
-    Default  = 7,
-    Suffix   = " studs",
+-- ═══════════════════════════════════════════════════════════════
+--  Farm Tab
+-- ═══════════════════════════════════════════════════════════════
+
+FarmTab:AddSection("Farming Options")
+
+FarmTab:AddDropdown({
+    Name = "Select Enemy",
+    Options = {"Bandit", "Thug", "Boss", "Mini-Boss"},
+    Default = "Bandit",
+    Callback = function(selected)
+        print("Selected enemy:", selected)
+
+        CrozoX:Notify({
+            Title = "Enemy Selected",
+            Text = "Selected: " .. tostring(selected),
+            Type = "Info",
+            Duration = 2
+        })
+    end
+})
+
+FarmTab:AddInput({
+    Name = "Farm Delay",
+    Placeholder = "Enter seconds...",
+    Default = "1.5",
+    Callback = function(text)
+        print("Farm delay set to:", text)
+    end
+})
+
+-- ═══════════════════════════════════════════════════════════════
+--  Player Tab
+-- ═══════════════════════════════════════════════════════════════
+
+PlayerTab:AddSection("Character")
+
+PlayerTab:AddSlider({
+    Name = "Jump Power",
+    Min = 50,
+    Max = 300,
+    Default = 50,
+    Suffix = " Power",
     Callback = function(value)
-        local char = game.Players.LocalPlayer.Character
-        if char and char:FindFirstChild("Humanoid") then
-            char.Humanoid.JumpPower = value
+        local humanoid = GetHumanoid()
+        if humanoid then
+            humanoid.UseJumpPower = true
+            humanoid.JumpPower = value
         end
-    end,
+    end
 })
 
--- ── PLAYER TAB ───────────────────────────────────────────────
-local Player = Window:CreateTab({ Name = "Player", Icon = "👤" })
-
-Player:AddSection("Appearance")
-
-Player:AddToggle({
-    Name     = "God Mode",
-    Default  = false,
-    Callback = function(value)
-        -- Anti-damage logic
-    end,
-})
-
-Player:AddToggle({
-    Name     = "Infinite Jump",
-    Default  = false,
-    Callback = function(value)
-        -- Infinite jump logic
-    end,
-})
-
-Player:AddColorPicker({
-    Name     = "Character Color",
-    Default  = Color3.fromRGB(255, 255, 255),
-    Callback = function(color)
-        -- Apply color to character
-    end,
-})
-
-Player:AddSection("Misc")
-
-Player:AddInput({
-    Name        = "Custom Name",
-    Placeholder = "Enter display name...",
-    Callback    = function(text)
-        Library:Notify({ Title = "Name Changed", Text = text, Type = "Success", Duration = 3 })
-    end,
-})
-
--- ── WORLD TAB ────────────────────────────────────────────────
-local World = Window:CreateTab({ Name = "World", Icon = "🌐" })
-
-World:AddSection("Environment")
-
-World:AddSlider({
-    Name     = "Time of Day",
-    Min      = 0,
-    Max      = 24,
-    Default  = 12,
-    Callback = function(value)
-        game:GetService("Lighting").TimeOfDay = value .. ":00:00"
-    end,
-})
-
-World:AddToggle({
-    Name     = "No Fog",
-    Default  = false,
-    Callback = function(v)
-        game:GetService("Lighting").FogEnd = v and 1e9 or 100000
-    end,
-})
-
-World:AddDropdown({
-    Name     = Library:GetLang().SelectEnemy,
-    Options  = { "Enemy1", "Enemy2", "Enemy3", "Boss", "Mini-Boss" },
-    Default  = "Enemy1",
-    Callback = function(option)
-        Library:Notify({ Title = "Target Selected", Text = option, Type = "Info", Duration = 2 })
-    end,
-})
-
--- ── SETTINGS TAB ─────────────────────────────────────────────
-local Settings = Window:CreateTab({ Name = "Settings", Icon = "⚙" })
-
-Settings:AddSection("Theme")
-
-Settings:AddDropdown({
-    Name     = "Color Theme",
-    Options  = { "Blue", "Red", "Green", "Purple" },
-    Default  = "Blue",
-    Callback = function(theme)
-        Library:SetTheme(theme)
-        Library:Notify({ Title = "Theme", Text = theme .. " theme applied!", Type = "Success", Duration = 3 })
-    end,
-})
-
-Settings:AddSection("Keybinds")
-
-Settings:AddKeybind({
-    Name     = Library:GetLang().ToggleUI,
-    Default  = Enum.KeyCode.RightControl,
-    Callback = function(key)
+PlayerTab:AddKeybind({
+    Name = "Toggle UI Key",
+    Default = Enum.KeyCode.RightControl,
+    Callback = function()
         Window:Toggle()
-    end,
+    end
 })
 
-Settings:AddSection("Config")
+-- ═══════════════════════════════════════════════════════════════
+--  Misc Tab
+-- ═══════════════════════════════════════════════════════════════
 
-Settings:AddButton({
-    Name     = Library:GetLang().SaveConfig,
+MiscTab:AddSection("Settings")
+
+MiscTab:AddButton({
+    Name = "Save Config",
+    Description = "يحفظ إعداداتك الحالية",
+    Icon = "save",
     Callback = function()
-        Library:SaveConfig("default")
-        Library:Notify({ Title = "Config", Text = "Settings saved!", Type = "Success", Duration = 3 })
-    end,
+        CrozoX:SaveConfig("MyConfig")
+
+        CrozoX:Notify({
+            Title = "Config",
+            Text = "تم حفظ الإعدادات بنجاح",
+            Type = "Success",
+            Duration = 3
+        })
+    end
 })
 
-Settings:AddButton({
-    Name     = Library:GetLang().LoadConfig,
+MiscTab:AddButton({
+    Name = "Load Config",
+    Description = "يحمل آخر إعدادات محفوظة",
+    Icon = "download",
     Callback = function()
-        Library:LoadConfig("default")
-        Library:Notify({ Title = "Config", Text = "Settings loaded!", Type = "Info", Duration = 3 })
-    end,
-})
+        CrozoX:LoadConfig("MyConfig")
 
--- ── WELCOME NOTIFICATION (after language select) ─────────────
--- (CrozoX shows this automatically after language selection)
--- You can add your own too:
--- Library:Notify({ Title = "Hub Loaded", Text = "All modules ready.", Type = "Success", Duration = 5 })
+        CrozoX:Notify({
+            Title = "Config",
+            Text = "تم تحميل الإعدادات",
+            Type = "Info",
+            Duration = 3
+        })
+    end
+})
