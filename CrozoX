@@ -775,7 +775,9 @@ local function PlayIntro(sg, onDone)
         Logo="rbxassetid://93116857865430",
         HubName="CrozoX", TagLine="Clean Script Hub",
         GlowColor=Color3.fromRGB(56,132,255),
-        AccentColor=Color3.fromRGB(120,180,255),
+        AccentColor=Color3.fromRGB(235,48,72),
+        BlueColor=Color3.fromRGB(56,132,255),
+        RedColor=Color3.fromRGB(235,48,72),
         ParticleN=0, FadeIn=0.45, ZoomDur=0.5,
         HoldDur=0.85, PulseDur=0.36, FadeOut=0.38,
         LogoStart=UDim2.new(0,86,0,86),
@@ -785,6 +787,15 @@ local function PlayIntro(sg, onDone)
     local bg=New("Frame",{Size=UDim2.new(1,0,1,0),
         BackgroundColor3=Color3.fromRGB(0,0,0),
         BackgroundTransparency=1,BorderSizePixel=0,ZIndex=100,Parent=sg})
+    local bgBlend=New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0,Color3.fromRGB(18,24,70)),
+            ColorSequenceKeypoint.new(0.5,Color3.fromRGB(30,12,28)),
+            ColorSequenceKeypoint.new(1,Color3.fromRGB(90,16,34)),
+        },
+        Rotation=25,
+        Parent=bg,
+    })
 
     -- container مع UIScale — كل عناصر الإنترو بتتضغط proportionally
     -- AnchorPoint(0.5,0.5) + Position(0.5,0.5) → يفضل centered حتى بعد الـ scale
@@ -826,6 +837,13 @@ local function PlayIntro(sg, onDone)
     local line=New("Frame",{Size=UDim2.new(0,0,0,2),
         AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,152),
         BackgroundColor3=CFG.GlowColor,BorderSizePixel=0,ZIndex=104,Parent=introCont})
+    local lineBlend=New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0,CFG.BlueColor),
+            ColorSequenceKeypoint.new(1,CFG.RedColor),
+        },
+        Parent=line,
+    })
     local loaderBg=New("Frame",{Size=UDim2.new(0,220,0,4),
         AnchorPoint=Vector2.new(0.5,0),Position=UDim2.new(0.5,0,0.5,186),
         BackgroundColor3=Color3.fromRGB(40,40,40),BackgroundTransparency=1,
@@ -834,6 +852,13 @@ local function PlayIntro(sg, onDone)
     local loaderFill=New("Frame",{Size=UDim2.new(0,0,1,0),
         BackgroundColor3=CFG.GlowColor,BorderSizePixel=0,ZIndex=105,Parent=loaderBg})
     Corner(loaderFill,2)
+    local loaderBlend=New("UIGradient",{
+        Color=ColorSequence.new{
+            ColorSequenceKeypoint.new(0,CFG.BlueColor),
+            ColorSequenceKeypoint.new(1,CFG.RedColor),
+        },
+        Parent=loaderFill,
+    })
     local particles={}
     local RADIUS=130
     for i=1,CFG.ParticleN do
@@ -855,6 +880,19 @@ local function PlayIntro(sg, onDone)
         local t=tick()-startT
         local sw=sg.AbsoluteSize.X; local sh=sg.AbsoluteSize.Y
         if sw<=0 or sh<=0 then return end
+        local blend=(math.sin(t*1.45)+1)/2
+        local cA=CFG.BlueColor:Lerp(CFG.RedColor,blend)
+        local cB=CFG.RedColor:Lerp(CFG.BlueColor,blend)
+        bgBlend.Rotation=(25+t*18)%360
+        bgBlend.Offset=Vector2.new(math.sin(t*0.7)*0.28,math.cos(t*0.55)*0.12)
+        glowOuter.ImageColor3=cA
+        glowInner.ImageColor3=cB
+        logoStroke.Color=cA
+        tagLabel.TextColor3=cA
+        line.BackgroundColor3=cB
+        loaderFill.BackgroundColor3=cA
+        lineBlend.Rotation=(t*90)%360
+        loaderBlend.Offset=Vector2.new(math.sin(t*1.4)*0.45,0)
         for i,p in ipairs(particles) do
             local speed=0.45+(i%3)*0.15
             local a=p.angle+t*speed
@@ -1209,7 +1247,7 @@ function CrozoX:CreateWindow(cfg)
     local T       =self._Theme
     local L       =self._Lang
     local sg      =self._ScreenGui
-    local titleH  =isCompact and 52 or 54
+    local titleH  =isCompact and 60 or 58
     local sidebarW=isCompact and 210 or 220
     local profileH=isCompact and 72 or 56
     local avatarSz=isCompact and 50 or 42
@@ -1221,6 +1259,8 @@ function CrozoX:CreateWindow(cfg)
     local searchIconSz=isCompact and 15 or 12
     local searchTextSize=isCompact and 14 or 11
     local tabListY=isCompact and (searchY + searchH + 10) or 96
+    local headerTitleSize=isCompact and 20 or 18
+    local headerSubtitleSize=isCompact and 13 or 12
 
     -- ════════════════════════════════════════════════════════
     --  MAIN FRAME — frame واحد فقط، UICorner عليه مباشرة
@@ -1362,8 +1402,8 @@ function CrozoX:CreateWindow(cfg)
 
     -- Logo
     local titleLogo = New("ImageLabel", {
-        Size             = UDim2.new(0, 30, 0, 30),
-        Position         = UDim2.new(0, 12, 0.5, -15),
+        Size             = UDim2.new(0, 34, 0, 34),
+        Position         = UDim2.new(0, 12, 0.5, -17),
         BackgroundTransparency = 1,
         Image            = logoId,
         ScaleType        = Enum.ScaleType.Fit,
@@ -1373,8 +1413,8 @@ function CrozoX:CreateWindow(cfg)
     Corner(titleLogo, 7)
     -- Glow ring
     New("ImageLabel", {
-        Size             = UDim2.new(0, 42, 0, 42),
-        Position         = UDim2.new(0, 6, 0.5, -21),
+        Size             = UDim2.new(0, 48, 0, 48),
+        Position         = UDim2.new(0, 5, 0.5, -24),
         BackgroundTransparency = 1,
         Image            = "rbxassetid://5028857084",
         ImageColor3      = T.Primary,
@@ -1384,26 +1424,28 @@ function CrozoX:CreateWindow(cfg)
     })
 
     New("TextLabel", {
-        Size             = UDim2.new(0, 260, 0, 22),
-        Position         = UDim2.new(0, 50, 0, 7),
+        Size             = UDim2.new(1, -180, 0, 26),
+        Position         = UDim2.new(0, 54, 0, 7),
         BackgroundTransparency = 1,
         Text             = title,
         TextColor3       = T.Text,
         Font             = L.Font,
-        TextSize         = 16,
+        TextSize         = headerTitleSize,
         TextXAlignment   = Enum.TextXAlignment.Left,
+        TextTruncate     = Enum.TextTruncate.AtEnd,
         ZIndex           = 12,
         Parent           = titleBar,
     })
     New("TextLabel", {
-        Size             = UDim2.new(0, 260, 0, 14),
-        Position         = UDim2.new(0, 50, 0, 30),
+        Size             = UDim2.new(1, -180, 0, 17),
+        Position         = UDim2.new(0, 54, 0, 34),
         BackgroundTransparency = 1,
         Text             = subtitle,
         TextColor3       = T.TextMuted,
         Font             = Enum.Font.Gotham,
-        TextSize         = 10,
+        TextSize         = headerSubtitleSize,
         TextXAlignment   = Enum.TextXAlignment.Left,
+        TextTruncate     = Enum.TextTruncate.AtEnd,
         ZIndex           = 12,
         Parent           = titleBar,
     })
@@ -1436,7 +1478,8 @@ function CrozoX:CreateWindow(cfg)
         })
         local btn = New("TextButton", {
             Size=UDim2.new(1,0,1,0), BackgroundTransparency=1,
-            Text="", ZIndex=22, Parent=fr,
+            Text="", ZIndex=22, AutoButtonColor=false, Active=true,
+            Selectable=false, Parent=fr,
         })
         local normSz  = UDim2.new(0,_btnSz,  0,_btnSz)
         local pressSz = UDim2.new(0,_btnSz-4,0,_btnSz-4)
@@ -1720,12 +1763,13 @@ function CrozoX:CreateWindow(cfg)
     local MAX_W, MAX_H = 1200, 800
 
     -- ── Drag Button — TextButton شفاف فوق titleBar ─────────
+    local dragGap = Device.IsPC and 90 or 126
     local dragBtn = New("TextButton", {
-        Size                   = UDim2.new(1, -90, 1, 0),
+        Size                   = UDim2.new(1, -dragGap, 1, 0),
         Position               = UDim2.new(0, 0, 0, 0),
         BackgroundTransparency = 1,
         Text                   = "",
-        ZIndex                 = 20,
+        ZIndex                 = 18,
         Parent                 = titleBar,
     })
 
@@ -2048,24 +2092,22 @@ function CrozoX:CreateWindow(cfg)
     -- الحل: على موبايل نستخدم InputEnded فقط (رفع الإصبع = tap مكتمل)
     -- ونمنع MouseButton1Click من التشغيل على موبايل عشان مش double-fire
     local function ConnectBtn(btn, fn)
-        if Device.IsPC then
-            btn.MouseButton1Click:Connect(fn)
-        else
-            -- موبايل: InputBegan + InputEnded على نفس الزر
-            -- resizeBtn منفصل في sg فلا يوجد bubble
-            local pressing = false
-            btn.InputBegan:Connect(function(i)
-                if i.UserInputType == Enum.UserInputType.Touch then
-                    pressing = true
-                end
-            end)
-            btn.InputEnded:Connect(function(i)
-                if i.UserInputType == Enum.UserInputType.Touch and pressing then
-                    pressing = false
-                    fn()
-                end
-            end)
+        local lastFire = 0
+        local function Fire()
+            local now = tick()
+            if now-lastFire < 0.18 then return end
+            lastFire = now
+            fn()
         end
+
+        btn.Activated:Connect(Fire)
+        btn.MouseButton1Click:Connect(Fire)
+        btn.InputEnded:Connect(function(i)
+            if i.UserInputType == Enum.UserInputType.Touch
+                or i.UserInputType == Enum.UserInputType.MouseButton1 then
+                Fire()
+            end
+        end)
     end
     ConnectBtn(closeBtn, DoClose)
     ConnectBtn(minBtn,   DoMinimize)
