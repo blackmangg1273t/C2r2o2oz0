@@ -1210,7 +1210,17 @@ function CrozoX:CreateWindow(cfg)
     local L       =self._Lang
     local sg      =self._ScreenGui
     local titleH  =isCompact and 52 or 54
-    local sidebarW=isCompact and 168 or 220
+    local sidebarW=isCompact and 210 or 220
+    local profileH=isCompact and 72 or 56
+    local avatarSz=isCompact and 50 or 42
+    local profileNameSize=isCompact and 14 or 12
+    local onlineSize=isCompact and 12 or 10
+    local statusDotSz=isCompact and 8 or 6
+    local searchY=isCompact and (profileH + 16) or 62
+    local searchH=isCompact and 38 or 27
+    local searchIconSz=isCompact and 15 or 12
+    local searchTextSize=isCompact and 14 or 11
+    local tabListY=isCompact and (searchY + searchH + 10) or 96
 
     -- ════════════════════════════════════════════════════════
     --  MAIN FRAME — frame واحد فقط، UICorner عليه مباشرة
@@ -1494,7 +1504,7 @@ function CrozoX:CreateWindow(cfg)
 
     -- Profile card — أكبر قليلاً عشان الصورة تظهر كاملة
     local profileCard = New("Frame", {
-        Size=UDim2.new(1,-14,0,56), Position=UDim2.new(0,7,0,6),
+        Size=UDim2.new(1,-14,0,profileH), Position=UDim2.new(0,7,0,6),
         BackgroundColor3=T.SurfaceAlt, BorderSizePixel=0,
         ZIndex=12, Parent=sidebar,
     })
@@ -1504,8 +1514,8 @@ function CrozoX:CreateWindow(cfg)
     -- ── Avatar دائري ─────────────────────────────────────
     local avatarImg = New("ImageLabel", {
         Name                   = "Avatar",
-        Size                   = UDim2.new(0, 42, 0, 42),
-        Position               = UDim2.new(0, 7, 0.5, -21),
+        Size                   = UDim2.new(0, avatarSz, 0, avatarSz),
+        Position               = UDim2.new(0, 8, 0.5, -avatarSz/2),
         BackgroundColor3       = T.SurfaceHover,
         BackgroundTransparency = 1,
         ImageTransparency      = 1,
@@ -1605,41 +1615,46 @@ function CrozoX:CreateWindow(cfg)
         end)
     end)
     New("TextLabel", {
-        Size=UDim2.new(1,-60,0,18), Position=UDim2.new(0,56,0,8),
+        Size=UDim2.new(1,-(avatarSz+22),0,22), Position=UDim2.new(0,avatarSz+18,0,isCompact and 12 or 8),
         BackgroundTransparency=1, Text=LocalPlayer.Name,
-        TextColor3=T.Text, Font=Enum.Font.GothamSemibold, TextSize=12,
+        TextColor3=T.Text, Font=Enum.Font.GothamSemibold, TextSize=profileNameSize,
         TextXAlignment=Enum.TextXAlignment.Left,
         TextTruncate=Enum.TextTruncate.AtEnd,
         ZIndex=13, Parent=profileCard,
     })
     local onlineDot = New("Frame", {
-        Size=UDim2.new(0,6,0,6), Position=UDim2.new(0,56,0,30),
+        Size=UDim2.new(0,statusDotSz,0,statusDotSz),
+        Position=UDim2.new(0,avatarSz+18,0,isCompact and 43 or 30),
         BackgroundColor3=T.Success, BorderSizePixel=0,
         ZIndex=13, Parent=profileCard,
     })
-    Corner(onlineDot, 3)
+    Corner(onlineDot, statusDotSz)
     New("TextLabel", {
-        Size=UDim2.new(1,-68,0,14), Position=UDim2.new(0,68,0,28),
+        Size=UDim2.new(1,-(avatarSz+34),0,18),
+        Position=UDim2.new(0,avatarSz+30,0,isCompact and 38 or 28),
         BackgroundTransparency=1, Text="Online",
-        TextColor3=T.TextMuted, Font=Enum.Font.Gotham, TextSize=10,
+        TextColor3=T.TextMuted, Font=Enum.Font.GothamMedium, TextSize=onlineSize,
         TextXAlignment=Enum.TextXAlignment.Left,
         ZIndex=13, Parent=profileCard,
     })
 
     -- Search bar
     local searchFrame = New("Frame", {
-        Size=UDim2.new(1,-14,0,27), Position=UDim2.new(0,7,0,62),
+        Size=UDim2.new(1,-14,0,searchH), Position=UDim2.new(0,7,0,searchY),
         BackgroundColor3=T.SurfaceAlt, BorderSizePixel=0,
         ZIndex=12, Parent=sidebar,
     })
-    Corner(searchFrame, 8)
+    Corner(searchFrame, isCompact and 10 or 8)
     local searchStroke = Stroke(searchFrame, T.Border, 1, 0)
-    Img(searchFrame, Icons.search, 12, UDim2.new(0,7,0.5,-6), T.TextMuted, 13)
+    Img(searchFrame, Icons.search, searchIconSz,
+        UDim2.new(0,isCompact and 11 or 7,0.5,-searchIconSz/2), T.TextMuted, 13)
     local searchBox = New("TextBox", {
-        Size=UDim2.new(1,-24,1,0), Position=UDim2.new(0,22,0,0),
+        Size=UDim2.new(1,-(isCompact and 38 or 24),1,0),
+        Position=UDim2.new(0,isCompact and 32 or 22,0,0),
         BackgroundTransparency=1, Text="",
         PlaceholderText=L.Search, PlaceholderColor3=T.TextMuted,
-        TextColor3=T.Text, Font=Enum.Font.Gotham, TextSize=11,
+        TextColor3=T.Text, Font=Enum.Font.GothamMedium, TextSize=searchTextSize,
+        TextXAlignment=L.IsRTL and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left,
         BorderSizePixel=0, ClearTextOnFocus=false,
         ZIndex=13, Parent=searchFrame,
     })
@@ -1654,7 +1669,7 @@ function CrozoX:CreateWindow(cfg)
 
     -- Tab list
     local tabList = New("ScrollingFrame", {
-        Size=UDim2.new(1,0,1,-96), Position=UDim2.new(0,0,0,96),
+        Size=UDim2.new(1,0,1,-tabListY), Position=UDim2.new(0,0,0,tabListY),
         BackgroundTransparency=1, ScrollBarThickness=2,
         ScrollBarImageColor3=T.Primary, BorderSizePixel=0,
         ZIndex=12, CanvasSize=UDim2.new(0,0,0,0), Parent=sidebar,
@@ -3004,8 +3019,10 @@ local function Init()
                 API._pendingWindowCfg = nil
                 local window = lib:CreateWindow(cfg)
                 -- Process any queued tab/element calls
-                if API._windowProxy and API._windowProxy._tabsQueue then
-                    for _, call in ipairs(API._windowProxy._tabsQueue) do
+                local proxy = API._windowProxy
+                if proxy and proxy._tabsQueue then
+                    proxy._realWindow = window
+                    for _, call in ipairs(proxy._tabsQueue) do
                         local methodName, args = call[1], call[2]
                         if methodName == "CreateTab" then
                             local tab = window:CreateTab(unpack(args))
@@ -3023,8 +3040,7 @@ local function Init()
                             window[methodName](window, unpack(args))
                         end
                     end
-                    -- Update the proxy to point to real window
-                    API._windowProxy._realWindow = window
+                    proxy._tabsQueue = {}
                 end
             end
 
