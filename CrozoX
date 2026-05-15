@@ -772,22 +772,39 @@ local function PlayIntro(sg, onDone)
     local vw = math.max(vp.X, 320)
     local vh = math.max(vp.Y, 320)
     local short = math.min(vw, vh)
+    local isCompactIntro = (Device.IsMobile or Device.IsTablet) or short < 520
 
-    local logoBox = math.floor(math.clamp(short * 0.22, 88, 138))
-    local logoImgSize = math.floor(logoBox * 0.84)
-    local logoRadius = math.floor(logoBox * 0.22)
-    local logoTopOffset = -math.floor(logoBox * 0.36)
-    local titleSize = math.floor(math.clamp(short * 0.066, 28, 44))
-    local subSize = math.floor(math.clamp(short * 0.024, 12, 16))
-    local titleW = math.floor(math.clamp(vw * 0.72, 260, 470))
-    local lineW = math.floor(math.clamp(short * 0.44, 170, 260))
-    local loaderW = math.floor(math.clamp(short * 0.48, 190, 280))
-    local loaderH = math.floor(math.clamp(short * 0.009, 4, 6))
+    local logoBox = isCompactIntro
+        and math.floor(math.clamp(short * 0.255, 96, 134))
+        or  math.floor(math.clamp(short * 0.245, 118, 160))
+    local logoImgSize = math.floor(logoBox * 0.86)
+    local logoRadius = math.floor(logoBox * 0.23)
+    local logoTopOffset = -math.floor(logoBox * (isCompactIntro and 0.42 or 0.40))
+    local titleSize = isCompactIntro
+        and math.floor(math.clamp(short * 0.076, 31, 44))
+        or  math.floor(math.clamp(short * 0.072, 34, 50))
+    local subSize = isCompactIntro
+        and math.floor(math.clamp(short * 0.031, 13, 17))
+        or  math.floor(math.clamp(short * 0.026, 13, 18))
+    local titleW = isCompactIntro
+        and math.floor(math.clamp(vw * 0.78, 280, 500))
+        or  math.floor(math.clamp(vw * 0.64, 340, 560))
+    local lineW = isCompactIntro
+        and math.floor(math.clamp(short * 0.50, 195, 290))
+        or  math.floor(math.clamp(short * 0.42, 220, 330))
+    local loaderW = isCompactIntro
+        and math.floor(math.clamp(short * 0.54, 215, 310))
+        or  math.floor(math.clamp(short * 0.46, 240, 340))
+    local loaderH = isCompactIntro
+        and math.floor(math.clamp(short * 0.011, 5, 7))
+        or  math.floor(math.clamp(short * 0.008, 4, 6))
     local logoY = math.floor(vh * 0.5 + logoTopOffset)
     local titleY = logoY + math.floor(logoBox * 0.64)
     local subY = titleY + math.floor(titleSize * 0.98)
-    local lineY = subY + math.floor(subSize * 1.95)
-    local loaderY = lineY + math.floor(short * 0.055)
+    local lineY = subY + math.floor(subSize * (isCompactIntro and 2.08 or 2.18))
+    local loaderY = lineY + math.floor(short * (isCompactIntro and 0.064 or 0.058))
+    local loaderDuration = isCompactIntro and 1.95 or 2.05
+    local finalHold = 1.0
 
     local blue = Color3.fromRGB(42, 125, 255)
     local blueSoft = Color3.fromRGB(95, 165, 255)
@@ -1000,11 +1017,11 @@ local function PlayIntro(sg, onDone)
         Tween(subtitle, {TextTransparency = 0}, 0.36, Enum.EasingStyle.Quart)
         Tween(line, {Size = UDim2.new(0, lineW, 0, 2)}, 0.40, Enum.EasingStyle.Quart)
         Tween(loader, {BackgroundTransparency = 0.26}, 0.26, Enum.EasingStyle.Quart)
-        TweenWait(fill, {Size = UDim2.new(1, 0, 1, 0)}, 1.02, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut)
+        TweenWait(fill, {Size = UDim2.new(1, 0, 1, 0)}, loaderDuration, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut)
         Tween(logoCard, {Size = UDim2.new(0, math.floor(logoBox * 1.045), 0, math.floor(logoBox * 1.045))}, 0.20, Enum.EasingStyle.Quad)
         task.wait(0.16)
         Tween(logoCard, {Size = UDim2.new(0, logoBox, 0, logoBox)}, 0.24, Enum.EasingStyle.Quad)
-        task.wait(0.12)
+        task.wait(finalHold)
         FadeOutGuiTree(root, 0.38)
         TweenWait(root, {BackgroundTransparency = 1}, 0.38, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
         alive = false
