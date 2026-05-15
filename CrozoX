@@ -2414,29 +2414,41 @@ function CrozoX:CreateWindow(cfg)
             local suf =scfg.Suffix or ""
             local cb  =scfg.Callback or function() end
             local val =def
-            local f=EF(66)
+            local isTouchDevice = Device.IsMobile or Device.IsTablet
+            local range = max-min
+            if range == 0 then range = 1 end
+            local function Pct(v)
+                return math.clamp((v-min)/range,0,1)
+            end
+            local cardH = isTouchDevice and 82 or 66
+            local trackH = isTouchDevice and 10 or 6
+            local knobSz = isTouchDevice and 26 or 16
+            local trackY = isTouchDevice and 60 or 48
+            local hitY = isTouchDevice and 36 or 34
+            local hitH = isTouchDevice and 44 or 34
+            local f=EF(cardH)
             EL(f,name,12,10,220,20,T.Text,L.FontSemi,FS.Title)
             local vl=New("TextLabel",{Size=UDim2.new(0,88,0,20),
                 Position=UDim2.new(1,-100,0,10),BackgroundTransparency=1,
                 Text=tostring(val)..suf,TextColor3=T.Primary,
                 Font=Enum.Font.GothamBold,TextSize=FS.Button,
                 TextXAlignment=Enum.TextXAlignment.Right,ZIndex=14,Parent=f})
-            local tbg=New("Frame",{Size=UDim2.new(1,-24,0,6),
-                Position=UDim2.new(0,12,0,48),BackgroundColor3=T.Border,
+            local tbg=New("Frame",{Size=UDim2.new(1,-24,0,trackH),
+                Position=UDim2.new(0,12,0,trackY),BackgroundColor3=T.Border,
                 BorderSizePixel=0,ZIndex=14,Parent=f})
-            Corner(tbg,3)
-            local fill=New("Frame",{Size=UDim2.new((val-min)/(max-min),0,1,0),
+            Corner(tbg,trackH/2)
+            local fill=New("Frame",{Size=UDim2.new(Pct(val),0,1,0),
                 BackgroundColor3=T.Primary,BorderSizePixel=0,ZIndex=15,Parent=tbg})
-            Corner(fill,3)
+            Corner(fill,trackH/2)
             -- gradient on fill
             local fillGrad=New("UIGradient",{Color=ColorSequence.new{
                 ColorSequenceKeypoint.new(0,T.PrimaryLight),
                 ColorSequenceKeypoint.new(1,T.Primary)},Parent=fill})
-            local knob=New("Frame",{Size=UDim2.new(0,16,0,16),
-                Position=UDim2.new((val-min)/(max-min),-8,0.5,-8),
+            local knob=New("Frame",{Size=UDim2.new(0,knobSz,0,knobSz),
+                Position=UDim2.new(Pct(val),-knobSz/2,0.5,-knobSz/2),
                 BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,
                 ZIndex=16,Parent=tbg})
-            Corner(knob,8)
+            Corner(knob,knobSz/2)
             -- UIStroke Transparency 0.6 حول الـ knob
             New("UIStroke", {
                 Color        = T.Primary,
@@ -2454,29 +2466,63 @@ function CrozoX:CreateWindow(cfg)
                 SliceCenter=Rect.new(49,49,450,450),
                 ZIndex=15,Parent=knob})
             local drag=false
-            local cz=New("TextButton",{Size=UDim2.new(1,0,0,34),
-                Position=UDim2.new(0,0,0,34),BackgroundTransparency=1,
-                Text="",ZIndex=17,Parent=f})
-            cz.InputBegan:Connect(function(inp)
-                if inp.UserInputType==Enum.UserInputType.MouseButton1 then drag=true end
-            end)
-            cz.InputEnded:Connect(function(inp)
-                if inp.UserInputType==Enum.UserInputType.MouseButton1 then drag=false end
-            end)
+            local activeInput=nil
+            local cz=New("TextButton",{Size=UDim2.new(1,0,0,hitH),
+                Position=UDim2.new(0,0,0,hitY),BackgroundTransparency=1,
+                Text="",ZIndex=17,AutoButtonColor=false,Active=true,Parent=f})
             local El={Value=val}
             local function SV(v,fire)
                 v=math.clamp(math.floor(v+0.5),min,max);val=v;El.Value=v
-                local p=(v-min)/(max-min)
+                local p=Pct(v)
                 Tween(fill,{Size=UDim2.new(p,0,1,0)},0.05)
-                Tween(knob,{Position=UDim2.new(p,-8,0.5,-8)},0.05)
+                Tween(knob,{Position=UDim2.new(p,-knobSz/2,0.5,-knobSz/2)},0.05)
                 vl.Text=tostring(v)..suf
                 if fire~=false then Safe(cb,v) end
             end
+            local function InputX(inp)
+                if inp and inp.Position then return inp.Position.X end
+                local ok, mp = pcall(function()
+                    return UserInputService:GetMouseLocation()
+                end)
+                return ok and mp.X or 0
+            end
+            local function UpdateFromInput(inp)
+                local width = math.max(tbg.AbsoluteSize.X,1)
+                local p=math.clamp((InputX(inp)-tbg.AbsolutePosition.X)/width,0,1)
+                SV(min+p*(max-min))
+            end
+            cz.InputBegan:Connect(function(inp)
+                if inp.UserInputType==Enum.UserInputType.MouseButton1
+                    or inp.UserInputType==Enum.UserInputType.Touch then
+                    drag=true
+                    activeInput=inp
+                    UpdateFromInput(inp)
+                end
+            end)
+            cz.InputEnded:Connect(function(inp)
+                if inp==activeInput
+                    or inp.UserInputType==Enum.UserInputType.MouseButton1
+                    or inp.UserInputType==Enum.UserInputType.Touch then
+                    drag=false
+                    activeInput=nil
+                end
+            end)
             UserInputService.InputChanged:Connect(function(inp)
-                if drag and inp.UserInputType==Enum.UserInputType.MouseMovement then
-                    local p=math.clamp((inp.Position.X-tbg.AbsolutePosition.X)
-                        /tbg.AbsoluteSize.X,0,1)
-                    SV(min+p*(max-min))
+                if not drag then return end
+                if inp.UserInputType==Enum.UserInputType.MouseMovement
+                    or inp.UserInputType==Enum.UserInputType.Touch then
+                    if activeInput and inp.UserInputType==Enum.UserInputType.Touch and inp~=activeInput then
+                        activeInput=inp
+                    end
+                    UpdateFromInput(inp)
+                end
+            end)
+            UserInputService.InputEnded:Connect(function(inp)
+                if inp==activeInput
+                    or inp.UserInputType==Enum.UserInputType.MouseButton1
+                    or inp.UserInputType==Enum.UserInputType.Touch then
+                    drag=false
+                    activeInput=nil
                 end
             end)
             function El:Set(v) SV(v,true) end
