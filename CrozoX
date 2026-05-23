@@ -3279,10 +3279,23 @@ function CrozoX:Notify(cfg)
     local bodyH   = isMob and 30  or 32
     local txtOffX = isMob and (panelW+8) or 56
 
-    local card=New("Frame",{Name="Notif_"..self._NotifCount,
-        Size=UDim2.new(1,0,0,cardH),
-        BackgroundColor3=T.Surface,BackgroundTransparency=1,
-        BorderSizePixel=0,ZIndex=900,Parent=self._NotifContainer})
+    local card
+    local okCard, canvasCard = pcall(function()
+        return New("CanvasGroup",{Name="Notif_"..self._NotifCount,
+            Size=UDim2.new(1,0,0,cardH),
+            BackgroundColor3=T.Surface,BackgroundTransparency=0,
+            GroupTransparency=1,
+            BorderSizePixel=0,ZIndex=900,Parent=self._NotifContainer})
+    end)
+    if okCard and canvasCard then
+        card=canvasCard
+    else
+        card=New("Frame",{Name="Notif_"..self._NotifCount,
+            Size=UDim2.new(1,0,0,cardH),
+            BackgroundColor3=T.Surface,BackgroundTransparency=1,
+            BorderSizePixel=0,ZIndex=900,Parent=self._NotifContainer})
+    end
+    local useGroupFade = okCard and card:IsA("CanvasGroup")
     Corner(card, isMob and 9 or 13)
     Stroke(card,color,1,0.5)
 
@@ -3314,7 +3327,7 @@ function CrozoX:Notify(cfg)
         iconImg=Img(panel,td.icon,iconSz,
             UDim2.new(0.5,-iconSz/2,0.5,-iconSz/2),color,903)
     end
-    iconImg.ImageTransparency=1
+    iconImg.ImageTransparency=useGroupFade and 0 or 1
 
     local titleLbl=New("TextLabel",{
         Size=UDim2.new(1,-(txtOffX+36),0,18),  -- +36 بدل +20 → مساحة أكبر للـ X
@@ -3322,14 +3335,14 @@ function CrozoX:Notify(cfg)
         BackgroundTransparency=1,Text=title,TextColor3=T.Text,Font=FONTS.Bold,
         TextSize=titleSz,TextXAlignment=xAlign,TextWrapped=false,
         TextTruncate=Enum.TextTruncate.AtEnd,
-        TextTransparency=1,ZIndex=902,Parent=card})
+        TextTransparency=useGroupFade and 0 or 1,ZIndex=902,Parent=card})
     local bodyLbl=New("TextLabel",{
         Size=UDim2.new(1,-(txtOffX+36),0,bodyH),  -- نفس الـ gap
         Position=UDim2.new(0,txtOffX,0,bodyY),
         BackgroundTransparency=1,Text=text,TextColor3=T.TextDim,
         Font=L and L.FontBody or FONTS.Body,
         TextSize=bodySz,TextXAlignment=xAlign,TextWrapped=true,
-        TextTransparency=1,ZIndex=902,Parent=card})
+        TextTransparency=useGroupFade and 0 or 1,ZIndex=902,Parent=card})
 
     -- Close X — صغير ومتناسب مع النص
     local xBtnSz = isMob and 20 or 24   -- أصغر على موبايل
@@ -3342,7 +3355,7 @@ function CrozoX:Notify(cfg)
     local xIcoSz = isMob and 10 or 12
     local xIco=Img(xBtn,Icons.x,xIcoSz,
         UDim2.new(0.5,-xIcoSz/2,0.5,-xIcoSz/2),T.TextMuted,905)
-    xIco.ImageTransparency=1
+    xIco.ImageTransparency=useGroupFade and 0 or 1
 
     -- Progress bar
     local pbg=New("Frame",{Size=UDim2.new(1,-12,0,2),
@@ -3352,26 +3365,35 @@ function CrozoX:Notify(cfg)
     local pfill=New("Frame",{Size=UDim2.new(1,0,1,0),
         BackgroundColor3=color,BorderSizePixel=0,ZIndex=903,Parent=pbg})
     Corner(pfill,1)
-    pfill.BackgroundTransparency=1
+    pfill.BackgroundTransparency=useGroupFade and 0 or 1
 
     -- Slide من اليمين دايماً (موبايل وPC) — أنظف وأوضح
     local FI = 0.35
     card.Position = UDim2.new(1, 30, 0, 0)
-    Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0,0,0,0)},FI,Enum.EasingStyle.Back)
-    Tween(iconImg,{ImageTransparency=0},FI)
-    Tween(titleLbl,{TextTransparency=0},FI)
-    Tween(bodyLbl,{TextTransparency=0},FI)
-    Tween(pfill,{BackgroundTransparency=0},FI)
-    Tween(xIco,{ImageTransparency=0},FI)
+    if useGroupFade then
+        Tween(card,{GroupTransparency=0,Position=UDim2.new(0,0,0,0)},FI,Enum.EasingStyle.Back)
+    else
+        Tween(card,{BackgroundTransparency=0,Position=UDim2.new(0,0,0,0)},FI,Enum.EasingStyle.Back)
+        Tween(iconImg,{ImageTransparency=0},FI)
+        Tween(titleLbl,{TextTransparency=0},FI)
+        Tween(bodyLbl,{TextTransparency=0},FI)
+        Tween(pfill,{BackgroundTransparency=0},FI)
+        Tween(xIco,{ImageTransparency=0},FI)
+    end
     Tween(pfill,{Size=UDim2.new(0,0,1,0)},dur,Enum.EasingStyle.Linear)
 
     local dismissed=false
     local function Dismiss()
         if dismissed then return end; dismissed=true
         local FO=0.25
-        Tween(card,{BackgroundTransparency=1,Position=UDim2.new(1,30,0,0)},FO,
-            Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-        FadeOutGuiTree(card,FO)
+        if useGroupFade then
+            Tween(card,{GroupTransparency=1,Position=UDim2.new(1,30,0,0)},FO,
+                Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+        else
+            Tween(card,{BackgroundTransparency=1,Position=UDim2.new(1,30,0,0)},FO,
+                Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+            FadeOutGuiTree(card,FO)
+        end
         task.delay(FO+0.05,function() card:Destroy() end)
     end
     task.delay(dur,Dismiss)

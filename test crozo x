@@ -5,9 +5,97 @@ local CrozoX = loadstring(game:HttpGet(url))()
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local rng = Random.new()
 
 local selectedPlayer = nil
 local playerAlertsEnabled = true
+local prayerReminderEnabled = true
+
+local Messages = {
+    English = {
+        noPlayer = "No player selected",
+        autoFarmTitle = "Auto Farm",
+        autoFarmOn = "Auto Farm enabled.",
+        autoFarmOff = "Auto Farm disabled.",
+        collectTitle = "Collect",
+        collectText = "Collected all available resources.",
+        enemyTitle = "Enemy Selected",
+        enemyText = "Selected: %s",
+        selectFirstTitle = "Player Action",
+        selectFirstText = "Select a player first.",
+        playerSelectedTitle = "Player Selected",
+        playerSelectedText = "You selected %s.",
+        teleportedTitle = "Teleported",
+        teleportedText = "Moved to %s.",
+        teleportFailedTitle = "Teleport Failed",
+        teleportFailedText = "%s is not spawned.",
+        playerInfoTitle = "Player Info",
+        playerJoinedTitle = "Player Joined",
+        playerJoinedText = "%s joined the game now.",
+        playerLeftTitle = "Player Left",
+        playerLeftText = "%s left the game.",
+        playerAlertsTitle = "Player Alerts",
+        playerAlertsOn = "Join/leave alerts enabled.",
+        playerAlertsOff = "Join/leave alerts disabled.",
+        prayerTitle = "Reminder",
+        prayerText = "Send blessings upon the Prophet.",
+        prayerOn = "Prayer reminder enabled.",
+        prayerOff = "Why did you turn it off? 😢",
+        configTitle = "Config",
+        configSaved = "Settings saved successfully.",
+        configLoaded = "Settings loaded.",
+    },
+    Arabic = {
+        noPlayer = "لم يتم اختيار لاعب",
+        autoFarmTitle = "الزراعة التلقائية",
+        autoFarmOn = "تم تشغيل الزراعة التلقائية.",
+        autoFarmOff = "تم إيقاف الزراعة التلقائية.",
+        collectTitle = "التجميع",
+        collectText = "تم جمع كل الموارد المتاحة.",
+        enemyTitle = "اختيار العدو",
+        enemyText = "تم اختيار: %s",
+        selectFirstTitle = "أكشن اللاعب",
+        selectFirstText = "اختار لاعب الأول.",
+        playerSelectedTitle = "اختيار لاعب",
+        playerSelectedText = "انت اختارت %s.",
+        teleportedTitle = "تم الانتقال",
+        teleportedText = "تم نقلك إلى %s.",
+        teleportFailedTitle = "فشل الانتقال",
+        teleportFailedText = "%s مش ظاهر في الخريطة دلوقتي.",
+        playerInfoTitle = "معلومات اللاعب",
+        playerJoinedTitle = "لاعب دخل",
+        playerJoinedText = "%s دخل للعبة دلوقتي.",
+        playerLeftTitle = "لاعب خرج",
+        playerLeftText = "%s خرج للأسف من اللعبة.",
+        playerAlertsTitle = "إشعارات اللاعبين",
+        playerAlertsOn = "تم تشغيل إشعارات دخول وخروج اللاعبين.",
+        playerAlertsOff = "تم إيقاف إشعارات دخول وخروج اللاعبين.",
+        prayerTitle = "تذكير",
+        prayerText = "صلي على النبي.",
+        prayerOn = "تم تشغيل تذكير الصلاة على النبي.",
+        prayerOff = "ليه قفلته 😢",
+        configTitle = "الإعدادات",
+        configSaved = "تم حفظ الإعدادات بنجاح.",
+        configLoaded = "تم تحميل الإعدادات.",
+    },
+}
+
+local function IsArabic()
+    local ok, langName = pcall(function()
+        return CrozoX:GetLangName()
+    end)
+
+    return ok and langName == "Arabic"
+end
+
+local function Msg(key)
+    local lang = IsArabic() and Messages.Arabic or Messages.English
+    return lang[key] or Messages.English[key] or key
+end
+
+local function FormatMsg(key, ...)
+    return string.format(Msg(key), ...)
+end
 
 local function GetHumanoid()
     local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
@@ -16,20 +104,30 @@ end
 
 local function PlayerLabel(player)
     if not player then
-        return "No player selected"
+        return Msg("noPlayer")
     end
 
     return string.format("%s (@%s)", player.DisplayName or player.Name, player.Name)
 end
 
-local function NotifyPlayer(title, text, player, notifType)
+local function Notify(titleKey, textKey, notifType, playSound, ...)
     CrozoX:Notify({
-        Title = title,
+        Title = Msg(titleKey),
+        Text = FormatMsg(textKey, ...),
+        Type = notifType or "Info",
+        Duration = 4,
+        Sound = playSound ~= false,
+    })
+end
+
+local function NotifyPlayer(titleKey, text, player, notifType, playSound)
+    CrozoX:Notify({
+        Title = Msg(titleKey),
         Text = text,
         Type = notifType or "Info",
         Duration = 4,
         UserId = player and player.UserId or nil,
-        Sound = true,
+        Sound = playSound ~= false,
     })
 end
 
@@ -52,12 +150,7 @@ MainTab:AddToggle({
     Description = "Example toggle for auto farming",
     Default = false,
     Callback = function(value)
-        CrozoX:Notify({
-            Title = "Auto Farm",
-            Text = value and "Auto Farm enabled" or "Auto Farm disabled",
-            Type = value and "Success" or "Info",
-            Duration = 3,
-        })
+        Notify("autoFarmTitle", value and "autoFarmOn" or "autoFarmOff", value and "Success" or "Info", true)
     end,
 })
 
@@ -66,12 +159,7 @@ MainTab:AddButton({
     Description = "Example action button",
     Icon = "package",
     Callback = function()
-        CrozoX:Notify({
-            Title = "Collect",
-            Text = "Collected all available resources.",
-            Type = "Info",
-            Duration = 3,
-        })
+        Notify("collectTitle", "collectText", "Info", true)
     end,
 })
 
@@ -96,12 +184,7 @@ FarmTab:AddDropdown({
     Options = {"Bandit", "Thug", "Boss", "Mini-Boss"},
     Default = "Bandit",
     Callback = function(selected)
-        CrozoX:Notify({
-            Title = "Enemy Selected",
-            Text = "Selected: " .. tostring(selected),
-            Type = "Info",
-            Duration = 2,
-        })
+        Notify("enemyTitle", "enemyText", "Info", true, tostring(selected))
     end,
 })
 
@@ -140,7 +223,7 @@ local PlayerSelector = PlayerTab:AddPlayerDropdown({
         selectedPlayer = player
 
         if player then
-            NotifyPlayer("Player Selected", PlayerLabel(player), player, "Info")
+            NotifyPlayer("playerSelectedTitle", FormatMsg("playerSelectedText", PlayerLabel(player)), player, "Info", false)
         end
     end,
 })
@@ -151,12 +234,7 @@ PlayerTab:AddButton({
     Icon = "map",
     Callback = function()
         if not selectedPlayer then
-            CrozoX:Notify({
-                Title = "Player Action",
-                Text = "Select a player first.",
-                Type = "Warning",
-                Duration = 3,
-            })
+            Notify("selectFirstTitle", "selectFirstText", "Warning", true)
             return
         end
 
@@ -165,9 +243,9 @@ PlayerTab:AddButton({
 
         if targetRoot and character then
             character:PivotTo(targetRoot.CFrame + Vector3.new(0, 3, 0))
-            NotifyPlayer("Teleported", "Moved to " .. PlayerLabel(selectedPlayer), selectedPlayer, "Success")
+            NotifyPlayer("teleportedTitle", FormatMsg("teleportedText", PlayerLabel(selectedPlayer)), selectedPlayer, "Success", true)
         else
-            NotifyPlayer("Teleport Failed", PlayerLabel(selectedPlayer) .. " is not spawned.", selectedPlayer, "Warning")
+            NotifyPlayer("teleportFailedTitle", FormatMsg("teleportFailedText", PlayerLabel(selectedPlayer)), selectedPlayer, "Warning", true)
         end
     end,
 })
@@ -178,17 +256,12 @@ PlayerTab:AddButton({
     Icon = "user",
     Callback = function()
         if not selectedPlayer then
-            CrozoX:Notify({
-                Title = "Player Info",
-                Text = "Select a player first.",
-                Type = "Warning",
-                Duration = 3,
-            })
+            Notify("playerInfoTitle", "selectFirstText", "Warning", true)
             return
         end
 
         print("Selected Player:", selectedPlayer.DisplayName, selectedPlayer.Name, selectedPlayer.UserId)
-        NotifyPlayer("Player Info", PlayerLabel(selectedPlayer), selectedPlayer, "Info")
+        NotifyPlayer("playerInfoTitle", PlayerLabel(selectedPlayer), selectedPlayer, "Info", true)
     end,
 })
 
@@ -200,7 +273,7 @@ PlayerTab:AddKeybind({
     end,
 })
 
-SettingsTab:AddSection("Player Notifications")
+SettingsTab:AddSection("Notifications")
 
 SettingsTab:AddToggle({
     Name = "Join/Leave Alerts",
@@ -208,14 +281,22 @@ SettingsTab:AddToggle({
     Default = true,
     Callback = function(value)
         playerAlertsEnabled = value
+        Notify("playerAlertsTitle", value and "playerAlertsOn" or "playerAlertsOff", value and "Success" or "Info", true)
+    end,
+})
 
-        CrozoX:Notify({
-            Title = "Player Alerts",
-            Text = value and "Join/leave alerts enabled." or "Join/leave alerts disabled.",
-            Type = value and "Success" or "Info",
-            Duration = 3,
-            Sound = true,
-        })
+SettingsTab:AddToggle({
+    Name = "Prayer Reminder",
+    Description = "Random reminder every 5-10 minutes",
+    Default = true,
+    Callback = function(value)
+        prayerReminderEnabled = value
+
+        if value then
+            Notify("prayerTitle", "prayerOn", "Success", true)
+        else
+            Notify("prayerTitle", "prayerOff", "Warning", true)
+        end
     end,
 })
 
@@ -224,7 +305,7 @@ Players.PlayerAdded:Connect(function(player)
         return
     end
 
-    NotifyPlayer("Player Joined", PlayerLabel(player) .. " joined the server.", player, "Success")
+    NotifyPlayer("playerJoinedTitle", FormatMsg("playerJoinedText", PlayerLabel(player)), player, "Success", true)
 
     if PlayerSelector and PlayerSelector.Refresh then
         PlayerSelector:Refresh()
@@ -236,7 +317,17 @@ Players.PlayerRemoving:Connect(function(player)
         return
     end
 
-    NotifyPlayer("Player Left", PlayerLabel(player) .. " left the server.", player, "Warning")
+    NotifyPlayer("playerLeftTitle", FormatMsg("playerLeftText", PlayerLabel(player)), player, "Warning", true)
+end)
+
+task.spawn(function()
+    while true do
+        task.wait(rng:NextInteger(300, 600))
+
+        if prayerReminderEnabled then
+            Notify("prayerTitle", "prayerText", "Info", true)
+        end
+    end
 end)
 
 SettingsTab:AddSection("Config")
@@ -247,13 +338,7 @@ SettingsTab:AddButton({
     Icon = "save",
     Callback = function()
         CrozoX:SaveConfig("MyConfig")
-
-        CrozoX:Notify({
-            Title = "Config",
-            Text = "Settings saved successfully.",
-            Type = "Success",
-            Duration = 3,
-        })
+        Notify("configTitle", "configSaved", "Success", true)
     end,
 })
 
@@ -263,12 +348,6 @@ SettingsTab:AddButton({
     Icon = "download",
     Callback = function()
         CrozoX:LoadConfig("MyConfig")
-
-        CrozoX:Notify({
-            Title = "Config",
-            Text = "Settings loaded.",
-            Type = "Info",
-            Duration = 3,
-        })
+        Notify("configTitle", "configLoaded", "Info", true)
     end,
 })
