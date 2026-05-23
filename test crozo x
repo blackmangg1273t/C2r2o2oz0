@@ -1,6 +1,4 @@
--- ═══════════════════════════════════════════════════════════════
---  CrozoX Example Script — سكربت مثال لأي لعبة / ماب
--- ═══════════════════════════════════════════════════════════════
+-- CrozoX Example Script
 
 local url = "https://raw.githubusercontent.com/blackmangg1273t/C2r2o2oz0/main/CrozoX?cacheBust=" .. tostring(os.time())
 local CrozoX = loadstring(game:HttpGet(url))()
@@ -8,9 +6,31 @@ local CrozoX = loadstring(game:HttpGet(url))()
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
+local selectedPlayer = nil
+local playerAlertsEnabled = true
+
 local function GetHumanoid()
     local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     return character:FindFirstChildOfClass("Humanoid")
+end
+
+local function PlayerLabel(player)
+    if not player then
+        return "No player selected"
+    end
+
+    return string.format("%s (@%s)", player.DisplayName or player.Name, player.Name)
+end
+
+local function NotifyPlayer(title, text, player, notifType)
+    CrozoX:Notify({
+        Title = title,
+        Text = text,
+        Type = notifType or "Info",
+        Duration = 4,
+        UserId = player and player.UserId or nil,
+        Sound = true,
+    })
 end
 
 local Window = CrozoX:CreateWindow({
@@ -20,45 +40,39 @@ local Window = CrozoX:CreateWindow({
     Size     = UDim2.new(0, 660, 0, 470),
 })
 
-local MainTab   = Window:CreateTab({ Name = "Main",   Icon = "home" })
-local FarmTab   = Window:CreateTab({ Name = "Farm",   Icon = "sprout" })
-local PlayerTab = Window:CreateTab({ Name = "Player", Icon = "user" })
-local MiscTab   = Window:CreateTab({ Name = "Misc",   Icon = "settings" })
-
--- ═══════════════════════════════════════════════════════════════
---  Main Tab
--- ═══════════════════════════════════════════════════════════════
+local MainTab     = Window:CreateTab({ Name = "Main",     Icon = "home" })
+local FarmTab     = Window:CreateTab({ Name = "Farm",     Icon = "sprout" })
+local PlayerTab   = Window:CreateTab({ Name = "Player",   Icon = "user" })
+local SettingsTab = Window:CreateTab({ Name = "Settings", Icon = "settings" })
 
 MainTab:AddSection("General")
 
 MainTab:AddToggle({
     Name = "Auto Farm",
-    Description = "يقوم بالزراعة التلقائية",
+    Description = "Example toggle for auto farming",
     Default = false,
     Callback = function(value)
-        print("Auto Farm:", value)
-
         CrozoX:Notify({
             Title = "Auto Farm",
-            Text = value and "تم تفعيل الزراعة التلقائية" or "تم إيقاف الزراعة التلقائية",
+            Text = value and "Auto Farm enabled" or "Auto Farm disabled",
             Type = value and "Success" or "Info",
-            Duration = 3
+            Duration = 3,
         })
-    end
+    end,
 })
 
 MainTab:AddButton({
     Name = "Collect All",
-    Description = "يجمع كل الموارد في الخريطة",
+    Description = "Example action button",
     Icon = "package",
     Callback = function()
         CrozoX:Notify({
             Title = "Collect",
-            Text = "تم جمع جميع الموارد!",
+            Text = "Collected all available resources.",
             Type = "Info",
-            Duration = 3
+            Duration = 3,
         })
-    end
+    end,
 })
 
 MainTab:AddSlider({
@@ -72,12 +86,8 @@ MainTab:AddSlider({
         if humanoid then
             humanoid.WalkSpeed = value
         end
-    end
+    end,
 })
-
--- ═══════════════════════════════════════════════════════════════
---  Farm Tab
--- ═══════════════════════════════════════════════════════════════
 
 FarmTab:AddSection("Farming Options")
 
@@ -86,15 +96,13 @@ FarmTab:AddDropdown({
     Options = {"Bandit", "Thug", "Boss", "Mini-Boss"},
     Default = "Bandit",
     Callback = function(selected)
-        print("Selected enemy:", selected)
-
         CrozoX:Notify({
             Title = "Enemy Selected",
             Text = "Selected: " .. tostring(selected),
             Type = "Info",
-            Duration = 2
+            Duration = 2,
         })
-    end
+    end,
 })
 
 FarmTab:AddInput({
@@ -103,12 +111,8 @@ FarmTab:AddInput({
     Default = "1.5",
     Callback = function(text)
         print("Farm delay set to:", text)
-    end
+    end,
 })
-
--- ═══════════════════════════════════════════════════════════════
---  Player Tab
--- ═══════════════════════════════════════════════════════════════
 
 PlayerTab:AddSection("Character")
 
@@ -124,7 +128,68 @@ PlayerTab:AddSlider({
             humanoid.UseJumpPower = true
             humanoid.JumpPower = value
         end
-    end
+    end,
+})
+
+PlayerTab:AddSection("Server Players")
+
+local PlayerSelector = PlayerTab:AddPlayerDropdown({
+    Name = "Select Player",
+    IncludeLocal = false,
+    Callback = function(player)
+        selectedPlayer = player
+
+        if player then
+            NotifyPlayer("Player Selected", PlayerLabel(player), player, "Info")
+        end
+    end,
+})
+
+PlayerTab:AddButton({
+    Name = "Teleport To Player",
+    Description = "Moves your character near the selected player",
+    Icon = "map",
+    Callback = function()
+        if not selectedPlayer then
+            CrozoX:Notify({
+                Title = "Player Action",
+                Text = "Select a player first.",
+                Type = "Warning",
+                Duration = 3,
+            })
+            return
+        end
+
+        local targetRoot = selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart")
+        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+        if targetRoot and character then
+            character:PivotTo(targetRoot.CFrame + Vector3.new(0, 3, 0))
+            NotifyPlayer("Teleported", "Moved to " .. PlayerLabel(selectedPlayer), selectedPlayer, "Success")
+        else
+            NotifyPlayer("Teleport Failed", PlayerLabel(selectedPlayer) .. " is not spawned.", selectedPlayer, "Warning")
+        end
+    end,
+})
+
+PlayerTab:AddButton({
+    Name = "Print Player Info",
+    Description = "Prints the selected player's identity",
+    Icon = "user",
+    Callback = function()
+        if not selectedPlayer then
+            CrozoX:Notify({
+                Title = "Player Info",
+                Text = "Select a player first.",
+                Type = "Warning",
+                Duration = 3,
+            })
+            return
+        end
+
+        print("Selected Player:", selectedPlayer.DisplayName, selectedPlayer.Name, selectedPlayer.UserId)
+        NotifyPlayer("Player Info", PlayerLabel(selectedPlayer), selectedPlayer, "Info")
+    end,
 })
 
 PlayerTab:AddKeybind({
@@ -132,43 +197,78 @@ PlayerTab:AddKeybind({
     Default = Enum.KeyCode.RightControl,
     Callback = function()
         Window:Toggle()
-    end
+    end,
 })
 
--- ═══════════════════════════════════════════════════════════════
---  Misc Tab
--- ═══════════════════════════════════════════════════════════════
+SettingsTab:AddSection("Player Notifications")
 
-MiscTab:AddSection("Settings")
+SettingsTab:AddToggle({
+    Name = "Join/Leave Alerts",
+    Description = "Notify with player name, username, avatar, and sound",
+    Default = true,
+    Callback = function(value)
+        playerAlertsEnabled = value
 
-MiscTab:AddButton({
+        CrozoX:Notify({
+            Title = "Player Alerts",
+            Text = value and "Join/leave alerts enabled." or "Join/leave alerts disabled.",
+            Type = value and "Success" or "Info",
+            Duration = 3,
+            Sound = true,
+        })
+    end,
+})
+
+Players.PlayerAdded:Connect(function(player)
+    if player == LocalPlayer or not playerAlertsEnabled then
+        return
+    end
+
+    NotifyPlayer("Player Joined", PlayerLabel(player) .. " joined the server.", player, "Success")
+
+    if PlayerSelector and PlayerSelector.Refresh then
+        PlayerSelector:Refresh()
+    end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    if player == LocalPlayer or not playerAlertsEnabled then
+        return
+    end
+
+    NotifyPlayer("Player Left", PlayerLabel(player) .. " left the server.", player, "Warning")
+end)
+
+SettingsTab:AddSection("Config")
+
+SettingsTab:AddButton({
     Name = "Save Config",
-    Description = "يحفظ إعداداتك الحالية",
+    Description = "Saves your current settings",
     Icon = "save",
     Callback = function()
         CrozoX:SaveConfig("MyConfig")
 
         CrozoX:Notify({
             Title = "Config",
-            Text = "تم حفظ الإعدادات بنجاح",
+            Text = "Settings saved successfully.",
             Type = "Success",
-            Duration = 3
+            Duration = 3,
         })
-    end
+    end,
 })
 
-MiscTab:AddButton({
+SettingsTab:AddButton({
     Name = "Load Config",
-    Description = "يحمل آخر إعدادات محفوظة",
+    Description = "Loads the last saved settings",
     Icon = "download",
     Callback = function()
         CrozoX:LoadConfig("MyConfig")
 
         CrozoX:Notify({
             Title = "Config",
-            Text = "تم تحميل الإعدادات",
+            Text = "Settings loaded.",
             Type = "Info",
-            Duration = 3
+            Duration = 3,
         })
-    end
+    end,
 })

@@ -28,6 +28,7 @@ local RunService       = game:GetService("RunService")
 local Players          = game:GetService("Players")
 local CoreGui          = game:GetService("CoreGui")
 local Debris           = game:GetService("Debris")
+local SoundService     = game:GetService("SoundService")
 
 local LocalPlayer = Players.LocalPlayer
 local Mouse       = LocalPlayer:GetMouse()
@@ -646,6 +647,27 @@ local function Img(parent,asset,sz,pos,color,zi)
         Position=pos or UDim2.new(0,0,0,0),BackgroundTransparency=1,
         Image=asset or "",ImageColor3=color or Color3.new(1,1,1),
         ScaleType=Enum.ScaleType.Fit,ZIndex=zi or 14,Parent=parent})
+end
+local function SetUserThumb(img, userId, thumbSize)
+    if not img or not userId then return end
+    img:SetAttribute("CrozoXUserId", userId)
+    img.Image = ""
+    task.spawn(function()
+        local ok, thumb = pcall(function()
+            return Players:GetUserThumbnailAsync(
+                userId,
+                Enum.ThumbnailType.HeadShot,
+                thumbSize or Enum.ThumbnailSize.Size100x100
+            )
+        end)
+        if ok and img and img.Parent and img:GetAttribute("CrozoXUserId") == userId then
+            img.Image = thumb
+        end
+    end)
+end
+local function SetPlayerThumb(img, player, thumbSize)
+    if not player then return end
+    SetUserThumb(img, player.UserId, thumbSize)
 end
 local function Ripple(target)
     -- target ممكن يكون Frame أو TextButton
@@ -2822,6 +2844,279 @@ function CrozoX:CreateWindow(cfg)
         end
 
         -- ── Keybind ────────────────────────────────────────
+        -- Player dropdown
+        function Tab:AddPlayerDropdown(pcfg)
+            pcfg=pcfg or {}
+            local name=pcfg.Name or "Select Player"
+            local cb=pcfg.Callback or function() end
+            local includeLocal = pcfg.IncludeLocal ~= false
+            local open=false
+            local isMob = Device.IsMobile or Device.IsTablet
+            local HEAD_H = isMob and 70 or 64
+            local ROW_H  = isMob and 58 or 52
+            local AV_SZ  = isMob and 44 or 38
+
+            local container=New("Frame",{
+                Size=UDim2.new(1,0,0,HEAD_H),
+                BackgroundTransparency=1,
+                BorderSizePixel=0,
+                ZIndex=13,Parent=tabPage,
+            })
+            local f=New("Frame",{
+                Size=UDim2.new(1,0,0,HEAD_H),
+                BackgroundColor3=T.SurfaceAlt,
+                BorderSizePixel=0,ZIndex=13,Parent=container,
+            })
+            Corner(f,12); Stroke(f,T.Border,1,0)
+            New("ImageLabel",{Size=UDim2.new(1,10,1,10),
+                Position=UDim2.new(0,-5,0,2),BackgroundTransparency=1,
+                Image="rbxassetid://6014261993",ImageColor3=Color3.fromRGB(0,0,0),
+                ImageTransparency=0.88,ScaleType=Enum.ScaleType.Slice,
+                SliceCenter=Rect.new(49,49,450,450),ZIndex=12,Parent=f})
+
+            local avatar=New("ImageLabel",{
+                Size=UDim2.new(0,AV_SZ,0,AV_SZ),
+                Position=UDim2.new(0,12,0.5,-AV_SZ/2),
+                BackgroundColor3=T.SurfaceHover,
+                Image="",ImageColor3=Color3.new(1,1,1),
+                ScaleType=Enum.ScaleType.Crop,
+                BorderSizePixel=0,ZIndex=15,Parent=f,
+            })
+            New("UICorner",{CornerRadius=UDim.new(1,0),Parent=avatar})
+            Stroke(avatar,T.Primary,1.5,0.45)
+
+            local txtX=AV_SZ+24
+            local selectedName=New("TextLabel",{
+                Size=UDim2.new(1,-(txtX+54),0,24),
+                Position=UDim2.new(0,txtX,0,isMob and 11 or 10),
+                BackgroundTransparency=1,Text=name,TextColor3=T.Text,
+                Font=L.FontSemi,TextSize=isMob and 17 or 15,
+                TextXAlignment=Enum.TextXAlignment.Left,
+                TextTruncate=Enum.TextTruncate.AtEnd,
+                ZIndex=15,Parent=f,
+            })
+            local selectedUser=New("TextLabel",{
+                Size=UDim2.new(1,-(txtX+54),0,20),
+                Position=UDim2.new(0,txtX,0,isMob and 38 or 34),
+                BackgroundTransparency=1,Text="No players available",
+                TextColor3=T.TextMuted,Font=L.FontBody,
+                TextSize=isMob and 13 or 12,
+                TextXAlignment=Enum.TextXAlignment.Left,
+                TextTruncate=Enum.TextTruncate.AtEnd,
+                ZIndex=15,Parent=f,
+            })
+            local arrowFrame=New("Frame",{Size=UDim2.new(0,26,0,26),
+                AnchorPoint=Vector2.new(1,0.5),
+                Position=UDim2.new(1,-10,0.5,0),
+                BackgroundColor3=T.SurfaceHover,
+                BorderSizePixel=0,ZIndex=15,Parent=f})
+            Corner(arrowFrame,7)
+            local aIco=Img(arrowFrame,Icons.chevrondown,13,
+                UDim2.new(0.5,-6.5,0.5,-6.5),T.TextDim,16)
+
+            local dl=New("ScrollingFrame",{
+                Size=UDim2.new(1,0,0,0),
+                Position=UDim2.new(0,0,0,HEAD_H+4),
+                BackgroundColor3=T.Surface,
+                BorderSizePixel=0,ClipsDescendants=true,
+                ScrollBarThickness=3,
+                ScrollBarImageColor3=T.Primary,
+                CanvasSize=UDim2.new(0,0,0,0),
+                ZIndex=14,Parent=container,
+            })
+            Corner(dl,10)
+            Stroke(dl,T.BorderBright,1,0.3)
+            ListLayout(dl,4); Pad(dl,5,5,5,5)
+
+            local selected=nil
+            local El={Value=nil}
+
+            local function PlayersList()
+                local list={}
+                for _,plr in ipairs(Players:GetPlayers()) do
+                    if includeLocal or plr~=LocalPlayer then
+                        table.insert(list,plr)
+                    end
+                end
+                table.sort(list,function(a,b)
+                    return string.lower(a.DisplayName or a.Name) < string.lower(b.DisplayName or b.Name)
+                end)
+                return list
+            end
+
+            local function Close()
+                open=false
+                Tween(container,{Size=UDim2.new(1,0,0,HEAD_H)},0.24,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+                Tween(dl,{Size=UDim2.new(1,0,0,0)},0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+                Tween(aIco,{Rotation=0},0.2)
+                Tween(arrowFrame,{BackgroundColor3=T.SurfaceHover},0.2)
+                Tween(f,{BackgroundColor3=T.SurfaceAlt},0.2)
+            end
+
+            local function SetPlayer(plr, fire)
+                selected=plr
+                El.Value=plr
+                if plr then
+                    selectedName.Text=plr.DisplayName or plr.Name
+                    selectedUser.Text="@"..plr.Name
+                    SetPlayerThumb(avatar,plr,Enum.ThumbnailSize.Size100x100)
+                else
+                    selectedName.Text=name
+                    selectedUser.Text="No players available"
+                    avatar.Image=""
+                    avatar:SetAttribute("CrozoXUserId",0)
+                end
+                if fire~=false then Safe(cb,plr) end
+            end
+
+            local function Refresh()
+                if not container.Parent then return end
+                for _,c in ipairs(dl:GetChildren()) do
+                    if c:IsA("Frame") then c:Destroy() end
+                end
+                local list=PlayersList()
+                if selected and not table.find(list,selected) then
+                    SetPlayer(list[1],false)
+                elseif not selected then
+                    SetPlayer(list[1],false)
+                end
+
+                if #list==0 then
+                    local row=New("Frame",{Size=UDim2.new(1,0,0,ROW_H),
+                        BackgroundColor3=T.SurfaceAlt,BorderSizePixel=0,ZIndex=15,Parent=dl})
+                    Corner(row,8)
+                    New("TextLabel",{Size=UDim2.new(1,-20,1,0),Position=UDim2.new(0,10,0,0),
+                        BackgroundTransparency=1,Text="No players in server",
+                        TextColor3=T.TextMuted,Font=L.FontBody,TextSize=isMob and 14 or 13,
+                        TextXAlignment=Enum.TextXAlignment.Left,ZIndex=16,Parent=row})
+                else
+                    for _,plr in ipairs(list) do
+                        local isA=(plr==selected)
+                        local row=New("Frame",{Size=UDim2.new(1,0,0,ROW_H),
+                            BackgroundColor3=isA and T.SurfaceHover or T.SurfaceAlt,
+                            BorderSizePixel=0,ZIndex=15,Parent=dl})
+                        Corner(row,8)
+                        if isA then
+                            local ind=New("Frame",{Size=UDim2.new(0,3,0.62,0),
+                                Position=UDim2.new(0,0,0.19,0),
+                                BackgroundColor3=T.Primary,BorderSizePixel=0,
+                                ZIndex=16,Parent=row})
+                            Corner(ind,2)
+                        end
+                        local rAv=New("ImageLabel",{Size=UDim2.new(0,AV_SZ-6,0,AV_SZ-6),
+                            Position=UDim2.new(0,10,0.5,-(AV_SZ-6)/2),
+                            BackgroundColor3=T.SurfaceHover,Image="",
+                            ImageColor3=Color3.new(1,1,1),ScaleType=Enum.ScaleType.Crop,
+                            BorderSizePixel=0,ZIndex=16,Parent=row})
+                        New("UICorner",{CornerRadius=UDim.new(1,0),Parent=rAv})
+                        SetPlayerThumb(rAv,plr,Enum.ThumbnailSize.Size100x100)
+                        local lx=AV_SZ+14
+                        New("TextLabel",{Size=UDim2.new(1,-(lx+12),0,22),
+                            Position=UDim2.new(0,lx,0,isMob and 7 or 6),
+                            BackgroundTransparency=1,Text=plr.DisplayName or plr.Name,
+                            TextColor3=isA and T.Text or T.TextDim,
+                            Font=isA and L.FontSemi or L.FontBody,
+                            TextSize=isMob and 15 or 14,
+                            TextXAlignment=Enum.TextXAlignment.Left,
+                            TextTruncate=Enum.TextTruncate.AtEnd,
+                            ZIndex=16,Parent=row})
+                        New("TextLabel",{Size=UDim2.new(1,-(lx+12),0,18),
+                            Position=UDim2.new(0,lx,0,isMob and 31 or 28),
+                            BackgroundTransparency=1,Text="@"..plr.Name,
+                            TextColor3=T.TextMuted,Font=L.FontBody,
+                            TextSize=isMob and 12 or 11,
+                            TextXAlignment=Enum.TextXAlignment.Left,
+                            TextTruncate=Enum.TextTruncate.AtEnd,
+                            ZIndex=16,Parent=row})
+                        local rb=New("TextButton",{Size=UDim2.new(1,0,1,0),
+                            BackgroundTransparency=1,Text="",ZIndex=17,
+                            AutoButtonColor=false,Active=true,Parent=row})
+                        local function Pick()
+                            SetPlayer(plr,true)
+                            Refresh()
+                            Close()
+                        end
+                        rb.MouseEnter:Connect(function()
+                            if plr~=selected then Tween(row,{BackgroundColor3=T.SurfaceHover},0.1) end
+                        end)
+                        rb.MouseLeave:Connect(function()
+                            if plr~=selected then Tween(row,{BackgroundColor3=T.SurfaceAlt},0.1) end
+                        end)
+                        rb.MouseButton1Click:Connect(Pick)
+                        rb.InputEnded:Connect(function(inp)
+                            if inp.UserInputType==Enum.UserInputType.Touch then Pick() end
+                        end)
+                    end
+                end
+                local count=math.max(#list,1)
+                dl.CanvasSize=UDim2.new(0,0,0,count*ROW_H+12)
+            end
+
+            local function ToggleOpen()
+                local now=tick()
+                if El._lastToggle and now-El._lastToggle<0.18 then return end
+                El._lastToggle=now
+                open=not open
+                Refresh()
+                if open then
+                    local count=math.max(#PlayersList(),1)
+                    local listH=math.min(count*ROW_H+12,isMob and 236 or 250)
+                    Tween(container,{Size=UDim2.new(1,0,0,HEAD_H+4+listH)},0.3,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
+                    Tween(dl,{Size=UDim2.new(1,0,0,listH)},0.3,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
+                    Tween(f,{BackgroundColor3=T.SurfaceHover},0.2)
+                    Tween(aIco,{Rotation=180},0.25,Enum.EasingStyle.Back)
+                    Tween(arrowFrame,{BackgroundColor3=T.Border},0.2)
+                else
+                    Close()
+                end
+            end
+
+            local tog=New("TextButton",{Size=UDim2.new(1,0,1,0),
+                BackgroundTransparency=1,Text="",ZIndex=18,
+                AutoButtonColor=false,Active=true,Parent=f})
+            tog.MouseButton1Click:Connect(ToggleOpen)
+            tog.InputEnded:Connect(function(inp)
+                if inp.UserInputType==Enum.UserInputType.Touch then ToggleOpen() end
+            end)
+            tog.MouseEnter:Connect(function()
+                if not open then Tween(f,{BackgroundColor3=T.SurfaceHover},0.15) end
+            end)
+            tog.MouseLeave:Connect(function()
+                if not open then Tween(f,{BackgroundColor3=T.SurfaceAlt},0.15) end
+            end)
+
+            Players.PlayerAdded:Connect(function()
+                task.defer(Refresh)
+            end)
+            Players.PlayerRemoving:Connect(function(plr)
+                task.defer(function()
+                    if selected==plr then selected=nil end
+                    Refresh()
+                end)
+            end)
+
+            Refresh()
+            function El:Get() return selected end
+            function El:Refresh() Refresh() end
+            function El:Set(v)
+                if typeof(v)=="Instance" and v:IsA("Player") then
+                    SetPlayer(v,true)
+                    Refresh()
+                    return
+                end
+                local target=tostring(v)
+                for _,plr in ipairs(PlayersList()) do
+                    if plr.Name==target or plr.DisplayName==target then
+                        SetPlayer(plr,true)
+                        Refresh()
+                        return
+                    end
+                end
+            end
+            return El
+        end
+
+        -- Keybind
         function Tab:AddKeybind(kcfg)
             kcfg=kcfg or {}
             local name=kcfg.Name or "Keybind"
@@ -2950,7 +3245,23 @@ function CrozoX:Notify(cfg)
     }
     local td=typeMap[ntype] or typeMap.Info
     local color=td.color
+    local notifImage = cfg.Image or cfg.Avatar or cfg.Thumbnail
+    local notifUserId = cfg.UserId
+    local soundValue = cfg.Sound
+    local playSound = soundValue ~= false
+    local soundId = cfg.SoundId or (type(soundValue)=="string" and soundValue) or "rbxassetid://12221967"
     self._NotifCount=self._NotifCount+1
+
+    if playSound then
+        local snd=New("Sound",{
+            SoundId=soundId,
+            Volume=cfg.SoundVolume or 0.28,
+            PlaybackSpeed=cfg.SoundSpeed or 1.15,
+            Parent=SoundService,
+        })
+        snd:Play()
+        Debris:AddItem(snd,3)
+    end
 
     -- ── Responsive sizes ──────────────────────────────────
     Device.Refresh()
@@ -2981,8 +3292,28 @@ function CrozoX:Notify(cfg)
     New("UICorner",{CornerRadius=UDim.new(0, isMob and 9 or 13),Parent=panel})
     New("Frame",{Size=UDim2.new(0,8,1,0),Position=UDim2.new(1,-8,0,0),
         BackgroundColor3=td.bg,BorderSizePixel=0,ZIndex=901,Parent=panel})
-    local iconImg=Img(panel,td.icon,iconSz,
-        UDim2.new(0.5,-iconSz/2,0.5,-iconSz/2),color,903)
+    local iconImg
+    if notifImage or notifUserId then
+        local avSz = isMob and 28 or 32
+        iconImg=New("ImageLabel",{
+            Size=UDim2.new(0,avSz,0,avSz),
+            AnchorPoint=Vector2.new(0.5,0.5),
+            Position=UDim2.new(0.5,0,0.5,0),
+            BackgroundColor3=T.SurfaceHover,
+            Image=notifImage or "",
+            ImageColor3=Color3.new(1,1,1),
+            ScaleType=Enum.ScaleType.Crop,
+            BorderSizePixel=0,ZIndex=903,Parent=panel,
+        })
+        New("UICorner",{CornerRadius=UDim.new(1,0),Parent=iconImg})
+        Stroke(iconImg,color,1.4,0.35)
+        if notifUserId then
+            SetUserThumb(iconImg,notifUserId,Enum.ThumbnailSize.Size100x100)
+        end
+    else
+        iconImg=Img(panel,td.icon,iconSz,
+            UDim2.new(0.5,-iconSz/2,0.5,-iconSz/2),color,903)
+    end
     iconImg.ImageTransparency=1
 
     local titleLbl=New("TextLabel",{
@@ -3084,7 +3415,7 @@ local function Init()
     local unpackArgs = table.unpack or unpack
     local TAB_METHODS = {
         "AddSection","AddButton","AddToggle","AddSlider",
-        "AddDropdown","AddInput","AddKeybind",
+        "AddDropdown","AddPlayerDropdown","AddInput","AddKeybind",
     }
 
     local function WarnReplay(scope, name, err)
