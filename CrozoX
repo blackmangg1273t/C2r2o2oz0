@@ -29,6 +29,7 @@ local Players          = game:GetService("Players")
 local CoreGui          = game:GetService("CoreGui")
 local Debris           = game:GetService("Debris")
 local SoundService     = game:GetService("SoundService")
+local TextService      = game:GetService("TextService")
 
 local LocalPlayer = Players.LocalPlayer
 local Mouse       = LocalPlayer:GetMouse()
@@ -1925,23 +1926,36 @@ function CrozoX:CreateWindow(cfg)
     -- ── Resize Button — نفس تصميم PC على الموبايل، خارج الواجهة
     local rBtnSz = Device.IsPC and 22 or 38   -- أكبر على موبايل لتسهيل اللمس
 
+    rBtnSz = Device.IsPC and 24 or 40
+    local rBtnOffset = Device.IsPC and 14 or 20
+    local rBtnRestSize = UDim2.new(0, rBtnSz, 0, rBtnSz)
+    local rBtnPressSize = UDim2.new(0, rBtnSz + 3, 0, rBtnSz + 3)
+
     local resizeBtn = New("TextButton", {
         Name                   = "ResizeBtn",
-        Size                   = UDim2.new(0, rBtnSz, 0, rBtnSz),
+        Size                   = rBtnRestSize,
         AnchorPoint            = Vector2.new(0.5, 0.5),
-        Position               = UDim2.new(1, 10, 1, 10),
-        BackgroundColor3       = Color3.fromRGB(30, 30, 30),
-        BackgroundTransparency = 0.1,
+        Position               = UDim2.new(1, rBtnOffset, 1, rBtnOffset),
+        BackgroundColor3       = T.SurfaceAlt,
+        BackgroundTransparency = 0.04,
         Text                   = "",
         ZIndex                 = 60,
         Parent                 = wrapFrame,
     })
-    Corner(resizeBtn, 6)
-    New("UIStroke", {
-        Color        = Color3.new(1, 1, 1),
+    Corner(resizeBtn, 9)
+    local resizeStroke = New("UIStroke", {
+        Color        = T.Primary,
         Thickness    = 1,
-        Transparency = 0.6,
+        Transparency = 0.35,
         Parent       = resizeBtn,
+    })
+    New("UIGradient", {
+        Rotation = 45,
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, T.SurfaceHover),
+            ColorSequenceKeypoint.new(1, T.Background),
+        }),
+        Parent = resizeBtn,
     })
     -- أيقونة ⌟ بالأبيض
     local iconH = New("Frame", {
@@ -1971,7 +1985,8 @@ function CrozoX:CreateWindow(cfg)
             rStartX = mp.X; rStartY = mp.Y
             rW = wrapFrame.Size.X.Offset; rH = wrapFrame.Size.Y.Offset
             rPX = wrapFrame.Position.X.Offset; rPY = wrapFrame.Position.Y.Offset
-            Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.1)
+            Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0,Size=rBtnPressSize},0.1)
+            Tween(resizeStroke,{Transparency=0.12},0.1)
 
         elseif inp.UserInputType == Enum.UserInputType.Touch then
             -- Mobile: resize فوري بدون انتظار — الزر صغير ومخصص لهذا
@@ -1980,7 +1995,8 @@ function CrozoX:CreateWindow(cfg)
             rStartX = inp.Position.X; rStartY = inp.Position.Y
             rW = wrapFrame.Size.X.Offset; rH = wrapFrame.Size.Y.Offset
             rPX = wrapFrame.Position.X.Offset; rPY = wrapFrame.Position.Y.Offset
-            Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.1)
+            Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0,Size=rBtnPressSize},0.1)
+            Tween(resizeStroke,{Transparency=0.12},0.1)
         end
     end)
 
@@ -1994,22 +2010,26 @@ function CrozoX:CreateWindow(cfg)
     UserInputService.InputEnded:Connect(function(inp)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 and resizing then
             resizing = false
-            Tween(resizeBtn,{BackgroundColor3=Color3.fromRGB(40,40,40),BackgroundTransparency=0.2},0.15)
+            Tween(resizeBtn,{BackgroundColor3=T.SurfaceAlt,BackgroundTransparency=0.04,Size=rBtnRestSize},0.15)
+            Tween(resizeStroke,{Transparency=0.35},0.15)
         elseif inp.UserInputType == Enum.UserInputType.Touch and resizing then
             resizing = false
             resizeTouchPos = nil
-            Tween(resizeBtn,{BackgroundColor3=Color3.fromRGB(30,30,30),BackgroundTransparency=0.1},0.2)
+            Tween(resizeBtn,{BackgroundColor3=T.SurfaceAlt,BackgroundTransparency=0.04,Size=rBtnRestSize},0.2)
+            Tween(resizeStroke,{Transparency=0.35},0.2)
         end
     end)
     resizeBtn.MouseEnter:Connect(function()
         if resizing then return end
-        Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0},0.15)
+        Tween(resizeBtn,{BackgroundColor3=T.Primary,BackgroundTransparency=0,Size=rBtnPressSize},0.15)
+        Tween(resizeStroke,{Transparency=0.1},0.15)
         Tween(iconH,{BackgroundColor3=Color3.new(1,1,1)},0.15)
         Tween(iconV,{BackgroundColor3=Color3.new(1,1,1)},0.15)
     end)
     resizeBtn.MouseLeave:Connect(function()
         if resizing then return end
-        Tween(resizeBtn,{BackgroundColor3=Color3.fromRGB(30,30,30),BackgroundTransparency=0.1},0.15)
+        Tween(resizeBtn,{BackgroundColor3=T.SurfaceAlt,BackgroundTransparency=0.04,Size=rBtnRestSize},0.15)
+        Tween(resizeStroke,{Transparency=0.35},0.15)
     end)
 
     -- ── RenderStepped: drag + resize + resize button pos ──
@@ -2084,9 +2104,11 @@ function CrozoX:CreateWindow(cfg)
         if inp.UserInputType == Enum.UserInputType.MouseButton1 and resizing then
             resizing = false
             Tween(resizeBtn, {
-                BackgroundColor3       = Color3.fromRGB(40, 40, 40),
-                BackgroundTransparency = 0.2,
+                BackgroundColor3       = T.SurfaceAlt,
+                BackgroundTransparency = 0.04,
+                Size                   = rBtnRestSize,
             }, 0.15)
+            Tween(resizeStroke,{Transparency=0.35},0.15)
         end
     end)
 
@@ -2176,7 +2198,7 @@ function CrozoX:CreateWindow(cfg)
             if Device.IsPC then
                 resizeBtn.Visible = true
                 resizeBtn.Size    = UDim2.new(0, 0, 0, 0)
-                Tween(resizeBtn,{Size=UDim2.new(0,rBtnSz,0,rBtnSz),BackgroundTransparency=0.1},0.3,Enum.EasingStyle.Back)
+                Tween(resizeBtn,{Size=rBtnRestSize,BackgroundTransparency=0.04},0.3,Enum.EasingStyle.Back)
             else
                 Tween(resizeBtn,{BackgroundTransparency=0.3},0.2)
             end
@@ -2373,6 +2395,22 @@ function CrozoX:CreateWindow(cfg)
                 TextXAlignment=xAlign,ZIndex=zi or 14,Parent=p})
         end
 
+        local function MeasureTextHeight(text, width, font, size, fallback)
+            if not text or text=="" then return 0 end
+            local ok, bounds = pcall(function()
+                return TextService:GetTextSize(
+                    tostring(text),
+                    size or FS.Body,
+                    font or L.FontBody,
+                    Vector2.new(math.max(width or 240, 80), 1000)
+                )
+            end)
+            if ok and bounds then
+                return math.ceil(bounds.Y)
+            end
+            return fallback or (size or FS.Body)
+        end
+
         -- Section
         function Tab:AddSection(name)
             local s=New("Frame",{Size=UDim2.new(1,0,0,30),
@@ -2493,10 +2531,33 @@ function CrozoX:CreateWindow(cfg)
             local desc    =tcfg.Description or ""
             local val     =tcfg.Default or false
             local callback=tcfg.Callback or function() end
-            local h=desc~="" and 60 or 46
+            local descTextSize = FS.Body
+            local descMeasureW = (Device.IsMobile or Device.IsTablet) and 250 or 270
+            local descH = desc~="" and math.max(16,
+                MeasureTextHeight(desc, descMeasureW, L.FontBody, descTextSize, 16)) or 0
+            descH = math.min(descH, (Device.IsMobile or Device.IsTablet) and 56 or 48)
+            local h=desc~="" and math.max(60, 36 + descH + 12) or 46
             local f=EF(h)
-            EL(f,name,12,desc~="" and 10 or 13,240,20,T.Text,L.FontSemi,FS.Title)
-            if desc~="" then EL(f,desc,12,32,240,16,T.TextMuted,L.FontBody,FS.Body) end
+            New("TextLabel",{
+                Size=UDim2.new(1,-92,0,22),
+                Position=UDim2.new(0,12,0,desc~="" and 9 or 12),
+                BackgroundTransparency=1,Text=name,TextColor3=T.Text,
+                Font=L.FontSemi,TextSize=FS.Title,
+                TextXAlignment=L.IsRTL and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left,
+                TextTruncate=Enum.TextTruncate.AtEnd,
+                ZIndex=14,Parent=f})
+            if desc~="" then
+                New("TextLabel",{
+                    Size=UDim2.new(1,-92,0,descH),
+                    Position=UDim2.new(0,12,0,32),
+                    BackgroundTransparency=1,Text=desc,
+                    TextColor3=T.TextMuted,Font=L.FontBody,
+                    TextSize=descTextSize,
+                    TextWrapped=true,
+                    TextYAlignment=Enum.TextYAlignment.Top,
+                    TextXAlignment=L.IsRTL and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left,
+                    ZIndex=14,Parent=f})
+            end
 
             local track=New("Frame",{Size=UDim2.new(0,50,0,28),
                 Position=UDim2.new(1,-62,0.5,-14),
@@ -2606,6 +2667,9 @@ function CrozoX:CreateWindow(cfg)
                 ZIndex=15,Parent=knob})
             local drag=false
             local activeInput=nil
+            local pendingTouch=false
+            local touchStart=nil
+            local touchScroll=false
             local cz=New("TextButton",{Size=UDim2.new(1,0,0,hitH),
                 Position=UDim2.new(0,0,0,hitY),BackgroundTransparency=1,
                 Text="",ZIndex=17,AutoButtonColor=false,Active=true,Parent=f})
@@ -2631,37 +2695,69 @@ function CrozoX:CreateWindow(cfg)
                 SV(min+p*(max-min))
             end
             cz.InputBegan:Connect(function(inp)
-                if inp.UserInputType==Enum.UserInputType.MouseButton1
-                    or inp.UserInputType==Enum.UserInputType.Touch then
+                if inp.UserInputType==Enum.UserInputType.MouseButton1 then
                     drag=true
                     activeInput=inp
                     UpdateFromInput(inp)
+                elseif inp.UserInputType==Enum.UserInputType.Touch then
+                    drag=false
+                    pendingTouch=true
+                    touchScroll=false
+                    activeInput=inp
+                    touchStart=Vector2.new(inp.Position.X, inp.Position.Y)
                 end
             end)
             cz.InputEnded:Connect(function(inp)
-                if inp==activeInput
-                    or inp.UserInputType==Enum.UserInputType.MouseButton1
-                    or inp.UserInputType==Enum.UserInputType.Touch then
+                if inp==activeInput or inp.UserInputType==Enum.UserInputType.MouseButton1 then
+                    if inp.UserInputType==Enum.UserInputType.Touch and pendingTouch and not touchScroll then
+                        UpdateFromInput(inp)
+                    end
                     drag=false
                     activeInput=nil
+                    pendingTouch=false
+                    touchStart=nil
+                    touchScroll=false
                 end
             end)
             UserInputService.InputChanged:Connect(function(inp)
-                if not drag then return end
-                if inp.UserInputType==Enum.UserInputType.MouseMovement
-                    or inp.UserInputType==Enum.UserInputType.Touch then
-                    if activeInput and inp.UserInputType==Enum.UserInputType.Touch and inp~=activeInput then
-                        activeInput=inp
+                if inp.UserInputType==Enum.UserInputType.Touch then
+                    if not activeInput or inp~=activeInput then return end
+                    if pendingTouch and touchStart then
+                        local dx=math.abs(inp.Position.X-touchStart.X)
+                        local dy=math.abs(inp.Position.Y-touchStart.Y)
+                        if dy>10 and dy>dx then
+                            touchScroll=true
+                            pendingTouch=false
+                            activeInput=nil
+                            touchStart=nil
+                            return
+                        elseif dx>10 and dx>=dy then
+                            pendingTouch=false
+                            drag=true
+                        else
+                            return
+                        end
                     end
+                    if not drag then return end
+                    UpdateFromInput(inp)
+                    return
+                end
+                if not drag then return end
+                if inp.UserInputType==Enum.UserInputType.MouseMovement then
                     UpdateFromInput(inp)
                 end
             end)
             UserInputService.InputEnded:Connect(function(inp)
                 if inp==activeInput
-                    or inp.UserInputType==Enum.UserInputType.MouseButton1
-                    or inp.UserInputType==Enum.UserInputType.Touch then
+                    or inp.UserInputType==Enum.UserInputType.MouseButton1 then
+                    if inp.UserInputType==Enum.UserInputType.Touch and pendingTouch and not touchScroll then
+                        UpdateFromInput(inp)
+                    end
                     drag=false
                     activeInput=nil
+                    pendingTouch=false
+                    touchStart=nil
+                    touchScroll=false
                 end
             end)
             function El:Set(v) SV(v,true) end
@@ -2931,6 +3027,46 @@ function CrozoX:CreateWindow(cfg)
             local selected=nil
             local El={Value=nil}
 
+            local function ConnectTapOnly(btn, fn)
+                local startPos=nil
+                local moved=false
+                local suppressClick=false
+                local limit=isMob and 12 or 8
+
+                btn.InputBegan:Connect(function(inp)
+                    if inp.UserInputType==Enum.UserInputType.Touch then
+                        startPos=Vector2.new(inp.Position.X,inp.Position.Y)
+                        moved=false
+                    end
+                end)
+                btn.InputChanged:Connect(function(inp)
+                    if inp.UserInputType==Enum.UserInputType.Touch and startPos then
+                        local dx=inp.Position.X-startPos.X
+                        local dy=inp.Position.Y-startPos.Y
+                        if (dx*dx + dy*dy) > (limit*limit) then
+                            moved=true
+                        end
+                    end
+                end)
+                btn.InputEnded:Connect(function(inp)
+                    if inp.UserInputType==Enum.UserInputType.Touch then
+                        suppressClick=true
+                        if startPos and not moved then
+                            fn()
+                        end
+                        startPos=nil
+                        moved=false
+                        task.delay(0.12,function()
+                            suppressClick=false
+                        end)
+                    end
+                end)
+                btn.MouseButton1Click:Connect(function()
+                    if suppressClick then return end
+                    fn()
+                end)
+            end
+
             local function PlayersList()
                 local list={}
                 for _,plr in ipairs(Players:GetPlayers()) do
@@ -3042,10 +3178,7 @@ function CrozoX:CreateWindow(cfg)
                         rb.MouseLeave:Connect(function()
                             if plr~=selected then Tween(row,{BackgroundColor3=T.SurfaceAlt},0.1) end
                         end)
-                        rb.MouseButton1Click:Connect(Pick)
-                        rb.InputEnded:Connect(function(inp)
-                            if inp.UserInputType==Enum.UserInputType.Touch then Pick() end
-                        end)
+                        ConnectTapOnly(rb, Pick)
                     end
                 end
                 local count=math.max(#list,1)
@@ -3074,10 +3207,7 @@ function CrozoX:CreateWindow(cfg)
             local tog=New("TextButton",{Size=UDim2.new(1,0,1,0),
                 BackgroundTransparency=1,Text="",ZIndex=18,
                 AutoButtonColor=false,Active=true,Parent=f})
-            tog.MouseButton1Click:Connect(ToggleOpen)
-            tog.InputEnded:Connect(function(inp)
-                if inp.UserInputType==Enum.UserInputType.Touch then ToggleOpen() end
-            end)
+            ConnectTapOnly(tog, ToggleOpen)
             tog.MouseEnter:Connect(function()
                 if not open then Tween(f,{BackgroundColor3=T.SurfaceHover},0.15) end
             end)

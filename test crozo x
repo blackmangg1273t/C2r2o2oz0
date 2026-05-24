@@ -37,9 +37,9 @@ local Messages = {
         playerAlertsTitle = "Player Alerts",
         playerAlertsOn = "Join/leave alerts enabled.",
         playerAlertsOff = "Join/leave alerts disabled.",
-        prayerTitle = "Reminder",
-        prayerText = "Send blessings upon the Prophet.",
-        prayerOn = "Prayer reminder enabled.",
+        prayerTitle = "Prayer Reminder",
+        prayerText = "Send blessings upon Prophet Muhammad.",
+        prayerOn = "Prophet blessing reminder enabled.",
         prayerOff = "Why did you turn it off? 😢",
         configTitle = "Config",
         configSaved = "Settings saved successfully.",
@@ -277,7 +277,7 @@ SettingsTab:AddSection("Notifications")
 
 SettingsTab:AddToggle({
     Name = "Join/Leave Alerts",
-    Description = "Notify with player name, username, avatar, and sound",
+    Description = "Player join/leave alerts with avatar and sound",
     Default = true,
     Callback = function(value)
         playerAlertsEnabled = value
@@ -287,7 +287,7 @@ SettingsTab:AddToggle({
 
 SettingsTab:AddToggle({
     Name = "Prayer Reminder",
-    Description = "Random reminder every 5-10 minutes",
+    Description = "Random Prophet blessing reminder every 5-10 minutes",
     Default = true,
     Callback = function(value)
         prayerReminderEnabled = value
